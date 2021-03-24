@@ -952,7 +952,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
             if (tiffFile == 0) {
                 Dialog.create("How many positions were opened?") // I added this in case the check positions doesn't work and the user opted to switch it off
                     Dialog.addNumber("Amount of positions", 1); // and I needed a way to find out how many positions were opened PS I haven;t really tested this...
-                Dialog.show();
+                //Dialog.show();
                     AmountOfPositions = Dialog.getNumber();
             } else {
                 AmountOfPositions = 1;
@@ -1320,6 +1320,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
         TCP = TransmittedChannelPresent;
         Dialog.create("Settings");
+        // ##DB## need to grab these from initiating macro
             Dialog.addString("Date experiment:", Date);
             Dialog.addString("Name Experiment:", NameExperiment, 30); //Dialog.setInsets(top, left, bottom) 		
             if (Interval == round(Interval)) {
@@ -1365,7 +1366,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
             }
             Dialog.setInsets(5, 40, 0);
             Dialog.addCheckbox("Show Extended Settings?", ExtendedSettings);
-        Dialog.show();
+        //Dialog.show();
             // !!!!!!!!!!!!!!! =========== Here We open a window to define all settings ===============!!!!!!!!!!!!!
             NumberOfChannelsToBeProcessed = 0;
             // !!!!!!!!!!!!!!! =========== Here We retreive all the chosen settings ===============!!!!!!!!!!!!!
@@ -1416,7 +1417,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
             Dialog.create("UseDepthcoding");
                 Dialog.addMessage("UseDepthcoding is now 'WITHOUT'. \n \n you really want that ?? ");
                 Dialog.addRadioButtonGroup("Add depthcoding?", newArray("With", "Without"), 1, 2, UseDepthcoding);
-            Dialog.show();      // ##DB## -- does this dialog show do anything at all?
+            Dialog.show();
                 UseDepthcoding = Dialog.getRadioButton;
         }
         if (UseDepthcoding == "Without" && NumberOfChannelsToBeProcessed > 2) {
@@ -1426,9 +1427,9 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         // !!!!!!!!!!!!!!! =========== Here We retreive all the chosen settings ===============!!!!!!!!!!!!!
 
         // !!!!!!!!!!!!!!! =========== Here We retreive settings for the red dead dye substraction ===============!!!!!!!!!!!!!
-        //NORMAL, DIALOG "Chose channels for DeadDye and Nuclei"
+        //NORMAL, DIALOG "Choose channels for DeadDye and Nuclei"
         if (RedDeadDye) {
-            Dialog.create("Chose channels for DeadDye and Nuclei");
+            Dialog.create("Choose channels for DeadDye and Nuclei");
                 for (j = 0; j < PositionChannelAmount[i]; j++) {
                     if (TransmittedChannelNumber[i] != j) {
                         if (UseChannel[j]) {
@@ -1771,7 +1772,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                 waitForUser(" - Set ROI in all positions \n \n - Set Zplane in all positions \n \n - and then click OK");
             }
         } else {
-            waitForUser("Set ROI in all positions BEFORE clicking OK");
+            // ##DB## call the auto crop function if wanted
+//            waitForUser("Set ROI in all positions BEFORE clicking OK");
         }
 
         // bp
@@ -2108,7 +2110,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                     if (testWait) {
                         wait(ms);
                     }
-                    waitForUser("Set slider to last Timepoint to be included");
+                    // ##DB## use auto last timepoint detection
+                    //waitForUser("Set slider to last Timepoint to be included");
                     if (testWait) {
                         wait(ms);
                     }
@@ -2203,6 +2206,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         print("4e test ");
         FirstPos = 0; //bp
         Duration = 1.3; //bp37
+        // ##DB## read duration from initiating macro
         for (i = StartFromi; i < PositionNumber.length; i++) {
             if (ArraySkipPositions[i] == 0) { //bp17
                 //waitForUser("haalt-i dit? "+file);
@@ -2431,7 +2435,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
             if (GuidedBC == 0) {
                 selectWindow("B&C");
-                waitForUser("set B&C in all channels BEFORE clicking OK");
+                resetMinAndMax();
+//                waitForUser("set B&C in all channels BEFORE clicking OK");
             }
             if (GuidedBC) {
                 run("Cascade");
@@ -2668,7 +2673,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                     run("Set... ", "zoom=100");
                     setLocation(x1, y1, NewWidthZselect + 100, NewHeightZselect + 100);
                     run("Set... ", "zoom=" + SetZoom);
-                    waitForUser("Choose the lowest and highest Zslice to be included \n (in appropriate windows) \n \n (pos " + i + 1 + " of " + PositionNumber.length + ")");
+                    //waitForUser("Choose the lowest and highest Zslice to be included \n (in appropriate windows) \n \n (pos " + i + 1 + " of " + PositionNumber.length + ")");
+                    // ##DB## plug in auto Z-plane detection
                     selectWindow(PositionNumber[i] + "_Z_Lowest");
                     Stack.getPosition(channel, slice, frame);
                     BottomZ[i] = slice;
@@ -2799,7 +2805,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                                         Dialog.addMessage(" ");
 
                                         Dialog.setInsets(20, 90, 0);
-                                        Dialog.addRadioButtonGroup("Show Depth projection with above settings?", TestOrContinue, 2, 1, TestOrContinue[0]); //BP37
+                                        Dialog.addRadioButtonGroup("Show Depth projection with above settings?", TestOrContinue, 2, 1, TestOrContinue[1]); //BP37
                                         Dialog.setInsets(0, 0, 0);
                                         Dialog.addMessage(" ");
 
@@ -2817,7 +2823,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                                             Dialog.setInsets(2, 100, 0);
                                             Dialog.addCheckbox("Analyze Z-stack in 2 or 3 parts", 0);
                                         } //bp21		//bp37
-                                    Dialog.show();
+                                    //Dialog.show();
                                         GammaCorr[i] = Dialog.getNumber();
                                         FixGammaCorr = Dialog.getCheckbox();
                                         ProposedGamma = Dialog.getRadioButton();
@@ -3230,7 +3236,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                                                 Dialog.setInsets(-72, 200, 5);
                                                 Dialog.addNumber("", Duration, 1, 4, "sec"); //bp16 // bp21
 
-                                            Dialog.show();
+                                            //Dialog.show();
 
                                                 if (s + 1 == 1 && ForUnsplit == 0) {
                                                     GammaCorr_1[i] = Dialog.getNumber();
