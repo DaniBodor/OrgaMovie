@@ -16,8 +16,9 @@ Dialog.create("OrgaMovie Setup");
 	Dialog.addMessage("");
 	
 	Dialog.addMessage("AUTOMATION SETTINGS:");
+	Dialog.addCheckbox("Use drift correction", 0);
 	Dialog.addCheckbox("Use auto-cropping?", 1);
-	Dialog.addCheckbox("Use auto-detection of last timepoint?", 1);
+	Dialog.addCheckbox("Use auto-detection of last timepoint?", 0);
 	Dialog.addCheckbox("Use auto-detection of Z planes?", 0);
 	Dialog.addMessage("");
 
@@ -33,6 +34,7 @@ Dialog.show();
     date = Dialog.getString();
     prefix = Dialog.getString();	
 	// AUTOMATION SETTINGS
+	do_registration = Dialog.getCheckbox();
 	do_autocrop = Dialog.getCheckbox();
 	do_autotime = Dialog.getCheckbox();
 	do_autoZ    = Dialog.getCheckbox();
