@@ -237,7 +237,7 @@ if (QuitQueuing) {
 }
 
 if (RestartQueueRun) {
-    Dialog.create("DIALOG A");
+    Dialog.create("Do a RESTART in the queued run");
         Dialog.addMessage("Do a RESTART in the queued run" + RestartMessage);
         Dialog.addNumber("Which experiment ?", ExpForRestart);
     Dialog.show();
@@ -846,9 +846,9 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
             AskSameLifFile = 1;
         }
         if (AskSameLifFile && PresenceSettingsFile) {
-            Dialog.create(" ");
+            Dialog.create("same life file?");
                 Dialog.addCheckbox("Same lif-file ?? ", 1);
-            Dialog.show();
+            //Dialog.show();
                 SameFile = Dialog.getCheckbox();
         } else {
             SameFile = 0;
@@ -856,7 +856,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
         StartFromi = 0;
         if (SameFile == 0) {
-            file = File.openDialog("Choose LIF-file to process");
+            file = File.openDialog("Choose LIF-file to process");     
+            // ##DB##, file should be picked up from argument in initiating macro! 
             CodedFile = replace(file, "\\\\", "SLASH");
 
             liffFile = 0;
@@ -1222,7 +1223,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         Extra = " \n \n by the way, changing the settings can only be done for THIS experiment";
     }
     if (AskToCheckSettings) {
-        Dialog.create(" ");
+        Dialog.create("Before Restarting...");
             Dialog.addMessage("Before Restarting...");
             Dialog.addCheckbox("Check and/or modify the settings ?", CheckSettings);
             Dialog.addMessage(Extra);
