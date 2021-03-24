@@ -52,7 +52,6 @@ TempXtoD = 0;
 
 
 
-
 //INDEX OF MACRO:
 	//GENERAL SETTINGS
 	//FIRST DIALOG (restart? transmitted? check position?)
@@ -144,17 +143,17 @@ RestartMessage = "";
 
 // dialog
 if (nQueuedExp == 0) {
-    Dialog.create(" ");
-    Dialog.addMessage("All Queued Experiments have been run !!");
-    Dialog.addCheckbox("Start adding experiment(s) to the queue ?", 0);
-    Dialog.setInsets(40, 10, 0);
-    Dialog.addMessage("***** BP & RO only ******");
-    Dialog.addNumber("Manipulate nQueuedExp ", nQueuedExp);
-    Dialog.addNumber("Manipulate QueueFinished ", QueueFinished);
-    Dialog.show;
-    QueueMultiple = Dialog.getCheckbox();
-    nQueuedExp = Dialog.getNumber();
-    QueueFinished = Dialog.getNumber();
+    Dialog.create("no queued experiments");
+        Dialog.addMessage("All Queued Experiments have been run !!");
+        Dialog.addCheckbox("Start adding experiment(s) to the queue ?", 1);
+        Dialog.setInsets(40, 10, 0);
+        Dialog.addMessage("***** BP & RO only ******");
+        Dialog.addNumber("Manipulate nQueuedExp ", nQueuedExp);
+        Dialog.addNumber("Manipulate QueueFinished ", QueueFinished);
+    //Dialog.show;
+        QueueMultiple = Dialog.getCheckbox();
+        nQueuedExp = Dialog.getNumber();
+        QueueFinished = Dialog.getNumber();
 }
 if (QueueMultiple) {
     Q = "Queued ";
@@ -178,21 +177,21 @@ if (QueueFinished == 0) {
     RestartMessage = " \n \n previous run got stuck at Exp#" + ExpWhenPreviousGotStuck + " \n \n ";
 }
 if (nQueuedExp > 0) {
-    Dialog.create(" ");
-    Dialog.setInsets(0, 10, 0);
-    Dialog.addMessage(Text + RestartMessage);
-    Dialog.addRadioButtonGroup("What do you want to do?", OptionArray, 4, 1, QueueFollowUp);
-    Dialog.setInsets(20, 20, 0);
-    Dialog.addCheckbox("Single analysis (no queuing)", QuitQueuing);
-    Dialog.setInsets(-3, 20, 0);
-    Dialog.addMessage("(upon checking, queued data are perfectly safe)");
-    Dialog.setInsets(40, 10, 0);
-    Dialog.addMessage("***** BP & RO only ******");
-    Dialog.addNumber("Manipulate nQueuedExp ", nQueuedExp);
-    Dialog.show();
-    QueueFollowUp = Dialog.getRadioButton;
-    QuitQueuing = Dialog.getCheckbox();
-    nQueuedExp = Dialog.getNumber();
+    Dialog.create("some experiments queued");
+        Dialog.setInsets(0, 10, 0);
+        Dialog.addMessage(Text + RestartMessage);
+        Dialog.addRadioButtonGroup("What do you want to do?", OptionArray, 4, 1, OptionArray[0]);
+        Dialog.setInsets(20, 20, 0);
+        Dialog.addCheckbox("Single analysis (no queuing)", QuitQueuing);
+        Dialog.setInsets(-3, 20, 0);
+        Dialog.addMessage("(upon checking, queued data are perfectly safe)");
+        Dialog.setInsets(40, 10, 0);
+        Dialog.addMessage("***** BP & RO only ******");
+        Dialog.addNumber("Manipulate nQueuedExp ", nQueuedExp);
+    //Dialog.show();
+        QueueFollowUp = Dialog.getRadioButton;
+        QuitQueuing = Dialog.getCheckbox();
+        nQueuedExp = Dialog.getNumber();
 }
 // in all cases evaluate this :
 a = QueueMultiple;
@@ -238,10 +237,11 @@ if (QuitQueuing) {
 }
 
 if (RestartQueueRun) {
-    Dialog.create(" ");
-    Dialog.addMessage("Do a RESTART in the queued run" + RestartMessage);
-    Dialog.addNumber("Which experiment ?", ExpForRestart);
-    Dialog.show ExpForRestart = Dialog.getNumber();
+    Dialog.create("DIALOG A");
+        Dialog.addMessage("Do a RESTART in the queued run" + RestartMessage);
+        Dialog.addNumber("Which experiment ?", ExpForRestart);
+    Dialog.show();
+        ExpForRestart = Dialog.getNumber();
 }
 print("");
 if (PrintToTestQueuing) {
@@ -364,18 +364,18 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
     if (RunAllQueued == 0 && Exp == 1) {
         Dialog.create("Restart?")
-        Dialog.addCheckbox("Select box if this is a restart", 0);
-        Dialog.addCheckbox("Is there a Transmitted Channel?", TransmittedChannelPresent);
-        Dialog.addCheckbox("Check Position number?", CheckPositionNumber);
-        Dialog.addCheckbox("Check Position Name?", CheckPositionName);
-        Dialog.addCheckbox("Read file name from metadata ?", ReadFileName); //bp34
-        Dialog.show
-        Restart = Dialog.getCheckbox();
-        TransmittedChannelPresent = Dialog.getCheckbox();
-        TCPForOverruling = TransmittedChannelPresent;
-        CheckPositionNumber = Dialog.getCheckbox();
-        CheckPositionName = Dialog.getCheckbox();
-        ReadFileName = Dialog.getCheckbox(); //	bp34
+            Dialog.addCheckbox("Select box if this is a restart", 0);
+            Dialog.addCheckbox("Is there a Transmitted Channel?", TransmittedChannelPresent);
+            Dialog.addCheckbox("Check Position number?", CheckPositionNumber);
+            Dialog.addCheckbox("Check Position Name?", CheckPositionName);
+            Dialog.addCheckbox("Read file name from metadata ?", ReadFileName); //bp34
+        Dialog.show();
+            Restart = Dialog.getCheckbox();
+            TransmittedChannelPresent = Dialog.getCheckbox();
+            TCPForOverruling = TransmittedChannelPresent;
+            CheckPositionNumber = Dialog.getCheckbox();
+            CheckPositionName = Dialog.getCheckbox();
+            ReadFileName = Dialog.getCheckbox(); //	bp34
     }
 
     //RESTART, CHECK LAST POSITION
@@ -798,25 +798,25 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
             }
 
             Dialog.create("Restart from which position?")
-            if (PreviousRunWasDone) {
-                Dialog.addMessage("!======================! ATTENTION: !======================!");
-                Dialog.addMessage("Last run was completed or progress file doesn't match the settings file");
-                Dialog.addMessage("!======================!===========!=====================!");
-            }
-            Dialog.addMessage("Please choose from which position the macro should restart");
-            Dialog.addMessage("The suggested start is already selected");
-            if (File.exists(TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\Progress.tif")) {
-                Dialog.addMessage("The Progress window shows the last postion completed successfully");
-            } else {
-                Dialog.addMessage("Could not complete the first position!");
-            }
-            Dialog.addRadioButtonGroup("Please choose position to start from", PositionNumber, AmountOfPositions, 1, PositionNumber[Progress]);
-            for (h = 0; h < ArrayWithSkippedPositions.length; h++) {
-                Dialog.addMessage("#" + ArraySkipPositions[h] + " was skipped");
-            }
-            Dialog.show
+                if (PreviousRunWasDone) {
+                    Dialog.addMessage("!======================! ATTENTION: !======================!");
+                    Dialog.addMessage("Last run was completed or progress file doesn't match the settings file");
+                    Dialog.addMessage("!======================!===========!=====================!");
+                }
+                Dialog.addMessage("Please choose from which position the macro should restart");
+                Dialog.addMessage("The suggested start is already selected");
+                if (File.exists(TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\Progress.tif")) {
+                    Dialog.addMessage("The Progress window shows the last postion completed successfully");
+                } else {
+                    Dialog.addMessage("Could not complete the first position!");
+                }
+                Dialog.addRadioButtonGroup("Please choose position to start from", PositionNumber, AmountOfPositions, 1, PositionNumber[Progress]);
+                for (h = 0; h < ArrayWithSkippedPositions.length; h++) {
+                    Dialog.addMessage("#" + ArraySkipPositions[h] + " was skipped");
+                }
+            Dialog.show();
+                StartfromPositionNumber = Dialog.getRadioButton();
 
-            StartfromPositionNumber = Dialog.getRadioButton();
         } else {
             StartfromPositionNumber = PositionNumber[Progress];
         }
@@ -847,9 +847,9 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         }
         if (AskSameLifFile && PresenceSettingsFile) {
             Dialog.create(" ");
-            Dialog.addCheckbox("Same lif-file ?? ", 1);
-            Dialog.show;
-            SameFile = Dialog.getCheckbox();
+                Dialog.addCheckbox("Same lif-file ?? ", 1);
+            Dialog.show();
+                SameFile = Dialog.getCheckbox();
         } else {
             SameFile = 0;
         } //bp	
@@ -882,36 +882,19 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                 CheckPositionNumber = 0;
                 CheckPositionName = 0;
                 ReadFileName = 0;
-            } // waitForUser("file_"+file+"___________nd2File__"+nd2File);	
+            } 
+            
 
-            /*if(tiffFile){	run("Bio-Formats Importer", "open=["+file+"] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT use_virtual_stack");
-            		TransmittedChannelPresent=0;CheckPositionNumber=0;CheckPositionName=0;ReadFileName=0;
-            }
-            else{*/
-            open(file); //}
+            open(file);
 
             FilePathForInCase = File.directory;
             setLocation(1, 1);
-        } //print(cfiler);
+        }
 
         if (Timo == 3) {
             waitForUser("open tif");
-            //	open();
             run("Bio-Formats Importer", "open=[] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT use_virtual_stack");
             file = File.directory + getTitle();
-
-            //	file=		File.openDialog("Choose LIF-file to process"); 
-            //	waitForUser("file_"+file+" \n file2___"+file2);
-            /*		getDimensions(dummy, dummy, dummy, ZSLICE, TIMEPOINTS);
-            		if(ZSLICE>TIMEPOINTS){TIMEPOINTS=ZSLICE;}
-            		Dialog.create("How many z-slices ?? ")	
-            		Dialog.addMessage("detected number of frames (probably frames x z-planes)__"+TIMEPOINTS);
-            		Dialog.addNumber("How many z-slices ??", 201);
-            		Dialog.show
-            		TempTimoSlices=Dialog.getNumber();
-            		TempFramesTemp = TIMEPOINTS/TempTimoSlices;
-            		TempTimoFrames = floor(TempFramesTemp);		if(TempFramesTemp!=TempTimoFrames){exit("exit , not good");}	*/
-            //	run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices="+TempTimoSlices+" frames="+TempTimoFrames+" display=Color");
         }
 
         //Chose a file to process, this way we also set which file to use for the open commands
@@ -921,10 +904,10 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
             file = replace(CodedFile, "SLASH", "\\\\");
             open(file);
             FilePathForInCase = File.directory;
-            setLocation(1, 1); //waitForUser(FilePathForInCase);
+            setLocation(1, 1); 
         }
 
-        MetadataLIF = getImageInfo(); // is a large string contiaing all info about the opened images
+        MetadataLIF = getImageInfo(); // is a large string containing all info about the opened images
         print(MetadataLIF);
         if (Timo == 3) {
             waitForUser("print(MetadataLIF)");
@@ -967,9 +950,9 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         } else {
             if (tiffFile == 0) {
                 Dialog.create("How many positions were opened?") // I added this in case the check positions doesn't work and the user opted to switch it off
-                Dialog.addNumber("Amount of positions", 1); // and I needed a way to find out how many positions were opened PS I haven;t really tested this...
-                Dialog.show
-                AmountOfPositions = Dialog.getNumber();
+                    Dialog.addNumber("Amount of positions", 1); // and I needed a way to find out how many positions were opened PS I haven;t really tested this...
+                Dialog.show();
+                    AmountOfPositions = Dialog.getNumber();
             } else {
                 AmountOfPositions = 1;
             }
@@ -1240,11 +1223,11 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
     }
     if (AskToCheckSettings) {
         Dialog.create(" ");
-        Dialog.addMessage("Before Restarting...");
-        Dialog.addCheckbox("Check and/or modify the settings ?", CheckSettings);
-        Dialog.addMessage(Extra);
-        Dialog.show;
-        CheckSettings = Dialog.getCheckbox();
+            Dialog.addMessage("Before Restarting...");
+            Dialog.addCheckbox("Check and/or modify the settings ?", CheckSettings);
+            Dialog.addMessage(Extra);
+        Dialog.show();
+            CheckSettings = Dialog.getCheckbox();
     } //bp44
 
     if (TempXtoD) {
@@ -1336,90 +1319,90 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
         TCP = TransmittedChannelPresent;
         Dialog.create("Settings");
-        Dialog.addString("Date experiment:", Date);
-        Dialog.addString("Name Experiment:", NameExperiment, 30); //Dialog.setInsets(top, left, bottom) 		
-        if (Interval == round(Interval)) {
-            DecimalPlaces = 0;
-        } else {
-            DecimalPlaces = 1;
-        } // + figure out, whether to use decimals or not. only when interval had a decimal other than 0
-        Dialog.setInsets(10, 0, 3);
-        Dialog.addNumber("Time Interval", Interval, DecimalPlaces, 5, "min");
-        i = 0;
-        Shift = (parseFloat(PositionChannelAmount[i]) - 1) * 22 + 22; //Assumes that the positions have the same amount as the first channel
-        Dialog.setInsets(22, 0, 5)
-        Dialog.addMessage("UseChannel Channel ChannelName ChannelColour");
-        for (j = 0; j < PositionChannelAmount[i]; j++) {
-            if (TransmittedChannelNumber[i] == j) {
-                Dialog.addMessage("This Channel (" + ChannelNumber[j] + ") is the Transmitted! No settings Required!");
+            Dialog.addString("Date experiment:", Date);
+            Dialog.addString("Name Experiment:", NameExperiment, 30); //Dialog.setInsets(top, left, bottom) 		
+            if (Interval == round(Interval)) {
+                DecimalPlaces = 0;
             } else {
-                Dialog.setInsets(-5, 60, -22)
-                Dialog.addCheckbox(" ", UseChannel[j])
-                Dialog.setInsets(-20, 100, -40.5);
-                Dialog.addChoice(ChannelNumber[j], ChannelColourOriginal, ChannelColour[j]);
-                Dialog.setInsets(-20, 120, 0)
-                Dialog.addString(" ", ChannelName[j], 10);
+                DecimalPlaces = 1;
+            } // + figure out, whether to use decimals or not. only when interval had a decimal other than 0
+            Dialog.setInsets(10, 0, 3);
+            Dialog.addNumber("Time Interval", Interval, DecimalPlaces, 5, "min");
+            i = 0;
+            Shift = (parseFloat(PositionChannelAmount[i]) - 1) * 22 + 22; //Assumes that the positions have the same amount as the first channel
+            Dialog.setInsets(22, 0, 5)
+            Dialog.addMessage("UseChannel Channel ChannelName ChannelColour");
+            for (j = 0; j < PositionChannelAmount[i]; j++) {
+                if (TransmittedChannelNumber[i] == j) {
+                    Dialog.addMessage("This Channel (" + ChannelNumber[j] + ") is the Transmitted! No settings Required!");
+                } else {
+                    Dialog.setInsets(-5, 60, -22)
+                    Dialog.addCheckbox(" ", UseChannel[j])
+                    Dialog.setInsets(-20, 100, -40.5);
+                    Dialog.addChoice(ChannelNumber[j], ChannelColourOriginal, ChannelColour[j]);
+                    Dialog.setInsets(-20, 120, 0)
+                    Dialog.addString(" ", ChannelName[j], 10);
+                }
             }
-        }
-        Dialog.addMessage(" ");
-        Dialog.setInsets(0, 40, -10);
-        Dialog.addRadioButtonGroup("If <=2 Channels: Add depthcoding?", newArray("With", "Without"), 1, 2, UseDepthcoding);
-        Dialog.addMessage(" ");
-        Dialog.setInsets(0, 40, 0);
-        Dialog.addCheckbox("RedDeadDye", RedDeadDye);
-        if (TCP) {
+            Dialog.addMessage(" ");
+            Dialog.setInsets(0, 40, -10);
+            Dialog.addRadioButtonGroup("If <=2 Channels: Add depthcoding?", newArray("With", "Without"), 1, 2, UseDepthcoding);
+            Dialog.addMessage(" ");
+            Dialog.setInsets(0, 40, 0);
+            Dialog.addCheckbox("RedDeadDye", RedDeadDye);
+            if (TCP) {
+                Dialog.setInsets(5, 40, 0);
+                Dialog.addCheckbox("Time-Project Transmitted for Crop-ROI", TimeProjectTransm);
+            }
             Dialog.setInsets(5, 40, 0);
-            Dialog.addCheckbox("Time-Project Transmitted for Crop-ROI", TimeProjectTransm);
-        }
-        Dialog.setInsets(5, 40, 0);
-        Dialog.addCheckbox("Limit Z-Stacks to be used?", DeleteZStacks);
-        Dialog.setInsets(5, 40, 0);
-        Dialog.addCheckbox("Set last Timepoint for each postion?", SetLastTimepoint);
-        if (CheckPositionName) {
+            Dialog.addCheckbox("Limit Z-Stacks to be used?", DeleteZStacks);
             Dialog.setInsets(5, 40, 0);
-            Dialog.addCheckbox("Add Position Name to Filename?", AddPositionName);
-        }
-        Dialog.setInsets(5, 40, 0);
-        Dialog.addCheckbox("Show Extended Settings?", ExtendedSettings);
+            Dialog.addCheckbox("Set last Timepoint for each postion?", SetLastTimepoint);
+            if (CheckPositionName) {
+                Dialog.setInsets(5, 40, 0);
+                Dialog.addCheckbox("Add Position Name to Filename?", AddPositionName);
+            }
+            Dialog.setInsets(5, 40, 0);
+            Dialog.addCheckbox("Show Extended Settings?", ExtendedSettings);
         Dialog.show();
-        // !!!!!!!!!!!!!!! =========== Here We open a window to define all settings ===============!!!!!!!!!!!!!
-        NumberOfChannelsToBeProcessed = 0;
-        // !!!!!!!!!!!!!!! =========== Here We retreive all the chosen settings ===============!!!!!!!!!!!!!
-        Date = Dialog.getString();
-        print("Date experiment: " + Date);
-        NameExperiment = Dialog.getString();
-        print("Name Experiment: " + NameExperiment);
-        Interval = Dialog.getNumber();
-        print("Time Interval: " + Interval + " min");
-        i = 0;
-        for (j = 0; j < PositionChannelAmount[i]; j++) {
-            if (TransmittedChannelNumber[i] == j) {
-                NumberOfChannelsToBeProcessed = NumberOfChannelsToBeProcessed + 1;
-            } else {
-                UseChannel[j] = Dialog.getCheckbox();
-                if (UseChannel[j]) {
-                    ChannelColour[j] = Dialog.getChoice();
+            // !!!!!!!!!!!!!!! =========== Here We open a window to define all settings ===============!!!!!!!!!!!!!
+            NumberOfChannelsToBeProcessed = 0;
+            // !!!!!!!!!!!!!!! =========== Here We retreive all the chosen settings ===============!!!!!!!!!!!!!
+            Date = Dialog.getString();
+            print("Date experiment: " + Date);
+            NameExperiment = Dialog.getString();
+            print("Name Experiment: " + NameExperiment);
+            Interval = Dialog.getNumber();
+            print("Time Interval: " + Interval + " min");
+            i = 0;
+            for (j = 0; j < PositionChannelAmount[i]; j++) {
+                if (TransmittedChannelNumber[i] == j) {
                     NumberOfChannelsToBeProcessed = NumberOfChannelsToBeProcessed + 1;
                 } else {
-                    ChannelColour[j] = "None";
+                    UseChannel[j] = Dialog.getCheckbox();
+                    if (UseChannel[j]) {
+                        ChannelColour[j] = Dialog.getChoice();
+                        NumberOfChannelsToBeProcessed = NumberOfChannelsToBeProcessed + 1;
+                    } else {
+                        ChannelColour[j] = "None";
+                    }
+                    ChannelName[j] = Dialog.getString();
                 }
-                ChannelName[j] = Dialog.getString();
             }
-        }
-        print("NumberOfChannelsToBeProcessed: " + NumberOfChannelsToBeProcessed);
-        UseDepthcoding = Dialog.getRadioButton;
-        RedDeadDye = Dialog.getCheckbox();
-        if (TCP) {
-            TimeProjectTransm = Dialog.getCheckbox();
-        } else {
-            TimeProjectTransm = 0;
-        }
-        DeleteZStacks = Dialog.getCheckbox();
-        SetLastTimepoint = Dialog.getCheckbox();
-        if (CheckPositionName) {
-            AddPositionName = Dialog.getCheckbox();
-        }
-        ExtendedSettings = Dialog.getCheckbox();
+            print("NumberOfChannelsToBeProcessed: " + NumberOfChannelsToBeProcessed);
+            UseDepthcoding = Dialog.getRadioButton;
+            RedDeadDye = Dialog.getCheckbox();
+            if (TCP) {
+                TimeProjectTransm = Dialog.getCheckbox();
+            } else {
+                TimeProjectTransm = 0;
+            }
+            DeleteZStacks = Dialog.getCheckbox();
+            SetLastTimepoint = Dialog.getCheckbox();
+            if (CheckPositionName) {
+                AddPositionName = Dialog.getCheckbox();
+            }
+            ExtendedSettings = Dialog.getCheckbox();
         //bpx
         if (QueueMultiple) {
             nQueuedExp = nQueuedExp + 1;
@@ -1430,11 +1413,10 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
         if (UseDepthcoding == "Without" && NumberOfChannelsToBeProcessed <= 2) { //RO232 changed message and gave option to change setting (prevents having to restart the macro)
             Dialog.create("UseDepthcoding");
-            Dialog.addMessage("UseDepthcoding is now 'WITHOUT'. \n \n you really want that ?? ");
-            Dialog.addRadioButtonGroup("Add depthcoding?", newArray("With", "Without"), 1, 2, UseDepthcoding);
-            Dialog.show();
-
-            UseDepthcoding = Dialog.getRadioButton;
+                Dialog.addMessage("UseDepthcoding is now 'WITHOUT'. \n \n you really want that ?? ");
+                Dialog.addRadioButtonGroup("Add depthcoding?", newArray("With", "Without"), 1, 2, UseDepthcoding);
+            Dialog.show();      // ##DB## -- does this dialog show do anything at all?
+                UseDepthcoding = Dialog.getRadioButton;
         }
         if (UseDepthcoding == "Without" && NumberOfChannelsToBeProcessed > 2) {
             waitForUser("There are more than 1 fluorescent channels! \n Depthconding can only be used with 1 channel! \n \n UseDepthcoding is now 'WITHOUT'.");
@@ -1446,28 +1428,27 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         //NORMAL, DIALOG "Chose channels for DeadDye and Nuclei"
         if (RedDeadDye) {
             Dialog.create("Chose channels for DeadDye and Nuclei");
-            for (j = 0; j < PositionChannelAmount[i]; j++) {
-                if (TransmittedChannelNumber[i] != j) {
-                    if (UseChannel[j]) {
-                        Dialog.addRadioButtonGroup(ChannelName[j], newArray("Nuclei", "DeadStuff", "Other"), 1, 3, RedDeadChannelUse[j]);
+                for (j = 0; j < PositionChannelAmount[i]; j++) {
+                    if (TransmittedChannelNumber[i] != j) {
+                        if (UseChannel[j]) {
+                            Dialog.addRadioButtonGroup(ChannelName[j], newArray("Nuclei", "DeadStuff", "Other"), 1, 3, RedDeadChannelUse[j]);
+                        }
                     }
                 }
-            }
             Dialog.show();
-
-            for (j = 0; j < PositionChannelAmount[i]; j++) {
-                if (TransmittedChannelNumber[i] != j) {
-                    if (UseChannel[j]) {
-                        RedDeadChannelUse[j] = Dialog.getRadioButton;
-                        if (RedDeadChannelUse[j] == "Nuclei") {
-                            NucleiChannel = j;
-                        }
-                        if (RedDeadChannelUse[j] == "DeadStuff") {
-                            DeadChannel = j;
+                for (j = 0; j < PositionChannelAmount[i]; j++) {
+                    if (TransmittedChannelNumber[i] != j) {
+                        if (UseChannel[j]) {
+                            RedDeadChannelUse[j] = Dialog.getRadioButton;
+                            if (RedDeadChannelUse[j] == "Nuclei") {
+                                NucleiChannel = j;
+                            }
+                            if (RedDeadChannelUse[j] == "DeadStuff") {
+                                DeadChannel = j;
+                            }
                         }
                     }
                 }
-            }
         } else {
             NucleiChannel = "NaN";
             DeadChannel = "NaN";
@@ -1490,93 +1471,93 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         if (ExtendedSettings) {
             Shift = 130;
             Dialog.create("Extended settings");
-            Dialog.addNumber("Number of TimePoints B&C window:", NumberOfTPTempStacks, 0, 12, "");
-            Dialog.setInsets(10, Shift, 0);
-            Dialog.addCheckbox("SetMultiplyBeforeDepthcoding", SetMultiplyBeforeDepthcoding);
-            Dialog.addNumber("Default Gamma factor", DefaultGamma, 2, 9, "");
-            Dialog.addNumber("Default Multiply factor", DefaultMultiply, 2, 9, "");
-            Dialog.setInsets(10, Shift, 0);
-            Dialog.addCheckbox("Window to pause macro", WindowForPause);
-            Dialog.addNumber("Pause window - duration", TimeForPause, 0, 6, "msec");
-            Dialog.addNumber("Pause window - every", PauseInterval, 0, 6, "frames");
-            Dialog.addNumber("Collect Garbage - every", GarbageInterval, 0, 6, "frames");
-            Dialog.setInsets(15, 0, 3);
-            Dialog.addNumber("Fraction For Text (1/x) : ", FractionForText, 0, 3, "");
-            Dialog.setInsets(15, Shift, 0);
-            Dialog.addCheckbox("Add Channel Name?", ColourName);
-            Dialog.setInsets(5, Shift, 0);
-            Dialog.addCheckbox("Add Time Stamp?", AddTime);
-            Dialog.addChoice("Colour Timestamp:", newArray("White", "Black", "Red", "Green", "Blue", "Cyan", "Magenta", "Yellow"), ColorTime);
-            Dialog.setInsets(5, Shift, 0);
-            Dialog.addCheckbox("Add Scale Bar?", AddScaleBar);
-            Dialog.setInsets(-3, 214, 0);
-            Dialog.addCheckbox("write scale above bar", WriteBarDimensions);
-            Dialog.addNumber("width", FractionForBar, 2, 6, "(% of image)");
-            Dialog.setInsets(5, Shift, -12);
-            Dialog.addCheckbox("Add Reference Depthcoding?", AddScaleBarZ);
-            Dialog.setInsets(-10, 190, 0);
-            Dialog.addRadioButtonGroup("Left or above ?", newArray("Left", "Top"), 1, 2, PlaceScaleBarZ);
+                Dialog.addNumber("Number of TimePoints B&C window:", NumberOfTPTempStacks, 0, 12, "");
+                Dialog.setInsets(10, Shift, 0);
+                Dialog.addCheckbox("SetMultiplyBeforeDepthcoding", SetMultiplyBeforeDepthcoding);
+                Dialog.addNumber("Default Gamma factor", DefaultGamma, 2, 9, "");
+                Dialog.addNumber("Default Multiply factor", DefaultMultiply, 2, 9, "");
+                Dialog.setInsets(10, Shift, 0);
+                Dialog.addCheckbox("Window to pause macro", WindowForPause);
+                Dialog.addNumber("Pause window - duration", TimeForPause, 0, 6, "msec");
+                Dialog.addNumber("Pause window - every", PauseInterval, 0, 6, "frames");
+                Dialog.addNumber("Collect Garbage - every", GarbageInterval, 0, 6, "frames");
+                Dialog.setInsets(15, 0, 3);
+                Dialog.addNumber("Fraction For Text (1/x) : ", FractionForText, 0, 3, "");
+                Dialog.setInsets(15, Shift, 0);
+                Dialog.addCheckbox("Add Channel Name?", ColourName);
+                Dialog.setInsets(5, Shift, 0);
+                Dialog.addCheckbox("Add Time Stamp?", AddTime);
+                Dialog.addChoice("Colour Timestamp:", newArray("White", "Black", "Red", "Green", "Blue", "Cyan", "Magenta", "Yellow"), ColorTime);
+                Dialog.setInsets(5, Shift, 0);
+                Dialog.addCheckbox("Add Scale Bar?", AddScaleBar);
+                Dialog.setInsets(-3, 214, 0);
+                Dialog.addCheckbox("write scale above bar", WriteBarDimensions);
+                Dialog.addNumber("width", FractionForBar, 2, 6, "(% of image)");
+                Dialog.setInsets(5, Shift, -12);
+                Dialog.addCheckbox("Add Reference Depthcoding?", AddScaleBarZ);
+                Dialog.setInsets(-10, 190, 0);
+                Dialog.addRadioButtonGroup("Left or above ?", newArray("Left", "Top"), 1, 2, PlaceScaleBarZ);
 
-            Dialog.setInsets(20, Shift, 0);
-            Dialog.addCheckbox("Define frame rate", DefineFrameRate);
-            Dialog.setInsets(-23, 60, 0);
-            Dialog.addNumber(" ", FrameRateAvi, 0, 6, " frames/sec");
-            Dialog.setInsets(3, Shift, 0);
-            Dialog.addCheckbox("Define length of movie", DefineAviLength);
-            Dialog.setInsets(-23, 60, 0);
-            Dialog.addNumber(" ", AviLength, 0, 6, " seconds");
+                Dialog.setInsets(20, Shift, 0);
+                Dialog.addCheckbox("Define frame rate", DefineFrameRate);
+                Dialog.setInsets(-23, 60, 0);
+                Dialog.addNumber(" ", FrameRateAvi, 0, 6, " frames/sec");
+                Dialog.setInsets(3, Shift, 0);
+                Dialog.addCheckbox("Define length of movie", DefineAviLength);
+                Dialog.setInsets(-23, 60, 0);
+                Dialog.addNumber(" ", AviLength, 0, 6, " seconds");
 
-            Dialog.setInsets(35, Shift, 0);
-            Dialog.addCheckbox("CheckLastTimepointBlack", CheckLastTimepointBlack);
-            Dialog.setInsets(0, Shift, 0);
-            Dialog.addCheckbox("Save Progress to Network?", SaveProgressToNetwork);
-            Dialog.setInsets(15, Shift, 0);
-            Dialog.addCheckbox("Use orignal colour instead of Glow?", SkipGlow);
-            Dialog.setInsets(0, Shift, 0);
-            Dialog.addCheckbox("Print text in GlowWindow as White?", TextInGlowIsWhite);
-            Dialog.setInsets(0, Shift, 0);
-            Dialog.addCheckbox("Window-guiding while Setting B&C", GuidedBC);
-            Dialog.setInsets(0, Shift, 0);
-            Dialog.addCheckbox("Processing in Upper Left", UpperLeft);
-            Dialog.setInsets(0, Shift, 0);
-            Dialog.addCheckbox("Hide Windows", Hidewindows);
-            Dialog.addChoice("Aspect Ratio of Output Movie ", AspectArray, AspectArray[0]);
+                Dialog.setInsets(35, Shift, 0);
+                Dialog.addCheckbox("CheckLastTimepointBlack", CheckLastTimepointBlack);
+                Dialog.setInsets(0, Shift, 0);
+                Dialog.addCheckbox("Save Progress to Network?", SaveProgressToNetwork);
+                Dialog.setInsets(15, Shift, 0);
+                Dialog.addCheckbox("Use orignal colour instead of Glow?", SkipGlow);
+                Dialog.setInsets(0, Shift, 0);
+                Dialog.addCheckbox("Print text in GlowWindow as White?", TextInGlowIsWhite);
+                Dialog.setInsets(0, Shift, 0);
+                Dialog.addCheckbox("Window-guiding while Setting B&C", GuidedBC);
+                Dialog.setInsets(0, Shift, 0);
+                Dialog.addCheckbox("Processing in Upper Left", UpperLeft);
+                Dialog.setInsets(0, Shift, 0);
+                Dialog.addCheckbox("Hide Windows", Hidewindows);
+                Dialog.addChoice("Aspect Ratio of Output Movie ", AspectArray, AspectArray[0]);
 
             Dialog.show(); // !!!!!!!!!!!!!!! =========== Here We open a window to define all extended settings ===============!!!!!!!!!!!!!
 
             // !!!!!!!!!!!!!!! =========== Here We retreive all the chosen extended settings ===============!!!!!!!!!!!!!
-            NumberOfTPTempStacks = Dialog.getNumber();
-            print("Number Of TPoints TempStacks: " + NumberOfTPTempStacks); //bpm blokkie
-            SetMultiplyBeforeDepthcoding = Dialog.getCheckbox();
-            DefaultGamma = Dialog.getNumber();
-            DefaultMultiply = Dialog.getNumber();
-            WindowForPause = Dialog.getCheckbox();
-            TimeForPause = Dialog.getNumber();
-            PauseInterval = Dialog.getNumber();
-            GarbageInterval = Dialog.getNumber();
-            FractionForText = Dialog.getNumber();
-            ColourName = Dialog.getCheckbox();
-            AddTime = Dialog.getCheckbox();
-            ColorTime = Dialog.getChoice();
-            AddScaleBar = Dialog.getCheckbox();
-            WriteBarDimensions = Dialog.getCheckbox();
-            FractionForBar = Dialog.getNumber();
-            AddScaleBarZ = Dialog.getCheckbox();
-            PlaceScaleBarZ = Dialog.getRadioButton();
+                NumberOfTPTempStacks = Dialog.getNumber();
+                print("Number Of TPoints TempStacks: " + NumberOfTPTempStacks); //bpm blokkie
+                SetMultiplyBeforeDepthcoding = Dialog.getCheckbox();
+                DefaultGamma = Dialog.getNumber();
+                DefaultMultiply = Dialog.getNumber();
+                WindowForPause = Dialog.getCheckbox();
+                TimeForPause = Dialog.getNumber();
+                PauseInterval = Dialog.getNumber();
+                GarbageInterval = Dialog.getNumber();
+                FractionForText = Dialog.getNumber();
+                ColourName = Dialog.getCheckbox();
+                AddTime = Dialog.getCheckbox();
+                ColorTime = Dialog.getChoice();
+                AddScaleBar = Dialog.getCheckbox();
+                WriteBarDimensions = Dialog.getCheckbox();
+                FractionForBar = Dialog.getNumber();
+                AddScaleBarZ = Dialog.getCheckbox();
+                PlaceScaleBarZ = Dialog.getRadioButton();
 
-            DefineFrameRate = Dialog.getCheckbox();
-            FrameRateAvi = Dialog.getNumber();
-            DefineAviLength = Dialog.getCheckbox();
-            AviLength = Dialog.getNumber();
+                DefineFrameRate = Dialog.getCheckbox();
+                FrameRateAvi = Dialog.getNumber();
+                DefineAviLength = Dialog.getCheckbox();
+                AviLength = Dialog.getNumber();
 
-            CheckLastTimepointBlack = Dialog.getCheckbox();
-            SaveProgressToNetwork = Dialog.getCheckbox();
-            SkipGlow = Dialog.getCheckbox();
-            TextInGlowIsWhite = Dialog.getCheckbox();
-            GuidedBC = Dialog.getCheckbox();
-            UpperLeft = Dialog.getCheckbox();
-            Hidewindows = Dialog.getCheckbox();
-            AspectChoice = Dialog.getChoice();
+                CheckLastTimepointBlack = Dialog.getCheckbox();
+                SaveProgressToNetwork = Dialog.getCheckbox();
+                SkipGlow = Dialog.getCheckbox();
+                TextInGlowIsWhite = Dialog.getCheckbox();
+                GuidedBC = Dialog.getCheckbox();
+                UpperLeft = Dialog.getCheckbox();
+                Hidewindows = Dialog.getCheckbox();
+                AspectChoice = Dialog.getChoice();
         } // !!!!!!!!!!!!!!! =========== Here We retreive all the chosen extended settings ===============!!!!!!!!!!!!!
         AddScaleBarZLeft = 0;
         if (AddScaleBarZ && PlaceScaleBarZ == "Left") {
@@ -1651,7 +1632,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                     selectWindow("TransmittedVirtual_" + PositionNumber[i]);
                     run("Select None");
                     getDimensions(dummy, dummy, dummy, ZSLICE, TIMEPOINTS);
-                    //		if(testWait){wait(ms);}
                 } //bp17
 
                 //RO232	
@@ -1659,10 +1639,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                 getDimensions(dummy, dummy, dummy, TempnSlices, NumberOfFrames);
                 ArraynFrames[i] = NumberOfFrames;
                 ArraynSlices[i] = TempnSlices;
-                //bp17
-                //RO232			if(TIMEPOINTS<3){Dialog.create(" "); Dialog.addMessage("Pos#"+i+1+" : sure you want to include this one? \n only "+TIMEPOINTS+" timepoint(s) "); 	Dialog.addCheckbox("Exclude this one", 1); 	Dialog.show(); 	Exclude = Dialog.getCheckbox(); 
-                //RO232					if(Exclude){ArraySkipPositions[i]=1; Array.print(ArraySkipPositions); 	waitForUser("skip pos "+i+1); selectWindow("TransmittedVirtual_"+PositionNumber[i]); close();	} }
-            }
+
         } else { //Needed to add ROI etc to a random fluorescent channel...
             for (i = 0; i < PositionNumber.length; i++) {
                 if (CheckPositionName) {
@@ -1687,9 +1664,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                 ArraynFrames[i] = NumberOfFrames;
                 ArraynSlices[i] = TempnSlices;
                 //bp17
-                //RO232		if(TIMEPOINTS<3){Dialog.create(" "); Dialog.addMessage("Pos#"+i+" : sure you want to include this one? \n only "+TIMEPOINTS+" timepoint(s) "); 	Dialog.addCheckbox("Exclude this one", 1); 	Dialog.show(); 	Exclude = Dialog.getCheckbox(); 
-                //RO232		if(Exclude){ArraySkipPositions[i]=1; waitForUser("skip pos "+i);} }
-                //bp17
             }
         }
         run("Brightness/Contrast...");
@@ -1700,20 +1674,20 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
         if (minNofTimePoints < 3) {
             Dialog.create("Exclude positions?");
-            Dialog.addMessage(" Which ones would you like to exclude from analysis ? ");
-            for (i = 0; i < PositionNumber.length; i++) {
-                Dialog.setInsets(0, 40, 0);
-                Dialog.addCheckbox("Pos#" + i + " --> only " + ArraynFrames[i] + " frame(s)", 0);
-            }
-            Dialog.addMessage(" ");
-            Dialog.addCheckbox(" Ignore this and keep ALL postions anyway ", 0);
-            Dialog.show();
-            for (i = 0; i < PositionNumber.length; i++) {
-                Temp = Dialog.getCheckbox();
-                if (Temp) {
-                    ArraySkipPositions[i] = 1;
+                Dialog.addMessage(" Which ones would you like to exclude from analysis ? ");
+                for (i = 0; i < PositionNumber.length; i++) {
+                    Dialog.setInsets(0, 40, 0);
+                    Dialog.addCheckbox("Pos#" + i + " --> only " + ArraynFrames[i] + " frame(s)", 0);
                 }
-            }
+                Dialog.addMessage(" ");
+                Dialog.addCheckbox(" Ignore this and keep ALL postions anyway ", 0);
+            Dialog.show();
+                for (i = 0; i < PositionNumber.length; i++) {
+                    Temp = Dialog.getCheckbox();
+                    if (Temp) {
+                        ArraySkipPositions[i] = 1;
+                    }
+                }
             KeepAllPositions = Dialog.getCheckbox();
             if (KeepAllPositions) {
                 ArraySkipPositions[i] = 0;
@@ -1732,21 +1706,22 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         // koppie-peest gedaan van bovenstaande, om zelfde mogelijk te maken voor posities met maar 1 of 2 z-planes
         if (minNofSlices < 3) {
             Dialog.create("Exclude positions?");
-            Dialog.addMessage(" Which ones would you like to exclude from analysis ? ");
-            for (i = 0; i < PositionNumber.length; i++) {
-                Dialog.setInsets(0, 40, 0);
-                Dialog.addCheckbox("Pos#" + i + " --> only " + ArraynSlices[i] + " z-plane(s)", 0);
-            }
-            Dialog.addMessage(" ");
-            Dialog.addCheckbox(" Ignore this and keep ALL postions anyway ", 0);
-            Dialog.show();
-            for (i = 0; i < PositionNumber.length; i++) {
-                Temp = Dialog.getCheckbox();
-                if (Temp) {
-                    ArraySkipPositions[i] = 1;
+                Dialog.addMessage(" Which ones would you like to exclude from analysis ? ");
+                for (i = 0; i < PositionNumber.length; i++) {
+                    Dialog.setInsets(0, 40, 0);
+                    Dialog.addCheckbox("Pos#" + i + " --> only " + ArraynSlices[i] + " z-plane(s)", 0);
                 }
-            }
-            KeepAllPositions = Dialog.getCheckbox();
+                Dialog.addMessage(" ");
+                Dialog.addCheckbox(" Ignore this and keep ALL postions anyway ", 0);
+            Dialog.show();
+                for (i = 0; i < PositionNumber.length; i++) {
+                    Temp = Dialog.getCheckbox();
+                    if (Temp) {
+                        ArraySkipPositions[i] = 1;
+                    }
+                }
+                KeepAllPositions = Dialog.getCheckbox();
+
             if (KeepAllPositions) {
                 ArraySkipPositions[i] = 0;
             }
@@ -2175,24 +2150,23 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         if (SetLastTimepoint) {} else {
             if (CheckLastTimepointBlack) {
                 Dialog.create("Remove Last Timepoints?");
-                Dialog.setInsets(10, 20, 0)
-                Dialog.addMessage("The number indicates the amount of timepoints");
-                Dialog.setInsets(0, 20, 20)
-                Dialog.addMessage("that are black according to the macro!");
-                Dialog.setInsets(0, 0, 0)
-                Dialog.addMessage("Remove timepoints? Position");
-                for (i = 0; i < AmountOfPositions; i++) {
-                    Dialog.setInsets(0, 40, 5)
-                    Dialog.addNumber(PositionNumberTemp[i], LastTimepointBlack[i]);
-                }
-                Dialog.show
-
-                for (i = 0; i < PositionNumber.length; i++) {
-                    LastTimepointBlack[i] = Dialog.getNumber();
-                    //RO Cleaning	List.set("LastTimepointBlack"+i,LastTimepointBlack[i]);//List.set("Singletimepoint"+i,Singletimepoint[i]);
-                    NumberOfTimepoints[i] = NumberOfTimepoints[i] - LastTimepointBlack[i];
-                    //RO Cleaning	List.set("NumberOfTimepoints"+i,NumberOfTimepoints[i]);
-                }
+                    Dialog.setInsets(10, 20, 0)
+                    Dialog.addMessage("The number indicates the amount of timepoints");
+                    Dialog.setInsets(0, 20, 20)
+                    Dialog.addMessage("that are black according to the macro!");
+                    Dialog.setInsets(0, 0, 0)
+                    Dialog.addMessage("Remove timepoints? Position");
+                    for (i = 0; i < AmountOfPositions; i++) {
+                        Dialog.setInsets(0, 40, 5)
+                        Dialog.addNumber(PositionNumberTemp[i], LastTimepointBlack[i]);
+                    }
+                Dialog.show();
+                    for (i = 0; i < PositionNumber.length; i++) {
+                        LastTimepointBlack[i] = Dialog.getNumber();
+                        //RO Cleaning	List.set("LastTimepointBlack"+i,LastTimepointBlack[i]);//List.set("Singletimepoint"+i,Singletimepoint[i]);
+                        NumberOfTimepoints[i] = NumberOfTimepoints[i] - LastTimepointBlack[i];
+                        //RO Cleaning	List.set("NumberOfTimepoints"+i,NumberOfTimepoints[i]);
+                    }
             } else {
                 for (i = 0; i < PositionNumber.length; i++) {
                     NumberOfTimepoints[i] = NumberOfTimepoints[i] - LastTimepointBlack[i];
@@ -2205,11 +2179,11 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         if (MinNumberOfTimepoints == 1) {
             items = newArray("As normal, output is a single jpg", "Switch t for z, output is an avi going through slices"); //RO232 correct spelling 
             Dialog.create("There is only 1 timepoint!");
-            Dialog.setInsets(10, 20, 0)
-            Dialog.addMessage("There is only 1 timepoint in at least 1 position");
-            Dialog.addRadioButtonGroup("Chose how to process z stacks", items, 2, 1, items[1]); //RO232 
+                Dialog.setInsets(10, 20, 0)
+                Dialog.addMessage("There is only 1 timepoint in at least 1 position");
+                Dialog.addRadioButtonGroup("Chose how to process z stacks", items, 2, 1, items[1]); //RO232 
             Dialog.show
-            OutcomeSingleTPtoZstack = Dialog.getRadioButton();
+                OutcomeSingleTPtoZstack = Dialog.getRadioButton();
             if (OutcomeSingleTPtoZstack == items[1]) SingleTPtoZstack = 1;
             print("SingleTPtoZstack :" + SingleTPtoZstack);
         }
@@ -2518,11 +2492,12 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
                         if (minTemp != FluoOffset) {
                             Dialog.create(" ");
-                            Dialog.addCheckbox("Change Fluo Offset for all next positions?", 1);
-                            Dialog.addNumber("New Fluo Offset ", minTemp);
-                            Dialog.show;
-                            ChangeFluoOffset = Dialog.getCheckbox();
-                            NewOffset = Dialog.getNumber();
+                                Dialog.addCheckbox("Change Fluo Offset for all next positions?", 1);
+                                Dialog.addNumber("New Fluo Offset ", minTemp);
+                            Dialog.show();
+                                ChangeFluoOffset = Dialog.getCheckbox();
+                                NewOffset = Dialog.getNumber();
+
                             if (ChangeFluoOffset) {
                                 FluoOffset = NewOffset;
                             } else {
@@ -2779,98 +2754,98 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                                     TestOrContinue[0] = "TEST these settings";
                                     TestOrContinue[1] = "SAVE these settings and CONTINUE";
                                     Dialog.create("Set Parameters fo Depthcoding"); //bp37
-                                    Dialog.setInsets(0, 0, 0);
-                                    Dialog.addMessage("Position " + i + 1 + " (of " + PositionNumber.length + ")");
-                                    Dialog.setInsets(10, 0, 0);
-                                    Dialog.addMessage("Which Gamma factor? (bring low and high intensies together)");
-                                    Dialog.setInsets(-3, 0, 0);
-                                    Dialog.addMessage("Which Multiply factor? (for depth-coded channel)");
-                                    Dialog.setInsets(0, 0, 0);
-                                    Dialog.addMessage(" ");
-
-                                    Dialog.setInsets(2, 0, 2);
-                                    Dialog.addNumber("GAMMA Factor", GammaCorrFill, 2, 8, ""); //bpp
-                                    Dialog.setInsets(-29, 310, 0);
-                                    Dialog.addCheckbox("fix", FixGammaCorr);
-                                    Rounded = round(20 * GammaCorrFill);
-                                    a = Rounded / 20;
-                                    aString = d2s(a, 2);
-                                    GammaSteps = newArray(-0.1, -0.05, 0, 0.05, 0.1);
-                                    ProposeGamma = newArray(GammaSteps.length);
-                                    for (c = 0; c < GammaSteps.length; c++) {
-                                        ProposeGamma[c] = d2s(a + GammaSteps[c], 2);
-                                    }
-                                    Dialog.setInsets(0, 120, 0);
-                                    Dialog.addRadioButtonGroup("", ProposeGamma, 1, 5, ProposeGamma[round((GammaSteps.length + 1) / 2) - 1]); //bp40
-                                    Dialog.setInsets(0, 0, 0);
-                                    Dialog.addMessage(" ");
-
-                                    Dialog.setInsets(2, 0, 2);
-                                    Dialog.addNumber("MULTIPLY Factor", MultiplyFill, 2, 8, ""); //bpp
-                                    Dialog.setInsets(-29, 310, 0);
-                                    Dialog.addCheckbox("fix", FixMultiply);
-                                    Rounded = round(20 * MultiplyFill);
-                                    b = Rounded / 20;
-                                    bString = d2s(b, 2);
-                                    MultiplySteps = newArray(-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15);
-                                    ProposeMultiply = newArray(MultiplySteps.length);
-                                    for (c = 0; c < MultiplySteps.length; c++) {
-                                        ProposeMultiply[c] = d2s(b + MultiplySteps[c], 2);
-                                    }
-                                    Dialog.setInsets(0, 120, 0);
-                                    Dialog.addRadioButtonGroup("", ProposeMultiply, 1, 5, ProposeMultiply[round((MultiplySteps.length + 1) / 2) - 1]); //bp40
-                                    Dialog.setInsets(0, 0, 0);
-                                    Dialog.addMessage(" ");
-
-                                    Dialog.setInsets(20, 90, 0);
-                                    Dialog.addRadioButtonGroup("Show Depth projection with above settings?", TestOrContinue, 2, 1, TestOrContinue[0]); //BP37
-                                    Dialog.setInsets(0, 0, 0);
-                                    Dialog.addMessage(" ");
-
-                                    Dialog.setInsets(-130, 414, 0);
-                                    Dialog.addCheckbox("Play (2x)", PlayDepth); //bp16
-                                    Dialog.setInsets(-72, 200, 5);
-                                    Dialog.addNumber("", Duration, 1, 4, "sec"); //bp16 // bp21
-                                    if (FirstTime == 0) {
                                         Dialog.setInsets(0, 0, 0);
-                                        Dialog.addMessage(" ***********************************************************");
-                                        SlicesInStack = TopZ[i] - BottomZ[i] + 1;
-                                        HeightChosenZStack = SlicesInStack * ArrayZResolution[i]; //bp38
-                                        Dialog.setInsets(3, 100, 0);
-                                        Dialog.addMessage(SlicesInStack + " z-planes ~~ " + HeightChosenZStack + " µm"); //bp38
-                                        Dialog.setInsets(2, 100, 0);
-                                        Dialog.addCheckbox("Analyze Z-stack in 2 or 3 parts", 0);
-                                    } //bp21		//bp37
-                                    Dialog.show
-                                    GammaCorr[i] = Dialog.getNumber();
-                                    FixGammaCorr = Dialog.getCheckbox();
-                                    ProposedGamma = Dialog.getRadioButton();
-                                    if (ProposedGamma != aString) {
-                                        ProposedGamma = parseFloat(ProposedGamma);
-                                        GammaCorr[i] = ProposedGamma;
-                                    }
+                                        Dialog.addMessage("Position " + i + 1 + " (of " + PositionNumber.length + ")");
+                                        Dialog.setInsets(10, 0, 0);
+                                        Dialog.addMessage("Which Gamma factor? (bring low and high intensies together)");
+                                        Dialog.setInsets(-3, 0, 0);
+                                        Dialog.addMessage("Which Multiply factor? (for depth-coded channel)");
+                                        Dialog.setInsets(0, 0, 0);
+                                        Dialog.addMessage(" ");
 
-                                    MultiplyBeforeDepthcoding[i] = Dialog.getNumber();
-                                    FixMultiply = Dialog.getCheckbox();
-                                    ProposedMultiply = Dialog.getRadioButton();
-                                    if (ProposedMultiply != bString) {
-                                        ProposedMultiply = parseFloat(ProposedMultiply);
-                                        MultiplyBeforeDepthcoding[i] = ProposedMultiply;
-                                    }
+                                        Dialog.setInsets(2, 0, 2);
+                                        Dialog.addNumber("GAMMA Factor", GammaCorrFill, 2, 8, ""); //bpp
+                                        Dialog.setInsets(-29, 310, 0);
+                                        Dialog.addCheckbox("fix", FixGammaCorr);
+                                        Rounded = round(20 * GammaCorrFill);
+                                        a = Rounded / 20;
+                                        aString = d2s(a, 2);
+                                        GammaSteps = newArray(-0.1, -0.05, 0, 0.05, 0.1);
+                                        ProposeGamma = newArray(GammaSteps.length);
+                                        for (c = 0; c < GammaSteps.length; c++) {
+                                            ProposeGamma[c] = d2s(a + GammaSteps[c], 2);
+                                        }
+                                        Dialog.setInsets(0, 120, 0);
+                                        Dialog.addRadioButtonGroup("", ProposeGamma, 1, 5, ProposeGamma[round((GammaSteps.length + 1) / 2) - 1]); //bp40
+                                        Dialog.setInsets(0, 0, 0);
+                                        Dialog.addMessage(" ");
 
-                                    Loop = Dialog.getRadioButton();
-                                    if (Loop == "TEST these settings") {
-                                        Loop = 1;
-                                    } else {
-                                        Loop = 0;
-                                    }
-                                    print(Loop);
-                                    GammaCorrFill = GammaCorr[i]; //bp16 opschuiven		
-                                    MultiplyFill = MultiplyBeforeDepthcoding[i];
-                                    PlayDepth = Dialog.getCheckbox(); //bp16
-                                    Duration = Dialog.getNumber();
-                                    if (FirstTime == 0) {
-                                        DecideSplitZ = Dialog.getCheckbox();
+                                        Dialog.setInsets(2, 0, 2);
+                                        Dialog.addNumber("MULTIPLY Factor", MultiplyFill, 2, 8, ""); //bpp
+                                        Dialog.setInsets(-29, 310, 0);
+                                        Dialog.addCheckbox("fix", FixMultiply);
+                                        Rounded = round(20 * MultiplyFill);
+                                        b = Rounded / 20;
+                                        bString = d2s(b, 2);
+                                        MultiplySteps = newArray(-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15);
+                                        ProposeMultiply = newArray(MultiplySteps.length);
+                                        for (c = 0; c < MultiplySteps.length; c++) {
+                                            ProposeMultiply[c] = d2s(b + MultiplySteps[c], 2);
+                                        }
+                                        Dialog.setInsets(0, 120, 0);
+                                        Dialog.addRadioButtonGroup("", ProposeMultiply, 1, 5, ProposeMultiply[round((MultiplySteps.length + 1) / 2) - 1]); //bp40
+                                        Dialog.setInsets(0, 0, 0);
+                                        Dialog.addMessage(" ");
+
+                                        Dialog.setInsets(20, 90, 0);
+                                        Dialog.addRadioButtonGroup("Show Depth projection with above settings?", TestOrContinue, 2, 1, TestOrContinue[0]); //BP37
+                                        Dialog.setInsets(0, 0, 0);
+                                        Dialog.addMessage(" ");
+
+                                        Dialog.setInsets(-130, 414, 0);
+                                        Dialog.addCheckbox("Play (2x)", PlayDepth); //bp16
+                                        Dialog.setInsets(-72, 200, 5);
+                                        Dialog.addNumber("", Duration, 1, 4, "sec"); //bp16 // bp21
+                                        if (FirstTime == 0) {
+                                            Dialog.setInsets(0, 0, 0);
+                                            Dialog.addMessage(" ***********************************************************");
+                                            SlicesInStack = TopZ[i] - BottomZ[i] + 1;
+                                            HeightChosenZStack = SlicesInStack * ArrayZResolution[i]; //bp38
+                                            Dialog.setInsets(3, 100, 0);
+                                            Dialog.addMessage(SlicesInStack + " z-planes ~~ " + HeightChosenZStack + " µm"); //bp38
+                                            Dialog.setInsets(2, 100, 0);
+                                            Dialog.addCheckbox("Analyze Z-stack in 2 or 3 parts", 0);
+                                        } //bp21		//bp37
+                                    Dialog.show();
+                                        GammaCorr[i] = Dialog.getNumber();
+                                        FixGammaCorr = Dialog.getCheckbox();
+                                        ProposedGamma = Dialog.getRadioButton();
+                                        if (ProposedGamma != aString) {
+                                            ProposedGamma = parseFloat(ProposedGamma);
+                                            GammaCorr[i] = ProposedGamma;
+                                        }
+
+                                        MultiplyBeforeDepthcoding[i] = Dialog.getNumber();
+                                        FixMultiply = Dialog.getCheckbox();
+                                        ProposedMultiply = Dialog.getRadioButton();
+                                        if (ProposedMultiply != bString) {
+                                            ProposedMultiply = parseFloat(ProposedMultiply);
+                                            MultiplyBeforeDepthcoding[i] = ProposedMultiply;
+                                        }
+
+                                        Loop = Dialog.getRadioButton();
+                                        if (Loop == "TEST these settings") {
+                                            Loop = 1;
+                                        } else {
+                                            Loop = 0;
+                                        }
+                                        print(Loop);
+                                        GammaCorrFill = GammaCorr[i]; //bp16 opschuiven		
+                                        MultiplyFill = MultiplyBeforeDepthcoding[i];
+                                        PlayDepth = Dialog.getCheckbox(); //bp16
+                                        Duration = Dialog.getNumber();
+                                        if (FirstTime == 0) {
+                                            DecideSplitZ = Dialog.getCheckbox();
                                     }
 
                                     // SplitZ ?? set default settings anyway
@@ -2887,34 +2862,34 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
                                     if (DecideSplitZ) {
                                         Dialog.create("Split Z-stack"); //bp37
-                                        Dialog.setInsets(0, 10, 0);
-                                        Dialog.addMessage(SlicesInStack + " z-planes ~~ " + HeightChosenZStack + " µm"); //bp38
-                                        Dialog.setInsets(20, 10, 0);
-                                        Dialog.addRadioButtonGroup("", DialogArraySplitZ, 2, 1, DialogArraySplitZ[0]);
-                                        Dialog.setInsets(0, 0, 0);
-                                        Dialog.addMessage(" ");
-                                        Dialog.setInsets(0, 10, 0);
-                                        Dialog.addRadioButtonGroup("... and the output of these partial analyses ? ", OutputArray, 2, 1, FillOutputArray); //bp40
-                                        Dialog.setInsets(30, 20, 0);
-                                        Dialog.addCheckbox("Process BOTH split AND unsplit", SplitAndUnsplitFill); // BP101 niet goed
-                                        Dialog.show
-                                        ButtonZSplit = Dialog.getRadioButton(); ///bp21
-                                        if (ButtonZSplit == DialogArraySplitZ[0]) {
-                                            nChunks = 2;
-                                            SplitZ[i] = 2;
-                                        } // dus > 0 wil zeggen dat er gechopt wordt en het echte getal zegt in hoeveel delen 
-                                        if (ButtonZSplit == DialogArraySplitZ[1]) {
-                                            nChunks = 3;
-                                            SplitZ[i] = 3;
-                                        }
-                                        OutputButton = Dialog.getRadioButton(); //bp37 en hieronder
-                                        if (OutputButton == OutputArray[0]) {
-                                            PileUpChunks[i] = 0;
-                                        }
-                                        if (OutputButton == OutputArray[1]) {
-                                            PileUpChunks[i] = 1;
-                                        }
-                                        SplitAndUnsplit[i] = Dialog.getCheckbox();
+                                            Dialog.setInsets(0, 10, 0);
+                                            Dialog.addMessage(SlicesInStack + " z-planes ~~ " + HeightChosenZStack + " µm"); //bp38
+                                            Dialog.setInsets(20, 10, 0);
+                                            Dialog.addRadioButtonGroup("", DialogArraySplitZ, 2, 1, DialogArraySplitZ[0]);
+                                            Dialog.setInsets(0, 0, 0);
+                                            Dialog.addMessage(" ");
+                                            Dialog.setInsets(0, 10, 0);
+                                            Dialog.addRadioButtonGroup("... and the output of these partial analyses ? ", OutputArray, 2, 1, FillOutputArray); //bp40
+                                            Dialog.setInsets(30, 20, 0);
+                                            Dialog.addCheckbox("Process BOTH split AND unsplit", SplitAndUnsplitFill); // BP101 niet goed
+                                        Dialog.show();
+                                            ButtonZSplit = Dialog.getRadioButton(); ///bp21
+                                            if (ButtonZSplit == DialogArraySplitZ[0]) {
+                                                nChunks = 2;
+                                                SplitZ[i] = 2;
+                                            } // dus > 0 wil zeggen dat er gechopt wordt en het echte getal zegt in hoeveel delen 
+                                            if (ButtonZSplit == DialogArraySplitZ[1]) {
+                                                nChunks = 3;
+                                                SplitZ[i] = 3;
+                                            }
+                                            OutputButton = Dialog.getRadioButton(); //bp37 en hieronder
+                                            if (OutputButton == OutputArray[0]) {
+                                                PileUpChunks[i] = 0;
+                                            }
+                                            if (OutputButton == OutputArray[1]) {
+                                                PileUpChunks[i] = 1;
+                                            }
+                                            SplitAndUnsplit[i] = Dialog.getCheckbox();
                                         SplitAndUnsplitFill = SplitAndUnsplit[i]; //bp40
                                     } // vd if(DecideSplitZ
                                 } // vd while continue 
@@ -3072,49 +3047,49 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                                         TopZ_3[i] = TopZ[i] - OffsetZ;
                                     }
                                     Dialog.create(" "); // macro proposes the following, but user can opt for larger overlap
-                                    Dialog.setInsets(5, 20, 0);
-                                    Dialog.addMessage("Z-planes for Split-Analysis Part #1");
-                                    Dialog.setInsets(0, 20, 0);
-                                    Dialog.addNumber("from Z-plane", BottomZ_1[i]);
-                                    Dialog.setInsets(0, 20, 0);
-                                    Dialog.addNumber("to Z-plane", TopZ_1[i]);
-                                    Dialog.setInsets(10, 20, 0);
-                                    Dialog.addMessage("Z-planes for Split-Analysis Part #2");
-                                    Dialog.setInsets(0, 20, 0);
-                                    Dialog.addNumber("from Z-plane", BottomZ_2[i]);
-                                    Dialog.setInsets(0, 20, 0);
-                                    Dialog.addNumber("to Z-plane", TopZ_2[i]);
-                                    if (nChunks == 2) {
-                                        Dialog.setInsets(20, 20, 0);
-                                        Dialog.addCheckbox("Split in 3 parts ...", 0);
-                                    }
-                                    if (nChunks == 3) {
+                                        Dialog.setInsets(5, 20, 0);
+                                        Dialog.addMessage("Z-planes for Split-Analysis Part #1");
+                                        Dialog.setInsets(0, 20, 0);
+                                        Dialog.addNumber("from Z-plane", BottomZ_1[i]);
+                                        Dialog.setInsets(0, 20, 0);
+                                        Dialog.addNumber("to Z-plane", TopZ_1[i]);
                                         Dialog.setInsets(10, 20, 0);
-                                        Dialog.addMessage("Z-planes for Split-Analysis Part #3");
+                                        Dialog.addMessage("Z-planes for Split-Analysis Part #2");
                                         Dialog.setInsets(0, 20, 0);
-                                        Dialog.addNumber("from Z-plane", BottomZ_3[i]);
+                                        Dialog.addNumber("from Z-plane", BottomZ_2[i]);
                                         Dialog.setInsets(0, 20, 0);
-                                        Dialog.addNumber("to Z-plane", TopZ_3[i]);
-                                    }
-                                    Dialog.show
-                                    BottomZ_1[i] = Dialog.getNumber();
-                                    BottomZ_1[i] = BottomZ_1[i] + OffsetZ; //bp30
-                                    TopZ_1[i] = Dialog.getNumber();
-                                    TopZ_1[i] = TopZ_1[i] + OffsetZ;
-                                    BottomZ_2[i] = Dialog.getNumber();
-                                    BottomZ_2[i] = BottomZ_2[i] + OffsetZ;
-                                    TopZ_2[i] = Dialog.getNumber();
-                                    TopZ_2[i] = TopZ_2[i] + OffsetZ;
-                                    ChangenChunksTo3 = 0;
-                                    if (nChunks == 2) {
-                                        ChangenChunksTo3 = Dialog.getCheckbox();
-                                    }
-                                    if (nChunks == 3) {
-                                        BottomZ_3[i] = Dialog.getNumber();
-                                        BottomZ_3[i] = BottomZ_3[i] + OffsetZ;
-                                        TopZ_3[i] = Dialog.getNumber();
-                                        TopZ_3[i] = TopZ_3[i] + OffsetZ;
-                                    } //waitForUser("ALTERNATIVE SETTINGS-LOOP______BottomZ_1[i] : "+BottomZ_1[i]+"_____TopZ_1[i] : "+TopZ_1[i]+"_____BottomZ_2[i] : "+BottomZ_2[i]+"_____TopZ_2[i] : "+TopZ_2[i]);
+                                        Dialog.addNumber("to Z-plane", TopZ_2[i]);
+                                        if (nChunks == 2) {
+                                            Dialog.setInsets(20, 20, 0);
+                                            Dialog.addCheckbox("Split in 3 parts ...", 0);
+                                        }
+                                        if (nChunks == 3) {
+                                            Dialog.setInsets(10, 20, 0);
+                                            Dialog.addMessage("Z-planes for Split-Analysis Part #3");
+                                            Dialog.setInsets(0, 20, 0);
+                                            Dialog.addNumber("from Z-plane", BottomZ_3[i]);
+                                            Dialog.setInsets(0, 20, 0);
+                                            Dialog.addNumber("to Z-plane", TopZ_3[i]);
+                                        }
+                                    Dialog.show();
+                                        BottomZ_1[i] = Dialog.getNumber();
+                                        BottomZ_1[i] = BottomZ_1[i] + OffsetZ; //bp30
+                                        TopZ_1[i] = Dialog.getNumber();
+                                        TopZ_1[i] = TopZ_1[i] + OffsetZ;
+                                        BottomZ_2[i] = Dialog.getNumber();
+                                        BottomZ_2[i] = BottomZ_2[i] + OffsetZ;
+                                        TopZ_2[i] = Dialog.getNumber();
+                                        TopZ_2[i] = TopZ_2[i] + OffsetZ;
+                                        ChangenChunksTo3 = 0;
+                                        if (nChunks == 2) {
+                                            ChangenChunksTo3 = Dialog.getCheckbox();
+                                        }
+                                        if (nChunks == 3) {
+                                            BottomZ_3[i] = Dialog.getNumber();
+                                            BottomZ_3[i] = BottomZ_3[i] + OffsetZ;
+                                            TopZ_3[i] = Dialog.getNumber();
+                                            TopZ_3[i] = TopZ_3[i] + OffsetZ;
+                                        }
                                     if (ChangenChunksTo3 == 0) {
                                         PlanesDialog = 0;
                                     } else {
@@ -3199,163 +3174,163 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                                             TestOrContinue[0] = "TEST these settings";
                                             TestOrContinue[1] = "SAVE these settings and CONTINUE";
                                             Dialog.create("Set Parameters fo Depthcoding"); //bp37
-                                            Dialog.setInsets(0, 0, 0);
-                                            Dialog.addMessage("SPLITTING THE STACK \n \n " + ChunkString + " " + ChunkString + " " + ChunkString);
-                                            Dialog.setInsets(15, 0, 0);
-                                            Dialog.addMessage("Position " + i + 1 + " (of " + PositionNumber.length + ")");
-                                            Dialog.setInsets(-3, 0, 0);
-                                            Dialog.addMessage("Which Gamma factor? (bring low and high intensies together)");
-                                            Dialog.setInsets(-3, 0, 0);
-                                            Dialog.addMessage("Which Multiply factor? (for depth coded channel)");
-                                            Dialog.setInsets(0, 0, 0);
-                                            Dialog.addMessage(" ");
+                                                Dialog.setInsets(0, 0, 0);
+                                                Dialog.addMessage("SPLITTING THE STACK \n \n " + ChunkString + " " + ChunkString + " " + ChunkString);
+                                                Dialog.setInsets(15, 0, 0);
+                                                Dialog.addMessage("Position " + i + 1 + " (of " + PositionNumber.length + ")");
+                                                Dialog.setInsets(-3, 0, 0);
+                                                Dialog.addMessage("Which Gamma factor? (bring low and high intensies together)");
+                                                Dialog.setInsets(-3, 0, 0);
+                                                Dialog.addMessage("Which Multiply factor? (for depth coded channel)");
+                                                Dialog.setInsets(0, 0, 0);
+                                                Dialog.addMessage(" ");
 
-                                            Dialog.setInsets(2, 0, 2);
-                                            Dialog.addNumber("GAMMA Factor", GammaCorrFill, 2, 8, ""); //bpp
-                                            Dialog.setInsets(-29, 310, 0);
-                                            Dialog.addCheckbox("fix", FixGammaCorr);
-                                            Rounded = round(20 * GammaCorrFill);
-                                            a = Rounded / 20;
-                                            aString = d2s(a, 2);
-                                            GammaSteps = newArray(-0.1, -0.05, 0, 0.05, 0.1);
-                                            ProposeGamma = newArray(GammaSteps.length);
-                                            for (c = 0; c < GammaSteps.length; c++) {
-                                                ProposeGamma[c] = d2s(a + GammaSteps[c], 2);
-                                            }
-                                            Dialog.setInsets(0, 120, 0);
-                                            Dialog.addRadioButtonGroup("", ProposeGamma, 1, 5, ProposeGamma[round((GammaSteps.length + 1) / 2) - 1]); //bp40
-                                            Dialog.setInsets(0, 0, 0);
-                                            Dialog.addMessage(" ");
-
-                                            Dialog.setInsets(2, 0, 2);
-                                            Dialog.addNumber("MULTIPLY Factor", MultiplyFill, 2, 8, ""); //bpp
-                                            Dialog.setInsets(-29, 310, 0);
-                                            Dialog.addCheckbox("fix", FixMultiply);
-                                            Rounded = round(20 * MultiplyFill);
-                                            b = Rounded / 20;
-                                            bString = d2s(b, 2);
-                                            MultiplySteps = newArray(-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15);
-                                            ProposeMultiply = newArray(MultiplySteps.length);
-                                            for (c = 0; c < MultiplySteps.length; c++) {
-                                                ProposeMultiply[c] = d2s(b + MultiplySteps[c], 2);
-                                            }
-                                            Dialog.setInsets(0, 120, 0);
-                                            Dialog.addRadioButtonGroup("", ProposeMultiply, 1, 5, ProposeMultiply[round((MultiplySteps.length + 1) / 2) - 1]); //bp40
-                                            Dialog.setInsets(0, 0, 0);
-                                            Dialog.addMessage(" ");
-
-                                            Dialog.setInsets(20, 90, 0);
-                                            Dialog.addRadioButtonGroup("Show Depth projection with above settings?", TestOrContinue, 2, 1, TestOrContinue[0]); //BP37
-                                            Dialog.setInsets(0, 0, 0);
-                                            Dialog.addMessage(" ");
-
-                                            Dialog.setInsets(-130, 414, 0);
-                                            Dialog.addCheckbox("Play (2x)", PlayDepth); //bp16
-                                            Dialog.setInsets(-72, 200, 5);
-                                            Dialog.addNumber("", Duration, 1, 4, "sec"); //bp16 // bp21
-
-                                            Dialog.show
-
-                                            if (s + 1 == 1 && ForUnsplit == 0) {
-                                                GammaCorr_1[i] = Dialog.getNumber();
-                                                FixGammaCorr = Dialog.getCheckbox();
-                                                ProposedGamma = Dialog.getRadioButton();
-                                                if (ProposedGamma != aString) {
-                                                    ProposedGamma = parseFloat(ProposedGamma);
-                                                    GammaCorr_1[i] = ProposedGamma;
+                                                Dialog.setInsets(2, 0, 2);
+                                                Dialog.addNumber("GAMMA Factor", GammaCorrFill, 2, 8, ""); //bpp
+                                                Dialog.setInsets(-29, 310, 0);
+                                                Dialog.addCheckbox("fix", FixGammaCorr);
+                                                Rounded = round(20 * GammaCorrFill);
+                                                a = Rounded / 20;
+                                                aString = d2s(a, 2);
+                                                GammaSteps = newArray(-0.1, -0.05, 0, 0.05, 0.1);
+                                                ProposeGamma = newArray(GammaSteps.length);
+                                                for (c = 0; c < GammaSteps.length; c++) {
+                                                    ProposeGamma[c] = d2s(a + GammaSteps[c], 2);
                                                 }
-                                                GammaCorrTest = GammaCorr_1[i];
-                                                GammaCorrFill = GammaCorrTest;
-                                            }
-                                            if (s + 1 == 2 && ForUnsplit == 0) {
-                                                GammaCorr_2[i] = Dialog.getNumber();
-                                                FixGammaCorr = Dialog.getCheckbox();
-                                                ProposedGamma = Dialog.getRadioButton();
-                                                if (ProposedGamma != aString) {
-                                                    ProposedGamma = parseFloat(ProposedGamma);
-                                                    GammaCorr_2[i] = ProposedGamma;
-                                                }
-                                                GammaCorrTest = GammaCorr_2[i];
-                                                GammaCorrFill = GammaCorrTest;
-                                            }
-                                            if (s + 1 == 3 && ForUnsplit == 0) {
-                                                GammaCorr_3[i] = Dialog.getNumber();
-                                                FixGammaCorr = Dialog.getCheckbox();
-                                                ProposedGamma = Dialog.getRadioButton();
-                                                if (ProposedGamma != aString) {
-                                                    ProposedGamma = parseFloat(ProposedGamma);
-                                                    GammaCorr_3[i] = ProposedGamma;
-                                                }
-                                                GammaCorrTest = GammaCorr_3[i];
-                                                GammaCorrFill = GammaCorrTest;
-                                            }
-                                            if (ForUnsplit) {
-                                                GammaCorr[i] = Dialog.getNumber();
-                                                FixGammaCorr = Dialog.getCheckbox();
-                                                ProposedGamma = Dialog.getRadioButton();
-                                                if (ProposedGamma != aString) {
-                                                    ProposedGamma = parseFloat(ProposedGamma);
-                                                    GammaCorr[i] = ProposedGamma;
-                                                }
-                                                GammaCorrTest = GammaCorr[i];
-                                                GammaCorrFill = GammaCorrTest;
-                                            }
+                                                Dialog.setInsets(0, 120, 0);
+                                                Dialog.addRadioButtonGroup("", ProposeGamma, 1, 5, ProposeGamma[round((GammaSteps.length + 1) / 2) - 1]); //bp40
+                                                Dialog.setInsets(0, 0, 0);
+                                                Dialog.addMessage(" ");
 
-                                            if (s + 1 == 1 && ForUnsplit == 0) {
-                                                MultiplyBeforeDepthcoding_1[i] = Dialog.getNumber();
-                                                FixMultiply = Dialog.getCheckbox();
-                                                ProposedMultiply = Dialog.getRadioButton();
-                                                if (ProposedMultiply != bString) {
-                                                    ProposedMultiply = parseFloat(ProposedMultiply);
-                                                    MultiplyBeforeDepthcoding_1[i] = ProposedMultiply;
+                                                Dialog.setInsets(2, 0, 2);
+                                                Dialog.addNumber("MULTIPLY Factor", MultiplyFill, 2, 8, ""); //bpp
+                                                Dialog.setInsets(-29, 310, 0);
+                                                Dialog.addCheckbox("fix", FixMultiply);
+                                                Rounded = round(20 * MultiplyFill);
+                                                b = Rounded / 20;
+                                                bString = d2s(b, 2);
+                                                MultiplySteps = newArray(-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15);
+                                                ProposeMultiply = newArray(MultiplySteps.length);
+                                                for (c = 0; c < MultiplySteps.length; c++) {
+                                                    ProposeMultiply[c] = d2s(b + MultiplySteps[c], 2);
                                                 }
-                                                MultiplyTest = MultiplyBeforeDepthcoding_1[i];
-                                                MultiplyFill = MultiplyTest;
-                                            }
-                                            if (s + 1 == 2 && ForUnsplit == 0) {
-                                                MultiplyBeforeDepthcoding_2[i] = Dialog.getNumber();
-                                                FixMultiply = Dialog.getCheckbox();
-                                                ProposedMultiply = Dialog.getRadioButton();
-                                                if (ProposedMultiply != bString) {
-                                                    ProposedMultiply = parseFloat(ProposedMultiply);
-                                                    MultiplyBeforeDepthcoding_2[i] = ProposedMultiply;
-                                                }
-                                                MultiplyTest = MultiplyBeforeDepthcoding_2[i];
-                                                MultiplyFill = MultiplyTest;
-                                            }
-                                            if (s + 1 == 3 && ForUnsplit == 0) {
-                                                MultiplyBeforeDepthcoding_3[i] = Dialog.getNumber();
-                                                FixMultiply = Dialog.getCheckbox();
-                                                ProposedMultiply = Dialog.getRadioButton();
-                                                if (ProposedMultiply != bString) {
-                                                    ProposedMultiply = parseFloat(ProposedMultiply);
-                                                    MultiplyBeforeDepthcoding_3[i] = ProposedMultiply;
-                                                }
-                                                MultiplyTest = MultiplyBeforeDepthcoding_3[i];
-                                                MultiplyFill = MultiplyTest;
-                                            }
-                                            if (ForUnsplit) {
-                                                MultiplyBeforeDepthcoding[i] = Dialog.getNumber();
-                                                FixMultiply = Dialog.getCheckbox();
-                                                ProposedMultiply = Dialog.getRadioButton();
-                                                if (ProposedMultiply != bString) {
-                                                    ProposedMultiply = parseFloat(ProposedMultiply);
-                                                    MultiplyBeforeDepthcoding[i] = ProposedMultiply;
-                                                }
-                                                MultiplyTest = MultiplyBeforeDepthcoding[i];
-                                                MultiplyFill = MultiplyTest;
-                                            }
+                                                Dialog.setInsets(0, 120, 0);
+                                                Dialog.addRadioButtonGroup("", ProposeMultiply, 1, 5, ProposeMultiply[round((MultiplySteps.length + 1) / 2) - 1]); //bp40
+                                                Dialog.setInsets(0, 0, 0);
+                                                Dialog.addMessage(" ");
 
-                                            Loop = Dialog.getRadioButton();
-                                            if (Loop == "TEST these settings") {
-                                                Loop = 1;
-                                            } else {
-                                                Loop = 0;
-                                            }
-                                            print(Loop);
+                                                Dialog.setInsets(20, 90, 0);
+                                                Dialog.addRadioButtonGroup("Show Depth projection with above settings?", TestOrContinue, 2, 1, TestOrContinue[0]); //BP37
+                                                Dialog.setInsets(0, 0, 0);
+                                                Dialog.addMessage(" ");
 
-                                            PlayDepth = Dialog.getCheckbox();
-                                            Duration = Dialog.getNumber();
+                                                Dialog.setInsets(-130, 414, 0);
+                                                Dialog.addCheckbox("Play (2x)", PlayDepth); //bp16
+                                                Dialog.setInsets(-72, 200, 5);
+                                                Dialog.addNumber("", Duration, 1, 4, "sec"); //bp16 // bp21
+
+                                            Dialog.show();
+
+                                                if (s + 1 == 1 && ForUnsplit == 0) {
+                                                    GammaCorr_1[i] = Dialog.getNumber();
+                                                    FixGammaCorr = Dialog.getCheckbox();
+                                                    ProposedGamma = Dialog.getRadioButton();
+                                                    if (ProposedGamma != aString) {
+                                                        ProposedGamma = parseFloat(ProposedGamma);
+                                                        GammaCorr_1[i] = ProposedGamma;
+                                                    }
+                                                    GammaCorrTest = GammaCorr_1[i];
+                                                    GammaCorrFill = GammaCorrTest;
+                                                }
+                                                if (s + 1 == 2 && ForUnsplit == 0) {
+                                                    GammaCorr_2[i] = Dialog.getNumber();
+                                                    FixGammaCorr = Dialog.getCheckbox();
+                                                    ProposedGamma = Dialog.getRadioButton();
+                                                    if (ProposedGamma != aString) {
+                                                        ProposedGamma = parseFloat(ProposedGamma);
+                                                        GammaCorr_2[i] = ProposedGamma;
+                                                    }
+                                                    GammaCorrTest = GammaCorr_2[i];
+                                                    GammaCorrFill = GammaCorrTest;
+                                                }
+                                                if (s + 1 == 3 && ForUnsplit == 0) {
+                                                    GammaCorr_3[i] = Dialog.getNumber();
+                                                    FixGammaCorr = Dialog.getCheckbox();
+                                                    ProposedGamma = Dialog.getRadioButton();
+                                                    if (ProposedGamma != aString) {
+                                                        ProposedGamma = parseFloat(ProposedGamma);
+                                                        GammaCorr_3[i] = ProposedGamma;
+                                                    }
+                                                    GammaCorrTest = GammaCorr_3[i];
+                                                    GammaCorrFill = GammaCorrTest;
+                                                }
+                                                if (ForUnsplit) {
+                                                    GammaCorr[i] = Dialog.getNumber();
+                                                    FixGammaCorr = Dialog.getCheckbox();
+                                                    ProposedGamma = Dialog.getRadioButton();
+                                                    if (ProposedGamma != aString) {
+                                                        ProposedGamma = parseFloat(ProposedGamma);
+                                                        GammaCorr[i] = ProposedGamma;
+                                                    }
+                                                    GammaCorrTest = GammaCorr[i];
+                                                    GammaCorrFill = GammaCorrTest;
+                                                }
+
+                                                if (s + 1 == 1 && ForUnsplit == 0) {
+                                                    MultiplyBeforeDepthcoding_1[i] = Dialog.getNumber();
+                                                    FixMultiply = Dialog.getCheckbox();
+                                                    ProposedMultiply = Dialog.getRadioButton();
+                                                    if (ProposedMultiply != bString) {
+                                                        ProposedMultiply = parseFloat(ProposedMultiply);
+                                                        MultiplyBeforeDepthcoding_1[i] = ProposedMultiply;
+                                                    }
+                                                    MultiplyTest = MultiplyBeforeDepthcoding_1[i];
+                                                    MultiplyFill = MultiplyTest;
+                                                }
+                                                if (s + 1 == 2 && ForUnsplit == 0) {
+                                                    MultiplyBeforeDepthcoding_2[i] = Dialog.getNumber();
+                                                    FixMultiply = Dialog.getCheckbox();
+                                                    ProposedMultiply = Dialog.getRadioButton();
+                                                    if (ProposedMultiply != bString) {
+                                                        ProposedMultiply = parseFloat(ProposedMultiply);
+                                                        MultiplyBeforeDepthcoding_2[i] = ProposedMultiply;
+                                                    }
+                                                    MultiplyTest = MultiplyBeforeDepthcoding_2[i];
+                                                    MultiplyFill = MultiplyTest;
+                                                }
+                                                if (s + 1 == 3 && ForUnsplit == 0) {
+                                                    MultiplyBeforeDepthcoding_3[i] = Dialog.getNumber();
+                                                    FixMultiply = Dialog.getCheckbox();
+                                                    ProposedMultiply = Dialog.getRadioButton();
+                                                    if (ProposedMultiply != bString) {
+                                                        ProposedMultiply = parseFloat(ProposedMultiply);
+                                                        MultiplyBeforeDepthcoding_3[i] = ProposedMultiply;
+                                                    }
+                                                    MultiplyTest = MultiplyBeforeDepthcoding_3[i];
+                                                    MultiplyFill = MultiplyTest;
+                                                }
+                                                if (ForUnsplit) {
+                                                    MultiplyBeforeDepthcoding[i] = Dialog.getNumber();
+                                                    FixMultiply = Dialog.getCheckbox();
+                                                    ProposedMultiply = Dialog.getRadioButton();
+                                                    if (ProposedMultiply != bString) {
+                                                        ProposedMultiply = parseFloat(ProposedMultiply);
+                                                        MultiplyBeforeDepthcoding[i] = ProposedMultiply;
+                                                    }
+                                                    MultiplyTest = MultiplyBeforeDepthcoding[i];
+                                                    MultiplyFill = MultiplyTest;
+                                                }
+
+                                                Loop = Dialog.getRadioButton();
+                                                if (Loop == "TEST these settings") {
+                                                    Loop = 1;
+                                                } else {
+                                                    Loop = 0;
+                                                }
+                                                print(Loop);
+
+                                                PlayDepth = Dialog.getCheckbox();
+                                                Duration = Dialog.getNumber();
 
                                             //bp37
                                             if (GammaCorrFill < 0.1 || GammaCorrFill > 1) {
@@ -3543,73 +3518,73 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
     // RESTART ?? --> possibility to change settings
     if (Restart && CheckSettings) {
         Dialog.create("Settings");
-        Dialog.addString("Date experiment:", Date);
-        Dialog.addString("Name Experiment:", NameExperiment, 30); //Dialog.setInsets(top, left, bottom) 		
-        if (Interval == round(Interval)) {
-            DecimalPlaces = 0;
-        } else {
-            DecimalPlaces = 1;
-        } // + figure out, whether to use decimals or not. only when interval had a decimal other than 0
-        Dialog.setInsets(10, 0, 3);
-        Dialog.addNumber("Time Interval", Interval, DecimalPlaces, 5, "min");
-        i = 0;
-        Shift = (parseFloat(PositionChannelAmount[i]) - 1) * 22 + 22; //Assumes that the positions have the same amount as the first channel
-        Dialog.setInsets(22, 0, 5)
-        Dialog.addMessage("UseChannel Channel ChannelName ChannelColour");
-        for (j = 0; j < PositionChannelAmount[i]; j++) {
-            if (TransmittedChannelNumber[i] == j) {
-                Dialog.addMessage("This Channel (" + ChannelNumber[j] + ") is the Transmitted! No settings Required!");
+            Dialog.addString("Date experiment:", Date);
+            Dialog.addString("Name Experiment:", NameExperiment, 30); //Dialog.setInsets(top, left, bottom) 		
+            if (Interval == round(Interval)) {
+                DecimalPlaces = 0;
             } else {
-                Dialog.setInsets(-5, 60, -22)
-                Dialog.addCheckbox(" ", UseChannel[j])
-                Dialog.setInsets(-20, 100, -40.5);
-                Dialog.addChoice(ChannelNumber[j], ChannelColourOriginal, ChannelColour[j]);
-                Dialog.setInsets(-20, 120, 0)
-                Dialog.addString(" ", ChannelName[j], 10);
+                DecimalPlaces = 1;
+            } // + figure out, whether to use decimals or not. only when interval had a decimal other than 0
+            Dialog.setInsets(10, 0, 3);
+            Dialog.addNumber("Time Interval", Interval, DecimalPlaces, 5, "min");
+            i = 0;
+            Shift = (parseFloat(PositionChannelAmount[i]) - 1) * 22 + 22; //Assumes that the positions have the same amount as the first channel
+            Dialog.setInsets(22, 0, 5)
+            Dialog.addMessage("UseChannel Channel ChannelName ChannelColour");
+            for (j = 0; j < PositionChannelAmount[i]; j++) {
+                if (TransmittedChannelNumber[i] == j) {
+                    Dialog.addMessage("This Channel (" + ChannelNumber[j] + ") is the Transmitted! No settings Required!");
+                } else {
+                    Dialog.setInsets(-5, 60, -22)
+                    Dialog.addCheckbox(" ", UseChannel[j])
+                    Dialog.setInsets(-20, 100, -40.5);
+                    Dialog.addChoice(ChannelNumber[j], ChannelColourOriginal, ChannelColour[j]);
+                    Dialog.setInsets(-20, 120, 0)
+                    Dialog.addString(" ", ChannelName[j], 10);
+                }
             }
-        }
-        Dialog.addMessage(" ");
-        Dialog.setInsets(0, 40, -10);
-        Dialog.addRadioButtonGroup("If <=2 Channels: Add depthcoding?", newArray("With", "Without"), 1, 2, UseDepthcoding);
-        Dialog.addMessage(" ");
-        Dialog.setInsets(0, 40, 0);
-        Dialog.addCheckbox("RedDeadDye", RedDeadDye);
-        //			Dialog.setInsets(5, 40,0) ;	Dialog.addCheckbox("Limit Z-Stacks to be used?", DeleteZStacks);
-        if (CheckPositionName) {
-            Dialog.setInsets(5, 40, 0);
-            Dialog.addCheckbox("Add Position Name to Filename?", AddPositionName);
-        }
+            Dialog.addMessage(" ");
+            Dialog.setInsets(0, 40, -10);
+            Dialog.addRadioButtonGroup("If <=2 Channels: Add depthcoding?", newArray("With", "Without"), 1, 2, UseDepthcoding);
+            Dialog.addMessage(" ");
+            Dialog.setInsets(0, 40, 0);
+            Dialog.addCheckbox("RedDeadDye", RedDeadDye);
+            //			Dialog.setInsets(5, 40,0) ;	Dialog.addCheckbox("Limit Z-Stacks to be used?", DeleteZStacks);
+            if (CheckPositionName) {
+                Dialog.setInsets(5, 40, 0);
+                Dialog.addCheckbox("Add Position Name to Filename?", AddPositionName);
+            }
         Dialog.show();
         // !!!!!!!!!!!!!!! =========== Here We open a window to define all settings ===============!!!!!!!!!!!!!
-        NumberOfChannelsToBeProcessed = 0;
-        // !!!!!!!!!!!!!!! =========== Here We retreive all the chosen settings ===============!!!!!!!!!!!!!
-        Date = Dialog.getString();
-        print("Date experiment: " + Date);
-        NameExperiment = Dialog.getString();
-        print("Name Experiment: " + NameExperiment);
-        Interval = Dialog.getNumber();
-        print("Time Interval: " + Interval + " min");
-        i = 0;
-        for (j = 0; j < PositionChannelAmount[i]; j++) {
-            if (TransmittedChannelNumber[i] == j) {
-                NumberOfChannelsToBeProcessed = NumberOfChannelsToBeProcessed + 1;
-            } else {
-                UseChannel[j] = Dialog.getCheckbox();
-                if (UseChannel[j]) {
-                    ChannelColour[j] = Dialog.getChoice();
+            NumberOfChannelsToBeProcessed = 0;
+            // !!!!!!!!!!!!!!! =========== Here We retreive all the chosen settings ===============!!!!!!!!!!!!!
+            Date = Dialog.getString();
+            print("Date experiment: " + Date);
+            NameExperiment = Dialog.getString();
+            print("Name Experiment: " + NameExperiment);
+            Interval = Dialog.getNumber();
+            print("Time Interval: " + Interval + " min");
+            i = 0;
+            for (j = 0; j < PositionChannelAmount[i]; j++) {
+                if (TransmittedChannelNumber[i] == j) {
                     NumberOfChannelsToBeProcessed = NumberOfChannelsToBeProcessed + 1;
                 } else {
-                    ChannelColour[j] = "None";
+                    UseChannel[j] = Dialog.getCheckbox();
+                    if (UseChannel[j]) {
+                        ChannelColour[j] = Dialog.getChoice();
+                        NumberOfChannelsToBeProcessed = NumberOfChannelsToBeProcessed + 1;
+                    } else {
+                        ChannelColour[j] = "None";
+                    }
+                    ChannelName[j] = Dialog.getString();
                 }
-                ChannelName[j] = Dialog.getString();
             }
-        }
-        UseDepthcoding = Dialog.getRadioButton;
-        RedDeadDye = Dialog.getCheckbox();
-        //		DeleteZStacks 		= Dialog.getCheckbox();		
-        if (CheckPositionName) {
-            AddPositionName = Dialog.getCheckbox();
-        }
+            UseDepthcoding = Dialog.getRadioButton;
+            RedDeadDye = Dialog.getCheckbox();
+            //		DeleteZStacks 		= Dialog.getCheckbox();		
+            if (CheckPositionName) {
+                AddPositionName = Dialog.getCheckbox();
+            }
         //bpx
         if (QueueMultiple) {
             nQueuedExp = nQueuedExp + 1;
@@ -3626,67 +3601,67 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         ///////// EXTENDED SETTINGS ////////////////////////
         ////////////////////////////////////////////////////////
         Dialog.create("Extended settings");
-        Shift = 130;
-        Dialog.setInsets(10, Shift, 0);
-        Dialog.addCheckbox("Window to pause macro", WindowForPause);
-        Dialog.addNumber("Pause window - duration", TimeForPause, 0, 6, "msec");
-        Dialog.addNumber("Pause window - every", PauseInterval, 0, 6, "frames");
-        Dialog.addNumber("Collect Garbage - every", GarbageInterval, 0, 6, "frames");
-        Dialog.setInsets(15, 0, 3);
-        Dialog.addNumber("Fraction For Text (1/x) : ", FractionForText, 0, 3, "");
+            Shift = 130;
+            Dialog.setInsets(10, Shift, 0);
+            Dialog.addCheckbox("Window to pause macro", WindowForPause);
+            Dialog.addNumber("Pause window - duration", TimeForPause, 0, 6, "msec");
+            Dialog.addNumber("Pause window - every", PauseInterval, 0, 6, "frames");
+            Dialog.addNumber("Collect Garbage - every", GarbageInterval, 0, 6, "frames");
+            Dialog.setInsets(15, 0, 3);
+            Dialog.addNumber("Fraction For Text (1/x) : ", FractionForText, 0, 3, "");
 
-        Dialog.setInsets(15, Shift, 0);
-        Dialog.addCheckbox("Add Channel Name?", ColourName);
-        Dialog.setInsets(5, Shift, 0);
-        Dialog.addCheckbox("Add Time Stamp?", AddTime);
+            Dialog.setInsets(15, Shift, 0);
+            Dialog.addCheckbox("Add Channel Name?", ColourName);
+            Dialog.setInsets(5, Shift, 0);
+            Dialog.addCheckbox("Add Time Stamp?", AddTime);
 
-        Dialog.addChoice("Colour Timestamp:", newArray("White", "Black", "Red", "Green", "Blue", "Cyan", "Magenta", "Yellow"), ColorTime);
-        Dialog.setInsets(5, Shift, 0);
-        Dialog.addCheckbox("Add Scale Bar?", AddScaleBar);
-        Dialog.setInsets(-3, 214, 0);
-        Dialog.addCheckbox("write scale above bar", WriteBarDimensions);
-        Dialog.addNumber("width", FractionForBar, 2, 6, "(% of image)");
+            Dialog.addChoice("Colour Timestamp:", newArray("White", "Black", "Red", "Green", "Blue", "Cyan", "Magenta", "Yellow"), ColorTime);
+            Dialog.setInsets(5, Shift, 0);
+            Dialog.addCheckbox("Add Scale Bar?", AddScaleBar);
+            Dialog.setInsets(-3, 214, 0);
+            Dialog.addCheckbox("write scale above bar", WriteBarDimensions);
+            Dialog.addNumber("width", FractionForBar, 2, 6, "(% of image)");
 
-        Dialog.setInsets(5, Shift, -12);
-        Dialog.addCheckbox("Add Reference Depthcoding?", AddScaleBarZ);
-        Dialog.setInsets(-10, 190, 0);
-        Dialog.addRadioButtonGroup("Left or above ?", newArray("Left", "Top"), 1, 2, PlaceScaleBarZ);
+            Dialog.setInsets(5, Shift, -12);
+            Dialog.addCheckbox("Add Reference Depthcoding?", AddScaleBarZ);
+            Dialog.setInsets(-10, 190, 0);
+            Dialog.addRadioButtonGroup("Left or above ?", newArray("Left", "Top"), 1, 2, PlaceScaleBarZ);
 
-        Dialog.setInsets(0, Shift, 0);
-        Dialog.addCheckbox("Save Progress to Network?", SaveProgressToNetwork);
-        Dialog.setInsets(15, Shift, 0);
-        Dialog.addCheckbox("Use orignal colour instead of Glow?", SkipGlow);
-        Dialog.setInsets(0, Shift, 0);
-        Dialog.addCheckbox("Print text in GlowWindow as White?", TextInGlowIsWhite);
-        Dialog.setInsets(0, Shift, 0);
-        Dialog.addCheckbox("Processing in Upper Left", UpperLeft);
-        Dialog.setInsets(0, Shift, 0);
-        Dialog.addCheckbox("Hide Windows", Hidewindows);
+            Dialog.setInsets(0, Shift, 0);
+            Dialog.addCheckbox("Save Progress to Network?", SaveProgressToNetwork);
+            Dialog.setInsets(15, Shift, 0);
+            Dialog.addCheckbox("Use orignal colour instead of Glow?", SkipGlow);
+            Dialog.setInsets(0, Shift, 0);
+            Dialog.addCheckbox("Print text in GlowWindow as White?", TextInGlowIsWhite);
+            Dialog.setInsets(0, Shift, 0);
+            Dialog.addCheckbox("Processing in Upper Left", UpperLeft);
+            Dialog.setInsets(0, Shift, 0);
+            Dialog.addCheckbox("Hide Windows", Hidewindows);
         Dialog.show(); // !!!!!!!!!!!!!!! =========== Here We open a window to define all extended settings ===============!!!!!!!!!!!!!
 
         // !!!!!!!!!!!!!!! =========== Here We retreive all the chosen extended settings ===============!!!!!!!!!!!!!
-        WindowForPause = Dialog.getCheckbox();
-        TimeForPause = Dialog.getNumber();
-        PauseInterval = Dialog.getNumber();
-        GarbageInterval = Dialog.getNumber();
-        FractionForText = Dialog.getNumber();
+            WindowForPause = Dialog.getCheckbox();
+            TimeForPause = Dialog.getNumber();
+            PauseInterval = Dialog.getNumber();
+            GarbageInterval = Dialog.getNumber();
+            FractionForText = Dialog.getNumber();
 
-        ColourName = Dialog.getCheckbox();
-        AddTime = Dialog.getCheckbox();
+            ColourName = Dialog.getCheckbox();
+            AddTime = Dialog.getCheckbox();
 
-        ColorTime = Dialog.getChoice();
-        AddScaleBar = Dialog.getCheckbox();
-        WriteBarDimensions = Dialog.getCheckbox();
-        FractionForBar = Dialog.getNumber();
+            ColorTime = Dialog.getChoice();
+            AddScaleBar = Dialog.getCheckbox();
+            WriteBarDimensions = Dialog.getCheckbox();
+            FractionForBar = Dialog.getNumber();
 
-        AddScaleBarZ = Dialog.getCheckbox();
-        PlaceScaleBarZ = Dialog.getRadioButton();
+            AddScaleBarZ = Dialog.getCheckbox();
+            PlaceScaleBarZ = Dialog.getRadioButton();
 
-        SaveProgressToNetwork = Dialog.getCheckbox();
-        SkipGlow = Dialog.getCheckbox();
-        TextInGlowIsWhite = Dialog.getCheckbox();
-        UpperLeft = Dialog.getCheckbox();
-        Hidewindows = Dialog.getCheckbox();
+            SaveProgressToNetwork = Dialog.getCheckbox();
+            SkipGlow = Dialog.getCheckbox();
+            TextInGlowIsWhite = Dialog.getCheckbox();
+            UpperLeft = Dialog.getCheckbox();
+            Hidewindows = Dialog.getCheckbox();
         // !!!!!!!!!!!!!!! =========== Here We retreive all the chosen extended settings ===============!!!!!!!!!!!!!
         AddScaleBarZLeft = 0;
         if (AddScaleBarZ && PlaceScaleBarZ == "Left") {
@@ -4312,52 +4287,52 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                                             OutputArray[0] = "save as separate movies";
                                             OutputArray[1] = "merge in one movie"; //bp40
                                             Dialog.create(" ");
-                                            Spacing = 20;
-                                            Dialog.setInsets(0, 10, 0);
-                                            Dialog.addCheckbox("Processing Windows in upper left", UpperLeft);
-                                            Dialog.setInsets(Spacing, 10, 0);
-                                            Dialog.addCheckbox("SaveProgressToNetwork", SaveProgressToNetwork);
-                                            Dialog.setInsets(Spacing, 10, 0);
-                                            Dialog.addCheckbox("Window For Pause", WindowForPause);
-                                            Dialog.setInsets(0, 10, 0);
-                                            Dialog.addNumber("Time For Pause", TimeForPause);
-                                            Dialog.setInsets(0, 10, 0);
-                                            Dialog.addNumber("Pause Interval", PauseInterval);
-                                            Dialog.setInsets(0, 10, 0);
-                                            Dialog.addNumber("Garbage Interval", GarbageInterval);
-                                            Dialog.setInsets(0, 0, 0);
-                                            Dialog.addMessage(" ");
-                                            Dialog.setInsets(0, 10, 0);
-                                            Dialog.addString("LUT bar left or top ?", PlaceScaleBarZ);
-                                            Dialog.setInsets(Spacing, 10, 0);
-                                            Dialog.addNumber("Correct the Interval ?", Interval);
-                                            if (SplitZ[i] > 0) {
-                                                Dialog.setInsets(20, 0, 0);
-                                                Dialog.addMessage("******************************* ");
-                                                Dialog.setInsets(Spacing, 10, 0);
-                                                Dialog.addRadioButtonGroup("... and the output of these partial analyses ? ", OutputArray, 2, 1, OutputArray[1]); //bp40
+                                                Spacing = 20;
                                                 Dialog.setInsets(0, 10, 0);
-                                                Dialog.addCheckbox("analyze BOTH split AND unsplit?", SplitAndUnsplitFill);
-                                            }
+                                                Dialog.addCheckbox("Processing Windows in upper left", UpperLeft);
+                                                Dialog.setInsets(Spacing, 10, 0);
+                                                Dialog.addCheckbox("SaveProgressToNetwork", SaveProgressToNetwork);
+                                                Dialog.setInsets(Spacing, 10, 0);
+                                                Dialog.addCheckbox("Window For Pause", WindowForPause);
+                                                Dialog.setInsets(0, 10, 0);
+                                                Dialog.addNumber("Time For Pause", TimeForPause);
+                                                Dialog.setInsets(0, 10, 0);
+                                                Dialog.addNumber("Pause Interval", PauseInterval);
+                                                Dialog.setInsets(0, 10, 0);
+                                                Dialog.addNumber("Garbage Interval", GarbageInterval);
+                                                Dialog.setInsets(0, 0, 0);
+                                                Dialog.addMessage(" ");
+                                                Dialog.setInsets(0, 10, 0);
+                                                Dialog.addString("LUT bar left or top ?", PlaceScaleBarZ);
+                                                Dialog.setInsets(Spacing, 10, 0);
+                                                Dialog.addNumber("Correct the Interval ?", Interval);
+                                                if (SplitZ[i] > 0) {
+                                                    Dialog.setInsets(20, 0, 0);
+                                                    Dialog.addMessage("******************************* ");
+                                                    Dialog.setInsets(Spacing, 10, 0);
+                                                    Dialog.addRadioButtonGroup("... and the output of these partial analyses ? ", OutputArray, 2, 1, OutputArray[1]); //bp40
+                                                    Dialog.setInsets(0, 10, 0);
+                                                    Dialog.addCheckbox("analyze BOTH split AND unsplit?", SplitAndUnsplitFill);
+                                                }
 
-                                            Dialog.show;
-                                            UpperLeft = Dialog.getCheckbox();
-                                            SaveProgressToNetwork = Dialog.getCheckbox();
-                                            WindowForPause = Dialog.getCheckbox();
-                                            TimeForPause = Dialog.getNumber();
-                                            PauseInterval = Dialog.getNumber();
-                                            GarbageInterval = Dialog.getNumber();
-                                            PlaceScaleBarZ = Dialog.getString();
-                                            Interval = Dialog.getNumber();
-                                            if (SplitZ[i] > 0) {
-                                                OutputButton = Dialog.getRadioButton(); //bp37 en hieronder
-                                                if (OutputButton == OutputArray[0]) {
-                                                    PileUpChunks[i] = 0;
-                                                }
-                                                if (OutputButton == OutputArray[1]) {
-                                                    PileUpChunks[i] = 1;
-                                                }
-                                                SplitAndUnsplitFill = Dialog.getCheckbox();
+                                            Dialog.show();
+                                                UpperLeft = Dialog.getCheckbox();
+                                                SaveProgressToNetwork = Dialog.getCheckbox();
+                                                WindowForPause = Dialog.getCheckbox();
+                                                TimeForPause = Dialog.getNumber();
+                                                PauseInterval = Dialog.getNumber();
+                                                GarbageInterval = Dialog.getNumber();
+                                                PlaceScaleBarZ = Dialog.getString();
+                                                Interval = Dialog.getNumber();
+                                                if (SplitZ[i] > 0) {
+                                                    OutputButton = Dialog.getRadioButton(); //bp37 en hieronder
+                                                    if (OutputButton == OutputArray[0]) {
+                                                        PileUpChunks[i] = 0;
+                                                    }
+                                                    if (OutputButton == OutputArray[1]) {
+                                                        PileUpChunks[i] = 1;
+                                                    }
+                                                    SplitAndUnsplitFill = Dialog.getCheckbox();
                                             }
 
                                         }

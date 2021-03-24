@@ -50,9 +50,6 @@ TCPForOverruling = ""; //nw//
 Timo = 0;
 TempXtoD = 0;
 
-
-
-
 //INDEX OF MACRO:
 	//GENERAL SETTINGS
 	//FIRST DIALOG (restart? transmitted? check position?)
