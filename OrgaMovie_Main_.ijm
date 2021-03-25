@@ -45,6 +45,7 @@ input_arguments = split(passargument, "$");
         if(movie_index<10){
             movie_index = "0" + d2s(movie_index,0);
         } else	movie_index = d2s(movie_index,0);
+    run_mode = input_arguments[12];	// "queue" OR "process"
 
 print("macro initiated for movie: " + movie_index);
 print("wait for file to open");
@@ -212,7 +213,8 @@ if (nQueuedExp > 0) {
 Dialog.create("some experiments queued");
     Dialog.setInsets(0, 10, 0);
     Dialog.addMessage(Text + RestartMessage);
-    Dialog.addRadioButtonGroup("What do you want to do?", OptionArray, 4, 1, OptionArray[0]);
+    if (run_mode = "queue")			Dialog.addRadioButtonGroup("What do you want to do?", OptionArray, 4, 1, OptionArray[0]);
+    else if (run_mode = "process")	Dialog.addRadioButtonGroup("What do you want to do?", OptionArray, 4, 1, OptionArray[1]);
     Dialog.setInsets(20, 20, 0);
     Dialog.addCheckbox("Single analysis (no queuing)", QuitQueuing);
     Dialog.setInsets(-3, 20, 0);
@@ -5321,9 +5323,11 @@ if (RunAllQueued) {
 //TempDisk="F";
 QueueString = "QueueMultiple_0 ; nQueuedExp_0";
 File.saveString(QueueString, TempDisk + ":\\ANALYSIS DUMP\\Queue-info.txt");
+/*
 waitForUser(" Klaar! \n \n All (Cute) Queued Experiments Processed !! ");
 FinalJoke();
 exit(" Klaar! \n \n All (Cute) Queued Experiments Processed !! ");
+*/
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++END OF MACRO!!!!!!!!!!!!!!!!!!!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

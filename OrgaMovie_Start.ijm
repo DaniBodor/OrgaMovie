@@ -45,6 +45,8 @@ Dialog.show();
 	gamma_factor = Dialog.getNumber();
 	multiply_factor = Dialog.getNumber();
 	sec_p_frame = Dialog.getNumber();
+	
+	//THESE WILL BE SET WITHIN THIS MACRO
 	movie_index = 0;
 
 arguments = newArray(	t_step, // 0
@@ -58,7 +60,8 @@ arguments = newArray(	t_step, // 0
 						multiply_factor, // 8
 						sec_p_frame, //9
 						"filename",	 // 10
-						movie_index);	// 11
+						movie_index, // 11
+						"queue");	// 12
 
 
 
@@ -74,12 +77,13 @@ outdir = dir + "output" + File.separator;
 Macro_location = "E:\\Dani\\trial 2"+File.separator;
 
 
+// run macro for all files in "queue" mode
 for (f = 0; f < filelist.length; f++) {
 	if (endsWith(filelist[f], ".nd2")){
 		movie_index ++;
 		
-		arguments[arguments.length-2] = dir+filelist[f];
-		arguments[arguments.length-1] = movie_index;
+		arguments[10] = dir+filelist[f];
+		arguments[11] = movie_index;
 		passargument = makeArgument(arguments);
 		
 		
@@ -88,6 +92,14 @@ for (f = 0; f < filelist.length; f++) {
 }
 print("*****************queue finished");
 
+// Now re-run macro in process mode
+print("***************** entering process mode");
+arguments[12] = "process";	// run_mode = "process"
+passargument = makeArgument(arguments);
+runMacro(Macro_location + "OrgaMovie_Main_.ijm",passargument);
+
+
+print("*****************process mode finished");
 
 
 function makeArgument(arg_array){
