@@ -39,7 +39,10 @@ input_arguments = split(passargument, "(,_,)");
     multiply_factor = input_arguments[8];
     sec_p_frame = input_arguments[9];
     filename = input_arguments[10];
-
+    movie_index = d2s(input_arguments[11]);
+        if(movie_index<10){
+            movie_index = "0" + movie_index;
+        }
 
 LimitTimepointForDebugging = 0;
 TempDisk = "F"; ///////////// If the MACRO does not do all timepoints then check line 2 This is a setting to speed up testing (and I might have forgotten to reset it...)
@@ -843,8 +846,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
         StartFromi = 0;
         if (SameFile == 0) {
-            file = File.openDialog("Choose LIF-file to process");     
-            // ##DB##, file should be picked up from argument in initiating macro! 
+            //file = File.openDialog("Choose LIF-file to process");
+            file = filename;   // ##DB## picked up from input arguments
             CodedFile = replace(file, "\\\\", "SLASH");
 
             liffFile = 0;
@@ -1308,15 +1311,15 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         TCP = TransmittedChannelPresent;
         Dialog.create("Settings");
         // ##DB## need to grab these from initiating macro
-            Dialog.addString("Date experiment:", Date);
-            Dialog.addString("Name Experiment:", NameExperiment, 30); //Dialog.setInsets(top, left, bottom) 		
-            if (Interval == round(Interval)) {
+            Dialog.addString("Date experiment:", date); // ##DB## picked up from input arguments
+            Dialog.addString("Name Experiment:", prefix + movie_index);  //##DB## picked up from input arguments
+            if (t_step == round(t_step)) {
                 DecimalPlaces = 0;
             } else {
                 DecimalPlaces = 1;
             } // + figure out, whether to use decimals or not. only when interval had a decimal other than 0
             Dialog.setInsets(10, 0, 3);
-            Dialog.addNumber("Time Interval", Interval, DecimalPlaces, 5, "min");
+            Dialog.addNumber("Time Interval", t_step, DecimalPlaces, 5, "min"); //##DB## picked up from input arguments
             i = 0;
             Shift = (parseFloat(PositionChannelAmount[i]) - 1) * 22 + 22; //Assumes that the positions have the same amount as the first channel
             Dialog.setInsets(22, 0, 5)
@@ -1757,8 +1760,10 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                 waitForUser(" - Set ROI in all positions \n \n - Set Zplane in all positions \n \n - and then click OK");
             }
         } else {
-            // ##DB## call the auto crop function if wanted
-//            waitForUser("Set ROI in all positions BEFORE clicking OK");
+            if (do_autocrop){
+                A=1;    // replace this line!
+                // !!##DB##!! call the auto crop function if wanted
+            }
         }
 
         // bp
@@ -2095,6 +2100,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                     if (testWait) {
                         wait(ms);
                     }
+                    if ()
                     // ##DB## use auto last timepoint detection
                     //waitForUser("Set slider to last Timepoint to be included");
                     if (testWait) {

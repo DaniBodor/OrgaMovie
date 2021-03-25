@@ -43,6 +43,7 @@ Dialog.show();
 	multiply_factor = Dialog.getNumber();
 	sec_p_frame = Dialog.getNumber();
 
+// array name in Main = input_arguments
 arguments = newArray(	t_step, // 0
 						date, 	// 1
 						prefix,	// 2
@@ -54,7 +55,6 @@ arguments = newArray(	t_step, // 0
 						multiply_factor, // 8
 						sec_p_frame, //9
 						"filename");	// 10
-passargument = makeArgument(arguments);
 
 
 
@@ -68,9 +68,14 @@ File.makeDirectory(outdir);
 
 
 for (f = 0; f < filelist.length; f++) {
-	if endsWith(f, ".nd2"){
-
+	movie_index = 0;
+	if (endsWith(filelist[f], ".nd2")){
+		movie_index ++;
+		
 		arguments[arguments.length-1] = dir+filelist[f];
+		arguments[arguments.length-1] = movie_index;
+		//Array.print(arguments);
+		passargument = makeArgument(arguments);
 		runMacro("OrgaMovie_Main",arguments);
 	}
 }
