@@ -40,7 +40,6 @@ input_arguments = split(passargument, "(,_,)");
     multiply_factor = input_arguments[8];
     sec_p_frame = input_arguments[9];
     filename = input_arguments[10];
-<<<<<<< HEAD
     movie_index = d2s(input_arguments[11]);
         if(movie_index<10){
             movie_index = "0" + movie_index;
@@ -58,9 +57,6 @@ multiply_factor = 1.0;
 sec_p_frame = 1.3;
 filename = File.openDialog("Choose LIF-file to process");
 movie_index = "09";
-=======
-
->>>>>>> parent of 1b2228f... should be fully automated now. minor bugs need to be fixed on workstation comp
 
 LimitTimepointForDebugging = 0;
 TempDisk = "F"; ///////////// If the MACRO does not do all timepoints then check line 2 This is a setting to speed up testing (and I might have forgotten to reset it...)
@@ -1011,58 +1007,10 @@ if (Restart) { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BEGIN >>>>
             channels = count + 1;
             PositionChannelAmount[i] = channels; //The amount of channels is the channel number +1 (as channel 1 is "C=0")
         }
-<<<<<<< HEAD
         if (nd2File || tiffFile) {
             //if (nd2File) waitForUser("it's an nd2-file, so macro assumes that it is 1 channel only");
             if (tiffFile) waitForUser("it's a tiff-file, so macro assumes that it is 1 channel only");
             PositionChannelAmount[i] = 1;
-=======
-        if (AskSameLifFile && PresenceSettingsFile) {
-            Dialog.create("same life file?");
-                Dialog.addCheckbox("Same lif-file ?? ", 1);
-            //Dialog.show();
-                SameFile = Dialog.getCheckbox();
-        } else {
-            SameFile = 0;
-        } //bp	
-
-        StartFromi = 0;
-        if (SameFile == 0) {
-            file = File.openDialog("Choose LIF-file to process");     
-            // ##DB##, file should be picked up from argument in initiating macro! 
-            CodedFile = replace(file, "\\\\", "SLASH");
-
-            liffFile = 0;
-            if (endsWith(file, ".lif")) {
-                liffFile = 1;
-            }
-            tiffFile = 0;
-            if (endsWith(file, ".tif")) {
-                tiffFile = 1;
-            }
-            if (tiffFile) {
-                TransmittedChannelPresent = 0;
-                CheckPositionNumber = 0;
-                CheckPositionName = 0;
-                ReadFileName = 0;
-            }
-            nd2File = 0;
-            if (endsWith(file, ".nd2")) {
-                nd2File = 1;
-            }
-            if (nd2File) {
-                TransmittedChannelPresent = 0;
-                CheckPositionNumber = 0;
-                CheckPositionName = 0;
-                ReadFileName = 0;
-            } 
-            
-
-            open(file);
-
-            FilePathForInCase = File.directory;
-            setLocation(1, 1);
->>>>>>> parent of 1b2228f... should be fully automated now. minor bugs need to be fixed on workstation comp
         }
 
         //NORMAL, TRANSMITTED CHANNEL		
@@ -1363,7 +1311,6 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
                 LastFigureInString = u;
                 Continue = 0;
             }
-<<<<<<< HEAD
             u = u + 1;
             print("");
             print(u);
@@ -1401,50 +1348,6 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
                 Dialog.addChoice(ChannelNumber[j], ChannelColourOriginal, ChannelColour[j]);
                 Dialog.setInsets(-20, 120, 0)
                 Dialog.addString(" ", ChannelName[j], 10);
-=======
-            nFigures = LastFigureInString;
-            Date = substring(EditTitle, 0, nFigures);
-            NameExperiment = substring(EditTitle, nFigures + 1, lengthOf(EditTitle));
-        } //bp33
-
-        TCP = TransmittedChannelPresent;
-        Dialog.create("Settings");
-        // ##DB## need to grab these from initiating macro
-            Dialog.addString("Date experiment:", Date);
-            Dialog.addString("Name Experiment:", NameExperiment, 30); //Dialog.setInsets(top, left, bottom) 		
-            if (Interval == round(Interval)) {
-                DecimalPlaces = 0;
-            } else {
-                DecimalPlaces = 1;
-            } // + figure out, whether to use decimals or not. only when interval had a decimal other than 0
-            Dialog.setInsets(10, 0, 3);
-            Dialog.addNumber("Time Interval", Interval, DecimalPlaces, 5, "min");
-            i = 0;
-            Shift = (parseFloat(PositionChannelAmount[i]) - 1) * 22 + 22; //Assumes that the positions have the same amount as the first channel
-            Dialog.setInsets(22, 0, 5)
-            Dialog.addMessage("UseChannel Channel ChannelName ChannelColour");
-            for (j = 0; j < PositionChannelAmount[i]; j++) {
-                if (TransmittedChannelNumber[i] == j) {
-                    Dialog.addMessage("This Channel (" + ChannelNumber[j] + ") is the Transmitted! No settings Required!");
-                } else {
-                    Dialog.setInsets(-5, 60, -22)
-                    Dialog.addCheckbox(" ", UseChannel[j])
-                    Dialog.setInsets(-20, 100, -40.5);
-                    Dialog.addChoice(ChannelNumber[j], ChannelColourOriginal, ChannelColour[j]);
-                    Dialog.setInsets(-20, 120, 0)
-                    Dialog.addString(" ", ChannelName[j], 10);
-                }
-            }
-            Dialog.addMessage(" ");
-            Dialog.setInsets(0, 40, -10);
-            Dialog.addRadioButtonGroup("If <=2 Channels: Add depthcoding?", newArray("With", "Without"), 1, 2, UseDepthcoding);
-            Dialog.addMessage(" ");
-            Dialog.setInsets(0, 40, 0);
-            Dialog.addCheckbox("RedDeadDye", RedDeadDye);
-            if (TCP) {
-                Dialog.setInsets(5, 40, 0);
-                Dialog.addCheckbox("Time-Project Transmitted for Crop-ROI", TimeProjectTransm);
->>>>>>> parent of 1b2228f... should be fully automated now. minor bugs need to be fixed on workstation comp
             }
         }
         Dialog.addMessage(" ");
@@ -1868,12 +1771,7 @@ if (Restart) { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BEGIN >>>>
         if (TimeProjectTransm) {
             waitForUser(" Set Zplane in all positions BEFORE clicking OK \n \n (cropping comes later)");
         } else {
-<<<<<<< HEAD
             waitForUser(" - Set ROI in all positions \n \n - Set Zplane in all positions \n \n - and then click OK");
-=======
-            // ##DB## call the auto crop function if wanted
-//            waitForUser("Set ROI in all positions BEFORE clicking OK");
->>>>>>> parent of 1b2228f... should be fully automated now. minor bugs need to be fixed on workstation comp
         }
     } else {
         if (do_autocrop){
@@ -2306,7 +2204,6 @@ if (Restart) { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BEGIN >>>>
 
 } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART END >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-<<<<<<< HEAD
 // =========================================That was the ROI, LastTimepointBlack (Zslice and B&C)! Now we turn our attention to the other channels!========================================
 // =========================================That was the ROI, LastTimepointBlack (Zslice and B&C)! Now we turn our attention to the other channels!========================================
 
@@ -2390,41 +2287,6 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
                     rename("Temp_" + ChannelName[c]);
                     if (UpperLeft) {
                         setLocation(1, 1);
-=======
-                    FillFractionX = 0.6;
-                    FillFractionY = 0.6;
-                    selectWindow(transmHyperstack);
-                    run("Select None");
-                    getLocationAndSize(x0, y0, W, H);
-                    setLocation(1, 1);
-                    run("View 100%");
-                    Continue = 1;
-                    if (testWait) {
-                        wait(ms);
-                    }
-                    while (Continue) {
-                        if (W > FillFractionX * screenWidth || H > FillFractionY * screenHeight) {
-                            Continue = 0;
-                        } else {
-                            run("In [+]");
-                        }
-                        getLocationAndSize(dummy, dummy, W, H);
-                    }
-                    if (testWait) {
-                        wait(ms);
-                    }
-                    // ##DB## use auto last timepoint detection
-                    //waitForUser("Set slider to last Timepoint to be included");
-                    if (testWait) {
-                        wait(ms);
-                    }
-                    if (test) {
-                        waitForUser("_3_slice__" + slice);
-                    }
-                    print("test SetLastTimepoint 3");
-                    if (testWait) {
-                        wait(ms);
->>>>>>> parent of 1b2228f... should be fully automated now. minor bugs need to be fixed on workstation comp
                     }
                     setBatchMode(false);
                     run("Put Behind [tab]");
