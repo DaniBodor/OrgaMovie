@@ -15,14 +15,14 @@ Dialog.create("OrgaMovie Setup");
     Dialog.addString("Experiment prefix:", "Pos_");
 	Dialog.addMessage("");
 	
-	Dialog.addMessage("AUTOMATION SETTINGS:");
+	Dialog.addMessage("AUTOMATION SETTINGS (!! currently not implemented !!) ");
 	Dialog.addCheckbox("Use drift correction", 0);
-	Dialog.addCheckbox("Use auto-cropping?", 1);
+	Dialog.addCheckbox("Use auto-cropping?", 0);
 	Dialog.addCheckbox("Use auto-detection of last timepoint?", 0);
 	Dialog.addCheckbox("Use auto-detection of Z planes?", 0);
 	Dialog.addMessage("");
 
-	Dialog.addMessage("MOVIE OUTPUT SETTINGS (!! currently unused !!):");
+	Dialog.addMessage("MOVIE OUTPUT SETTINGS:");
 	Dialog.addNumber("Gamma factor:", 0.7, 1, 4,"(brings low and high intensity together)" );
     Dialog.addNumber("Multiply factor:", 1.0, 1, 4,"(for depth coded channel)" );
     Dialog.addNumber("Duration:", 1.3, 1, 4,"sec / frame");
