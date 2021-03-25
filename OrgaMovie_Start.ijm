@@ -1,7 +1,10 @@
 // Dialog settings
 getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec);
 date = "" + dayOfMonth + "-" + month+1 + "-" + year;
-Choice_time_interval_unit = newArray("sec","min","hr")
+Choice_time_interval_unit = newArray("sec","min","hr");
+
+print("\\Clear");
+
 
 Dialog.create("OrgaMovie Setup");
 	Dialog.addMessage("SETTING UP YOUR DATA STRUCTURE:");
@@ -66,30 +69,33 @@ filelist = getFileList(dir);
 
 
 outdir = dir + "output" + File.separator;
-File.makeDirectory(outdir);
+//File.makeDirectory(outdir);
+
+Macro_location = "E:\\Dani\\trial 2"+File.separator;
+
 
 for (f = 0; f < filelist.length; f++) {
-	if endsWith(f, ".nd2"){
+	if (endsWith(filelist[f], ".nd2")){
 		movie_index ++;
 		
 		arguments[arguments.length-2] = dir+filelist[f];
 		arguments[arguments.length-1] = movie_index;
 		passargument = makeArgument(arguments);
 		
-		runMacro("OrgaMovie_Main",passargument);
+		
+		runMacro(Macro_location + "OrgaMovie_Main_.ijm",passargument);
 	}
 }
-
+print("*****************queue finished");
 
 
 
 function makeArgument(arg_array){
 	string_arg = "";
-	splitter = ",_,";
+	splitter = "$";
 	for (i = 0; i < arg_array.length; i++) {
 		string_arg = string_arg + arg_array[i] + splitter;
 	}
-	string_arg = substring (string_arg,0,lengthOf(string_arg)-3);
 	return string_arg;
 }
 
