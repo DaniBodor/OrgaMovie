@@ -42,6 +42,7 @@ Dialog.show();
 	gamma_factor = Dialog.getNumber();
 	multiply_factor = Dialog.getNumber();
 	sec_p_frame = Dialog.getNumber();
+	movie_index = 0;
 
 arguments = newArray(	t_step, // 0
 						date, 	// 1
@@ -53,8 +54,9 @@ arguments = newArray(	t_step, // 0
 						gamma_factor, // 7
 						multiply_factor, // 8
 						sec_p_frame, //9
-						"filename");	// 10
-passargument = makeArgument(arguments);
+						"filename",	 // 10
+						movie_index);	// 11
+
 
 
 
@@ -66,12 +68,15 @@ filelist = getFileList(dir);
 outdir = dir + "output" + File.separator;
 File.makeDirectory(outdir);
 
-
 for (f = 0; f < filelist.length; f++) {
 	if endsWith(f, ".nd2"){
-
-		arguments[arguments.length-1] = dir+filelist[f];
-		runMacro("OrgaMovie_Main",arguments);
+		movie_index ++;
+		
+		arguments[arguments.length-2] = dir+filelist[f];
+		arguments[arguments.length-1] = movie_index;
+		passargument = makeArgument(arguments);
+		
+		runMacro("OrgaMovie_Main",passargument);
 	}
 }
 

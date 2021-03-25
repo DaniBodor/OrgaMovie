@@ -26,7 +26,7 @@
 
 // VERBETER DE SetBrightness etc....... ook CONTRAST standaardiseren
 
-/*
+
 passargument = getArgument();
 input_arguments = split(passargument, "(,_,)");
     t_step = input_arguments[0];
@@ -36,15 +36,17 @@ input_arguments = split(passargument, "(,_,)");
     do_autocrop = input_arguments[4];
     do_autotime = input_arguments[5];
     do_autoZ = input_arguments[6];
-    gamma_factor = input_arguments[7];
-    multiply_factor = input_arguments[8];
+    gamma_factor_import = input_arguments[7];
+    multiply_factor_import = input_arguments[8];
     sec_p_frame = input_arguments[9];
     filename = input_arguments[10];
     movie_index = d2s(input_arguments[11]);
         if(movie_index<10){
             movie_index = "0" + movie_index;
         }
-*/
+
+
+/*
 t_step = 3;
 date = "25-3-2021";
 prefix = "Pos_";
@@ -52,11 +54,12 @@ do_registration = 0;
 do_autocrop = 0;
 do_autotime = 0;
 do_autoZ = 0;
-gamma_factor = 0.7;
-multiply_factor = 1.0;
+gamma_factor_import = 0.7;
+multiply_factor_import = 1.0;
 sec_p_frame = 1.3;
 filename = File.openDialog("Choose LIF-file to process");
 movie_index = "09";
+*/
 
 LimitTimepointForDebugging = 0;
 TempDisk = "F"; ///////////// If the MACRO does not do all timepoints then check line 2 This is a setting to speed up testing (and I might have forgotten to reset it...)
@@ -2095,8 +2098,6 @@ if (Restart) { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BEGIN >>>>
                     // !!##DB##!! use auto last timepoint detection
                     KJNFBDIF = 1;
                 }
-                // ##DB## use auto last timepoint detection
-                //waitForUser("Set slider to last Timepoint to be included");
                 if (testWait) {
                     wait(ms);
                 }
@@ -2190,8 +2191,7 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
     //NORMAL, MAKE TEMPORARY WINDOWS FOR B&C NON-TRANSMITTED CHANNELS
     print("4e test ");
     FirstPos = 0; //bp
-    Duration = 1.3; //bp37
-    // ##DB## read duration from initiating macro
+    Duration = 1.3; //bp37  ##DB## duration from initiating macro
     for (i = StartFromi; i < PositionNumber.length; i++) {
         if (ArraySkipPositions[i] == 0) { //bp17
             //waitForUser("haalt-i dit? "+file);
@@ -2660,6 +2660,10 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
                 run("Set... ", "zoom=" + SetZoom);
                 //waitForUser("Choose the lowest and highest Zslice to be included \n (in appropriate windows) \n \n (pos " + i + 1 + " of " + PositionNumber.length + ")");
                 // ##DB## plug in auto Z-plane detection
+                if (do_autoZ){
+                    // !!##DB##!! plug in auto Z detector when ready
+
+                }
                 selectWindow(PositionNumber[i] + "_Z_Lowest");
                 Stack.getPosition(channel, slice, frame);
                 BottomZ[i] = slice;
@@ -2756,7 +2760,7 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
                                     Dialog.addMessage(" ");
 
                                     Dialog.setInsets(2, 0, 2);
-                                    Dialog.addNumber("GAMMA Factor", GammaCorrFill, 2, 8, ""); //bpp
+                                    Dialog.addNumber("GAMMA Factor", gamma_factor_import, 2, 8, ""); //bpp
                                     Dialog.setInsets(-29, 310, 0);
                                     Dialog.addCheckbox("fix", FixGammaCorr);
                                     Rounded = round(20 * GammaCorrFill);
@@ -2773,7 +2777,7 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
                                     Dialog.addMessage(" ");
 
                                     Dialog.setInsets(2, 0, 2);
-                                    Dialog.addNumber("MULTIPLY Factor", MultiplyFill, 2, 8, ""); //bpp
+                                    Dialog.addNumber("MULTIPLY Factor", multiply_factor_import, 2, 8, ""); //bpp
                                     Dialog.setInsets(-29, 310, 0);
                                     Dialog.addCheckbox("fix", FixMultiply);
                                     Rounded = round(20 * MultiplyFill);
@@ -3178,7 +3182,7 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
                                             Dialog.addMessage(" ");
 
                                             Dialog.setInsets(2, 0, 2);
-                                            Dialog.addNumber("GAMMA Factor", GammaCorrFill, 2, 8, ""); //bpp
+                                            Dialog.addNumber("GAMMA Factor", gamma_factor_import, 2, 8, ""); //bpp
                                             Dialog.setInsets(-29, 310, 0);
                                             Dialog.addCheckbox("fix", FixGammaCorr);
                                             Rounded = round(20 * GammaCorrFill);
@@ -3195,7 +3199,7 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
                                             Dialog.addMessage(" ");
 
                                             Dialog.setInsets(2, 0, 2);
-                                            Dialog.addNumber("MULTIPLY Factor", MultiplyFill, 2, 8, ""); //bpp
+                                            Dialog.addNumber("MULTIPLY Factor", multiply_factor_import, 2, 8, ""); //bpp
                                             Dialog.setInsets(-29, 310, 0);
                                             Dialog.addCheckbox("fix", FixMultiply);
                                             Rounded = round(20 * MultiplyFill);
