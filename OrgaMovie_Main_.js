@@ -26,6 +26,21 @@
 
 // VERBETER DE SetBrightness etc....... ook CONTRAST standaardiseren
 
+passargument = getArgument();
+input_arguments = split(passargument, "(,_,)");
+    t_step = input_arguments[0];
+    date = input_arguments[1];
+    prefix = input_arguments[2];
+    do_registration = input_arguments[3];
+    do_autocrop = input_arguments[4];
+    do_autotime = input_arguments[5];
+    do_autoZ = input_arguments[6];
+    gamma_factor = input_arguments[7];
+    multiply_factor = input_arguments[8];
+    sec_p_frame = input_arguments[9];
+    filename = input_arguments[10];
+
+
 LimitTimepointForDebugging = 0;
 TempDisk = "F"; ///////////// If the MACRO does not do all timepoints then check line 2 This is a setting to speed up testing (and I might have forgotten to reset it...)
 OutputDisk = "D";
@@ -1641,6 +1656,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                 getDimensions(dummy, dummy, dummy, TempnSlices, NumberOfFrames);
                 ArraynFrames[i] = NumberOfFrames;
                 ArraynSlices[i] = TempnSlices;
+            }
 
         } else { //Needed to add ROI etc to a random fluorescent channel...
             for (i = 0; i < PositionNumber.length; i++) {
@@ -4399,7 +4415,9 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                             if (minute < 10) minute = "0" + minute;
                             if (second < 10) second = "0" + second; //Adds a 0 if the number is below 10 (esthetics...)
                             drawString("That was: Position " + i + " of: " + AmountOfPositions, 10, 40);
-                            drawString("Position number in LIF file :" + PositionNumber[i] + , 10, 80);
+                            drawString("Position number in LIF file :" + PositionNumber[i], 10, 80);     
+                            // ##DB## in above line I cleared a plus from the following line, cause it probably would result in an error (even though it was present in old version): 
+                            // drawString("Position number in LIF file :" + PositionNumber[i] + , 10, 80);
                             if (CheckPositionName) drawString("Name: " + PositionName[i], 10, 80);
                             drawString("Timepoint: " + frame + " of:" + LastTimepointTemp, 10, 120);
                             drawString("Time of day: " + hour + ":" + minute + "," + second + "s " + dayOfMonth + "/" + month + "/" + year, 10, 160);

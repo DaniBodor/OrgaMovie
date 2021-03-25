@@ -43,6 +43,20 @@ Dialog.show();
 	multiply_factor = Dialog.getNumber();
 	sec_p_frame = Dialog.getNumber();
 
+arguments = newArray(	t_step, // 0
+						date, 	// 1
+						prefix,	// 2
+						do_registration, // 3 
+						do_autocrop, // 4
+						do_autotime, // 5 
+						do_autoZ,	// 6
+						gamma_factor, // 7
+						multiply_factor, // 8
+						sec_p_frame, //9
+						"filename");	// 10
+passargument = makeArgument(arguments);
+
+
 
 dir = getDirectory("Choose Directory");
 	// dir should contain all image data and the autocrop and movie assembly macro
@@ -56,15 +70,23 @@ File.makeDirectory(outdir);
 for (f = 0; f < filelist.length; f++) {
 	if endsWith(f, ".nd2"){
 
-		//open (dir+f);
-		runMacro("OrgaMovie_Autocrop");
-		runMacro("OrgaMovie_Main")
+		arguments[arguments.length-1] = dir+filelist[f];
+		runMacro("OrgaMovie_Main",arguments);
 	}
 }
 
 
 
 
+function makeArgument(arg_array){
+	string_arg = "";
+	splitter = ",_,";
+	for (i = 0; i < arg_array.length; i++) {
+		string_arg = string_arg + arg_array[i] + splitter;
+	}
+	string_arg = substring (string_arg,0,lengthOf(string_arg)-3);
+	return string_arg;
+}
 
 
 
