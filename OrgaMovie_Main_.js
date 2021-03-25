@@ -3319,7 +3319,7 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
                                             } else {
                                                 Loop = 0;
                                             }
-                                            print("printloop 2: " + Loop);;
+                                            print("printloop 2: " + Loop);
 
                                             PlayDepth = Dialog.getCheckbox();
                                             Duration = Dialog.getNumber();
@@ -3498,7 +3498,7 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
             run("Close");
         }
         print("exp " + movie_index + " added to queue");
-        exit("OK, those were the settings for Exp#" + nQueuedExp + " in the Queue \n \n Add more experiments to the queue ???????? ");
+        exit;
     }
 
     if (QueueMultiple == 0 && AlreadyShown == 0) {
