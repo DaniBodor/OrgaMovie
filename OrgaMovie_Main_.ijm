@@ -210,22 +210,22 @@ ExpForRestart = ExpWhenPreviousGotStuck;
 RestartMessage = " \n \n previous run got stuck at Exp#" + ExpWhenPreviousGotStuck + " \n \n ";
 }
 if (nQueuedExp > 0) {
-Dialog.create("some experiments queued");
-    Dialog.setInsets(0, 10, 0);
-    Dialog.addMessage(Text + RestartMessage);
-    if (run_mode = "queue")			Dialog.addRadioButtonGroup("What do you want to do?", OptionArray, 4, 1, OptionArray[0]);
-    else if (run_mode = "process")	Dialog.addRadioButtonGroup("What do you want to do?", OptionArray, 4, 1, OptionArray[1]);
-    Dialog.setInsets(20, 20, 0);
-    Dialog.addCheckbox("Single analysis (no queuing)", QuitQueuing);
-    Dialog.setInsets(-3, 20, 0);
-    Dialog.addMessage("(upon checking, queued data are perfectly safe)");
-    Dialog.setInsets(40, 10, 0);
-    Dialog.addMessage("***** BP & RO only ******");
-    Dialog.addNumber("Manipulate nQueuedExp ", nQueuedExp);
-//Dialog.show();
-    QueueFollowUp = Dialog.getRadioButton;
-    QuitQueuing = Dialog.getCheckbox();
-    nQueuedExp = Dialog.getNumber();
+	Dialog.create("some experiments queued");
+	    Dialog.setInsets(0, 10, 0);
+	    Dialog.addMessage(Text + RestartMessage);
+	    if (run_mode == "queue")			Dialog.addRadioButtonGroup("What do you want to do?", OptionArray, 4, 1, OptionArray[0]);
+	    else if (run_mode == "process")	Dialog.addRadioButtonGroup("What do you want to do?", OptionArray, 4, 1, OptionArray[1]);
+	    Dialog.setInsets(20, 20, 0);
+	    Dialog.addCheckbox("Single analysis (no queuing)", QuitQueuing);
+	    Dialog.setInsets(-3, 20, 0);
+	    Dialog.addMessage("(upon checking, queued data are perfectly safe)");
+	    Dialog.setInsets(40, 10, 0);
+	    Dialog.addMessage("***** BP & RO only ******");
+	    Dialog.addNumber("Manipulate nQueuedExp ", nQueuedExp);
+	//Dialog.show();
+	    QueueFollowUp = Dialog.getRadioButton;
+	    QuitQueuing = Dialog.getCheckbox();
+	    nQueuedExp = Dialog.getNumber();
 }
 // in all cases evaluate this :
 a = QueueMultiple;

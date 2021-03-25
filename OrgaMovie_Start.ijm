@@ -9,6 +9,7 @@ print("\\Clear");
 Dialog.create("OrgaMovie Setup");
 	Dialog.addMessage("SETTING UP YOUR DATA STRUCTURE:");
 	Dialog.addMessage("Put all your analysis data in a single folder.\nMake sure your filetype is opened in 'windowless' mode (Check README for details).\nIf you wish to skip any movies, add an underscore (i.e. _ ) in front of the filename.");
+	Dialog.addMessage("Remove all 'Queued Exp' folders and all *.txt files from the ANALYSIS DUMP before proceeding");
 	Dialog.addMessage("");
 
     Dialog.addMessage("DATA INPUT SETTINGS:");
@@ -74,7 +75,7 @@ filelist = getFileList(dir);
 outdir = dir + "output" + File.separator;
 //File.makeDirectory(outdir);
 
-Macro_location = "E:\\Dani\\trial 2"+File.separator;
+Macro_location = "C:\\Users\\j.fernandes\\Desktop\\TEST" + File.separator;
 
 
 // run macro for all files in "queue" mode
@@ -94,6 +95,7 @@ print("*****************queue finished");
 
 // Now re-run macro in process mode
 print("***************** entering process mode");
+print("this mode is untested as of 25-03-2021 and might crash")
 arguments[12] = "process";	// run_mode = "process"
 passargument = makeArgument(arguments);
 runMacro(Macro_location + "OrgaMovie_Main_.ijm",passargument);
