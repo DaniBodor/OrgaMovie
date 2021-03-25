@@ -842,59 +842,42 @@ if (Restart) { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BEGIN >>>>
 } else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART ELSE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     //NORMAL, SETTINGS	
-    AskSameLifFile = 0; //bp13
-    if (QueueMultiple == 0) {
-        AskSameLifFile = 1;
-    }
-    if (QueueMultiple && nQueuedExp == 0) {
-        AskSameLifFile = 1;
-    }
-    if (AskSameLifFile && PresenceSettingsFile) {
-        Dialog.create("same life file?");
-            Dialog.addCheckbox("Same lif-file ?? ", 0);
-        //Dialog.show();
-            SameFile = Dialog.getCheckbox();
-    } else {
-        SameFile = 0;
-    } //bp	
-
     StartFromi = 0;
-    if (SameFile == 0) {
-        //file = File.openDialog("Choose LIF-file to process");
-        file = filename;   // ##DB## picked up from input arguments
-        CodedFile = replace(file, "\\\\", "SLASH");
 
-        liffFile = 0;
-        if (endsWith(file, ".lif")) {
-            liffFile = 1;
-        }
-        tiffFile = 0;
-        if (endsWith(file, ".tif")) {
-            tiffFile = 1;
-        }
-        if (tiffFile) {
-            TransmittedChannelPresent = 0;
-            CheckPositionNumber = 0;
-            CheckPositionName = 0;
-            ReadFileName = 0;
-        }
-        nd2File = 0;
-        if (endsWith(file, ".nd2")) {
-            nd2File = 1;
-        }
-        if (nd2File) {
-            TransmittedChannelPresent = 0;
-            CheckPositionNumber = 0;
-            CheckPositionName = 0;
-            ReadFileName = 0;
-        } 
+    //file = File.openDialog("Choose LIF-file to process");
+    file = filename;   // ##DB## picked up from input arguments
+    CodedFile = replace(file, "\\\\", "SLASH");
+
+    liffFile = 0;
+    if (endsWith(file, ".lif")) {
+        liffFile = 1;
+    }
+    tiffFile = 0;
+    if (endsWith(file, ".tif")) {
+        tiffFile = 1;
+    }
+    if (tiffFile) {
+        TransmittedChannelPresent = 0;
+        CheckPositionNumber = 0;
+        CheckPositionName = 0;
+        ReadFileName = 0;
+    }
+    nd2File = 0;
+    if (endsWith(file, ".nd2")) {
+        nd2File = 1;
+    }
+    if (nd2File) {
+        TransmittedChannelPresent = 0;
+        CheckPositionNumber = 0;
+        CheckPositionName = 0;
+        ReadFileName = 0;
+    } 
         
 
         open(file);
 
         FilePathForInCase = File.directory;
         setLocation(1, 1);
-    }
 
     if (Timo == 3) {
         waitForUser("open tif");
@@ -904,13 +887,7 @@ if (Restart) { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BEGIN >>>>
 
     //Chose a file to process, this way we also set which file to use for the open commands
     //The CodedFile is required as \ marks disappear when saved to a file (required for Restart)
-    if (SameFile) {
-        CodedFile = List.get("CodedFile");
-        file = replace(CodedFile, "SLASH", "\\\\");
-        open(file);
-        FilePathForInCase = File.directory;
-        setLocation(1, 1); 
-    }
+
 
     MetadataLIF = getImageInfo(); // is a large string containing all info about the opened images
     print(MetadataLIF);
