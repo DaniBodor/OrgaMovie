@@ -105,14 +105,12 @@ TempXtoD = 0;
 	//FUNCTIONS
 
 // wegwerken : StringPreviousRun
-// dat vinkje in de restart-dialog moet nog wegT
-//QueueMultiple=1;	// kan weg toch??
+// dat vinkje in de restart-dialog moet nog weg
 
 run("Close All");
 run("Collect Garbage");
 ImageJDirectory = getDirectory("imagej");
 
-PrintToTestQueuing = 0;
 if (File.exists("D:\\ANALYSIS DUMP\\")) {
     OutputDisk = "D";
     TempDisk = "D";
@@ -128,9 +126,6 @@ if (File.exists(TempDisk + ":\\ANALYSIS DUMP\\Queue-info.txt")) {
     nQueuedExp = 1 * nQueuedExp;
 } else {
     nQueuedExp = 0;
-}
-if (PrintToTestQueuing) {
-    waitForUser("nQueuedExp_ : " + nQueuedExp + "___en testje " + 3 * nQueuedExp);
 }
 
 QueueFinished = 1;
@@ -259,10 +254,6 @@ if (RestartQueueRun) {
         ExpForRestart = Dialog.getNumber();
 }
 print("");
-if (PrintToTestQueuing) {
-    print("");
-    waitForUser("nQueuedExp=" + nQueuedExp + "___QueueMultiple=" + QueueMultiple + "___nExp=" + nExp + "___Q=" + Q + "___RunAllQueued=" + RunAllQueued + "___RestartQueuing=" + RestartQueuing + "___Restart=" + Restart);
-}
 if (RunAllQueued && LimitTimepointForDebugging > 0) {
     print("");
     waitForUser("LimitTimepointForDebugging is at " + LimitTimepointForDebugging + " \n \n do you want that ???");
@@ -275,13 +266,6 @@ if (RunAllQueued && LimitTimepointForDebugging > 0) {
 // deze for-loop gaat over de GEHELE macro !!!
 // deze for-loop gaat over de GEHELE macro !!!
 for (Exp = 1; Exp < nExp + 1; Exp++) {
-    if (PrintToTestQueuing) {
-        print("");
-        waitForUser("we zijn nu in de loop !!!!!!!!!!! RunAllQueued_" + RunAllQueued + "_______Exp" + Exp);
-        print("");
-        waitForUser("Q_:" + Q);
-    }
-    //	waitForUser(" begin vd settings-loop : Exp"+Exp+"__nExp__"+nExp);
     if (Exp == 1 && RunAllQueued) {
         QueueFinished = 0;
         RunAllQueuedString = "RunAllQueued_" + RunAllQueued + " current_Exp_" + Exp + " ; nExp_" + nExp + " ; QueueFinished_" + QueueFinished;
@@ -356,9 +340,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
     //FIRST DIALOG (restart? transmitted? check position?)
 
     if (File.exists(TempDisk + ":\\ANALYSIS DUMP\\Settings\\Settings_Previous_Exp.tif")) {
-        if (PrintToTestQueuing) {
-            waitForUser("werkt met de previous");
-        }
         PresenceSettingsFile = 1;
         open(TempDisk + ":\\ANALYSIS DUMP\\Settings\\Settings_Previous_Exp.tif"); //bpx
         info = getMetadata("info");
@@ -423,9 +404,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
     //LOAD SETTINGS		
     if (Restart) {
         if (File.exists(TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\Settings_Exp" + Exp + ".tif")) {
-            if (PrintToTestQueuing) {
-                waitForUser("regel 170 (LOAD SETTINS) ; werkt");
-            }
             open(TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\Settings_Exp" + Exp + ".tif");
             info = getMetadata("info");
             close(); //print(info);
@@ -433,9 +411,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         }
     } else {
         if (File.exists(TempDisk + ":\\ANALYSIS DUMP\\Settings\\Settings_Previous_Exp.tif")) {
-            if (PrintToTestQueuing) {
-                waitForUser("regel 170 (LOAD SETTINS) ; werkt");
-            }
             open(TempDisk + ":\\ANALYSIS DUMP\\Settings\\Settings_Previous_Exp.tif");
             info = getMetadata("info");
             close(); //print(info);
@@ -792,9 +767,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         }
         if (RestartQueueRun && FirstRoundRestart) {
             AskFromWichPos = 1;
-        }
-        if (PrintToTestQueuing) {
-            waitForUser("AskFromWichPos ___ " + AskFromWichPos + "__PositionNumber[Progress]_" + PositionNumber[Progress]);
         }
         // now the FirstRoundRestart can be set at 0, because not necessary anymore
         FirstRoundRestart = 0;
@@ -1594,9 +1566,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         if (QueueMultiple) {
             StringPreviousRun = "Q_" + Q + " ; Exp_" + WhereToSaveSettings;
             File.saveString(StringPreviousRun, TempDisk + ":\\ANALYSIS DUMP\\PreviousRun-info.txt");
-            if (PrintToTestQueuing) {
-                waitForUser("welke Exp saven we weg in de StringPreviousRun???_" + WhereToSaveSettings);
-            }
         }
 
     } // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART END >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -5206,9 +5175,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                     if (PrintLikeCrazy) {
                         getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
                         print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec COMBINE THE CHANNELS AND TRANS/DEPTHCODING 33");
-                    }
-                    if (PrintToTestQueuing) {
-                        waitForUser("Saved: [" + OutputDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\" + PRINT + "]");
                     }
                     CloseIndeed = 1;
                     if (CloseIndeed) {
