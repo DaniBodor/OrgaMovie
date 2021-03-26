@@ -101,7 +101,7 @@ Macro_location = "C:\\Users\\j.fernandes\\Desktop\\TEST" + File.separator;
 // run macro for all *.nd2 files in "queue" mode, excluding files starting with an _
 for (f = 0; f < filelist.length; f++) {
 	currfile = filelist[f];
-	if (endsWith(currfile, filetype) &! startsWith(endsWith(currfile, "_") ){
+	if (endsWith(currfile, filetype) &! endsWith(currfile, "_") ){
 		if (indexing)	movie_index = substring(currfile, lengthOf(currfile)-7, lengthOf(currfile)-4);
 		else 			movie_index ++;
 		
@@ -109,7 +109,7 @@ for (f = 0; f < filelist.length; f++) {
 		arguments[11] = movie_index;
 		passargument = makeArgument(arguments);
 		
-		
+		print("run macro in queue mode");
 		runMacro(Macro_location + "OrgaMovie_Main_.ijm",passargument);
 	}
 }
