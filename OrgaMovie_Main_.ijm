@@ -25,6 +25,8 @@
 // REMOVE !!!! DoingOtherTests EN TESTS IN FUNCTION - function TimeProjectionOnTransmitted(title,slice){
 
 // VERBETER DE SetBrightness etc....... ook CONTRAST standaardiseren
+
+
 passargument = getArgument();
 input_arguments = split(passargument, "$");
 t_step = input_arguments[0];
@@ -37,7 +39,7 @@ do_autoZ = input_arguments[6];
 gamma_factor_import = input_arguments[7];
 multiply_factor_import = input_arguments[8];
 sec_p_frame = input_arguments[9];
-filename = input_arguments[10];
+inputfilename = input_arguments[10];
 movie_index = input_arguments[11];
 if (isNaN(movie_index)) {
     movie_index = movie_index; // i.e. do nothing
@@ -46,24 +48,33 @@ if (isNaN(movie_index)) {
 } else movie_index = d2s(movie_index, 0);
 run_mode = input_arguments[12]; // "queue" OR "process"
 minOrgaSize = input_arguments[13];
+	minOrgaSize = parseInt(minOrgaSize);
 cropBoundary = input_arguments[14];
 
-print("macro initiated for movie: " + movie_index);
-print("wait for file to open");
+
 /*
 t_step = 3;
 date = "25-3-2021";
 prefix = "Pos_";
 do_registration = 0;
-do_autocrop = 0;
+do_autocrop = 1;
 do_autotime = 0;
 do_autoZ = 0;
 gamma_factor_import = 0.7;
 multiply_factor_import = 1.0;
 sec_p_frame = 1.3;
-filename = File.openDialog("Choose LIF-file to process");
+inputfilename = File.openDialog("Choose LIF-file to process");
+run_mode = "queue";
 movie_index = "09";
+minOrgaSize = 1500;
+cropBoundary = 75;
 */
+
+
+print("macro initiated for movie: " + movie_index);
+print("wait for file to open");
+run("Set Measurements...", "area mean standard min bounding stack limit redirect=None decimal=1");
+
 
 LimitTimepointForDebugging = 0;
 TempDisk = "F"; ///////////// If the MACRO does not do all timepoints then check line 2 This is a setting to speed up testing (and I might have forgotten to reset it...)
@@ -318,7 +329,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         run("Close");
     } //Reset things to prevent error
     setOption("ExpandableArrays", true); //Makes expandable arrays possible
-    run("Set Measurements...", "area mean limit redirect=None decimal=1"); //Set measurements to include mean gray
+    //run("Set Measurements...", "area mean limit redirect=None decimal=1"); //Set measurements to include mean gray
 
     // for analysis
     File.makeDirectory(TempDisk + ":\\ANALYSIS DUMP\\");
@@ -522,7 +533,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
     UnsplitStillToDo = 1;
     NowDoTheUnsplit = 0;
     SplitAndUnsplitFill = 1; //BP37
-    UpperLeft = 1;
+    UpperLeft = 0;
     GarbageInterval = 1;
     AspectChoice = AspectArray[0];
     DefineFrameRate = 0;
@@ -853,7 +864,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         StartFromi = 0;
 
         //file = File.openDialog("Choose LIF-file to process");
-        file = filename; // ##DB## picked up from input arguments
+        file = inputfilename; // ##DB## picked up from input arguments
         CodedFile = replace(file, "\\\\", "SLASH");
 
         liffFile = 0;
@@ -1945,7 +1956,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
             selectWindow(TitleOfFirstPosition);
             getLocationAndSize(XFirstPos, YFirstPos, WidthFirstPos, HeightFirstPos);
             selectWindow("B&C");
-            setLocation(XFirstPos + WidthFirstPos - 100, YFirstPos - 20);
+            //setLocation(XFirstPos + WidthFirstPos - 100, YFirstPos - 20);
             waitForUser("Set B&C for each position");
             for (a = 0; a < PositionNumber.length; a++) {
                 if (ArraySkipPositions[a] == 0) { //bp17
@@ -2280,7 +2291,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                     for (j = PositionChannelAmount[i] - 1; j >= 0; j--) {
                         c = j;
                         if (tiffFile == 0) {
-                            selectWindow(TempTitle + c);
+                            // selectWindow(TempTitle + c);	// ##DB##
                         }
                         if (tiffFile == 1) {
                             selectWindow(TempTitle);
@@ -2417,7 +2428,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         getLocationAndSize(XFirstPos, YFirstPos, WidthFirstPos, HeightFirstPos);
         print("6");
         selectWindow("B&C");
-        setLocation(XFirstPos + WidthFirstPos - 100, YFirstPos - 30);
+        //setLocation(XFirstPos + WidthFirstPos - 100, YFirstPos - 30);
 
         WhiteScreenDimension = 0.89;
 
@@ -2484,7 +2495,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                                 setLocation(screenWidth - testWidth - MarginBC, screenHeight - (testHeight * place) - MarginBC);
                                 getLocationAndSize(testX, testY, testWidth, testHeight);
                                 selectWindow("B&C");
-                                setLocation(testX - 180, testY);
+                                //setLocation(testX - 180, testY);
 
                             }
                         }
@@ -3730,23 +3741,22 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
             }
             if (SplitZ[i] == 3) {
                 nChunks = 3;
-            } //waitForUser(" process file test BottomZ_2 : "+BottomZ_2[i]);
+            }
 
             for (Chunk = 1; Chunk < nChunks + 1; Chunk++) {
-                //	print("");waitForUser("begin vd chunk-loop_______Exp :"+Exp+"_of _nExp__"+nExp +"___+__________Chunk :"+Chunk);	print("");		
                 if (TransmittedChannelPresent) {
                     c = TransmittedChannelNumber[i];
                     ChannelName[c] = "Transmitted";
                     ChannelColour[c] = "White";
                 }
                 selectWindow("Log");
-                setLocation(1, 1);
+                //setLocation(1, 1);
                 print("net voor de Bio-Formats");
                 if (RunAllQueued) {
                     tiffFile = 0;
                     if (endsWith(file, ".tif")) {
                         tiffFile = 1;
-                    } /*waitForUser("_______"+file+"__tiffFile__"+tiffFile); */
+                    }
                 }
                 if (tiffFile) {
                     run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT use_virtual_stack");
@@ -3818,9 +3828,9 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                     TempTitle = substring(TempTitle, 0, lengthOf(TempTitle) - 1);
                 }
 
-                for (j = 0; j < PositionChannelAmount[i]; j++) { // print("");waitForUser("gaan we ... ");print(""); //bp20 wat doet die je hier????
+                for (j = 0; j < PositionChannelAmount[i]; j++) {
                     if (tiffFile == 0) {
-                        selectWindow(TempTitle + j);
+                        //selectWindow(TempTitle + j);	// ##DB## DB debug --> commented out. Results in *.nd0
                     }
                     print("i__" + j + "__TempTitle__" + TempTitle);
                     if (tiffFile == 1) {
@@ -3829,7 +3839,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                     rename("Temp_" + ChannelName[j]);
                     if (UpperLeft) {
                         setLocation(1, 1);
-                    } // print("");waitForUser("ok?"); 
+                    }
                     setBatchMode(false);
                     print("i__" + j + "__rename...getTitle__" + getTitle);
                     run("Put Behind [tab]");
@@ -3982,7 +3992,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                     print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec First do Trans 21");
                 }
                 selectWindow("Log");
-                setLocation(1, 1);
+                //setLocation(1, 1);
 
                 // ===========================================================That was the Transmitted ====================================
                 //ALL, PROCESS CHANNELS
@@ -6672,6 +6682,7 @@ function PrintSettings() {
 
 
 function autoCrop(minSize, boundary) { // DB
+    run("Select None");
     // convert minSize (um) to pixel units
     getPixelSize(unit, pixelWidth, pixelHeight);
     minPixSize = minSize / (pixelWidth * pixelHeight);
@@ -6684,20 +6695,19 @@ function autoCrop(minSize, boundary) { // DB
     tprj = getTitle();
 
     // convert units of final projection for identifying region in pixel units (original movie will retain unit info) 
-    Stack.setXUnit("px");
-    Stack.setYUnit("px");
-    run("Properties...", "pixel_width=1 pixel_height=1");
-    setAutoThreshold("Yen dark");
-    run("Analyze Particles...", "size=" + minPixSize + "-Infinity display exclude clear include add");
+    run("Properties...", "unit=px pixel_width=1 pixel_height=1");
+    setAutoThreshold("Triangle dark");
+    run("Analyze Particles...", "size=" + minPixSize + "-Infinity display clear include add");
 
     // select the first ROI found (probably the biggest one)
     if (roiManager("count") > 0) {
         roiManager("select", 0);
-        x = getValue("BX") - extra_boundary;
-        y = getValue("BY") - extra_boundary;
-        width = getValue("Width") + extra_boundary * 2;
-        height = getValue("Height") + extra_boundary * 2;
-        makeRectangle(x, y, width, height)
+        run("Measure");
+        x = getResult("BX") - boundary;
+        y = getResult("BY") - boundary;
+        width = getResult("Width") + boundary * 2;
+        height = getResult("Height") + boundary * 2;
+        makeRectangle(x, y, width, height);
     }
     // in case no region is found use entire
     else {
@@ -6742,6 +6752,7 @@ function GetLUTColour(Title)
 */
 
 FirstTime = 1;
+
 for (i = 0; i < 10; i++) {
     print("i_" + i);
 

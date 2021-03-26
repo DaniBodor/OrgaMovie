@@ -5,7 +5,8 @@ Choice_time_interval_unit = newArray("sec","min","hr");
 IndexingOptions = newArray("read from file","linear");
 
 print("\\Clear");
-
+run("Close All");
+run("Collect Garbage");
 
 Dialog.create("OrgaMovie Setup");
 	Dialog.addMessage("SETTING UP YOUR DATA STRUCTURE:");
@@ -22,10 +23,9 @@ Dialog.create("OrgaMovie Setup");
 	Dialog.addMessage("");
 	
 	Dialog.addMessage("AUTOMATION SETTINGS");
-	Dialog.addMessage("currently only auto-crop is implemented");
-	Dialog.addMessage("drift-correction is the next thing to work on");
+	Dialog.addMessage("Currently only auto-crop is implemented.\nNext I'm gonna work on drift-correction.");
 	Dialog.addCheckbox("Use drift correction", 0);
-	Dialog.addCheckbox("Use auto-cropping?", 0);
+	Dialog.addCheckbox("Use auto-cropping?", 1);
 	Dialog.addCheckbox("Use auto-detection of last timepoint?", 0);
 	Dialog.addCheckbox("Use auto-detection of Z planes?", 0);
 	Dialog.addCheckbox("Change default automation settings?", 0);
@@ -60,13 +60,12 @@ Dialog.show();
 Dialog.create("Automation Settings");
 	Dialog.addMessage("Auto-crop settings:")
 	Dialog.addNumber("Minimum organoid size:", 1500, 0, 4, "um2");
-	Dialog.addNumber("Boundary around square:", 50, 0, 4, "pixels");
+	Dialog.addNumber("Boundary around square:", 75, 0, 4, "pixels");
 if (autoSettings) {
 	Dialog.show();
 }
 	minOrgaSize = Dialog.getNumber();
 	cropBoundary = Dialog.getNumber();
-
 
 arguments = newArray(	t_step, // 0
 						date, 	// 1
@@ -101,23 +100,26 @@ Macro_location = "C:\\Users\\j.fernandes\\Desktop\\TEST" + File.separator;
 // run macro for all *.nd2 files in "queue" mode, excluding files starting with an _
 for (f = 0; f < filelist.length; f++) {
 	currfile = filelist[f];
-	if (endsWith(currfile, filetype) &! endsWith(currfile, "_") ){
+	if (endsWith(currfile, filetype) &! startsWith(currfile, "_") )  {
 		if (indexing)	movie_index = substring(currfile, lengthOf(currfile)-7, lengthOf(currfile)-4);
 		else 			movie_index ++;
 		
 		arguments[10] = dir+currfile;
 		arguments[11] = movie_index;
 		passargument = makeArgument(arguments);
-		
-		print("run macro in queue mode");
+
+		//Array.print(arguments);
+		print("run macro in queue mode on movie: " + movie_index);
+		run("Collect Garbage");
 		runMacro(Macro_location + "OrgaMovie_Main_.ijm",passargument);
+		run("Collect Garbage");
 	}
 }
 print("*****************queue finished");
 
 // Now re-run macro in process mode
 print("***************** entering process mode");
-print("this mode is untested as of 25-03-2021 and might crash")
+print("this mode is untested as of 25-03-2021 and might crash");
 arguments[12] = "process";	// run_mode = "process"
 passargument = makeArgument(arguments);
 runMacro(Macro_location + "OrgaMovie_Main_.ijm",passargument);
