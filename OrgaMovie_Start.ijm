@@ -11,22 +11,24 @@ Dialog.create("OrgaMovie Setup");
 	Dialog.addMessage("SETTING UP YOUR DATA STRUCTURE:");
 	Dialog.addMessage("Put all your analysis data in a single folder.\nMake sure your filetype is opened in 'windowless' mode (Check README for details).\nIf you wish to skip any movies, add an underscore (i.e. _ ) in front of the filename.");
 	Dialog.addMessage("Remove all 'Queued Exp' folders and all *.txt files from the ANALYSIS DUMP before proceeding");
-	Dialog.addString("Filetype extension", "nd2");
 	Dialog.addMessage("");
 
     Dialog.addMessage("DATA INPUT SETTINGS:");
+    Dialog.addString("Filetype extension", "nd2");
     Dialog.addNumber("Time interval:", 3, 0, 2, "min");
     //    Dialog.addChoice("Time interval unit", Choice_time_interval_unit[1])
     Dialog.addString("Date experiment:", date);
     Dialog.addString("Experiment prefix:", "Pos_");
 	Dialog.addMessage("");
 	
-	Dialog.addMessage("AUTOMATION SETTINGS (!! currently not implemented !!) ");
+	Dialog.addMessage("AUTOMATION SETTINGS");
+	Dialog.addMessage("currently only auto-crop is implemented");
+	Dialog.addMessage("drift-correction is the next thing to work on");
 	Dialog.addCheckbox("Use drift correction", 0);
 	Dialog.addCheckbox("Use auto-cropping?", 0);
 	Dialog.addCheckbox("Use auto-detection of last timepoint?", 0);
 	Dialog.addCheckbox("Use auto-detection of Z planes?", 0);
-	Dialog.addCheckbox("Change default automation settings?", 1);
+	Dialog.addCheckbox("Change default automation settings?", 0);
 	Dialog.addMessage("");
 
 	Dialog.addMessage("MOVIE OUTPUT SETTINGS:");
