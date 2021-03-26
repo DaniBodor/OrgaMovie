@@ -27,8 +27,9 @@
 // VERBETER DE SetBrightness etc....... ook CONTRAST standaardiseren
 
 
+
 passargument = getArgument();
-input_arguments = split(passargument, "(,_,)");
+input_arguments = split(passargument, "$");
     t_step = input_arguments[0];
     date = input_arguments[1];
     prefix = input_arguments[2];
@@ -40,12 +41,14 @@ input_arguments = split(passargument, "(,_,)");
     multiply_factor_import = input_arguments[8];
     sec_p_frame = input_arguments[9];
     filename = input_arguments[10];
-    movie_index = d2s(input_arguments[11]);
+    movie_index = input_arguments[11];
         if(movie_index<10){
-            movie_index = "0" + movie_index;
-        }
+            movie_index = "0" + d2s(movie_index,0);
+        } else	movie_index = d2s(movie_index,0);
+    run_mode = input_arguments[12];	// "queue" OR "process"
 
-
+print("macro initiated for movie: " + movie_index);
+print("wait for file to open");
 /*
 t_step = 3;
 date = "25-3-2021";
@@ -207,21 +210,22 @@ ExpForRestart = ExpWhenPreviousGotStuck;
 RestartMessage = " \n \n previous run got stuck at Exp#" + ExpWhenPreviousGotStuck + " \n \n ";
 }
 if (nQueuedExp > 0) {
-Dialog.create("some experiments queued");
-    Dialog.setInsets(0, 10, 0);
-    Dialog.addMessage(Text + RestartMessage);
-    Dialog.addRadioButtonGroup("What do you want to do?", OptionArray, 4, 1, OptionArray[0]);
-    Dialog.setInsets(20, 20, 0);
-    Dialog.addCheckbox("Single analysis (no queuing)", QuitQueuing);
-    Dialog.setInsets(-3, 20, 0);
-    Dialog.addMessage("(upon checking, queued data are perfectly safe)");
-    Dialog.setInsets(40, 10, 0);
-    Dialog.addMessage("***** BP & RO only ******");
-    Dialog.addNumber("Manipulate nQueuedExp ", nQueuedExp);
-//Dialog.show();
-    QueueFollowUp = Dialog.getRadioButton;
-    QuitQueuing = Dialog.getCheckbox();
-    nQueuedExp = Dialog.getNumber();
+	Dialog.create("some experiments queued");
+	    Dialog.setInsets(0, 10, 0);
+	    Dialog.addMessage(Text + RestartMessage);
+	    if (run_mode == "queue")			Dialog.addRadioButtonGroup("What do you want to do?", OptionArray, 4, 1, OptionArray[0]);
+	    else if (run_mode == "process")	Dialog.addRadioButtonGroup("What do you want to do?", OptionArray, 4, 1, OptionArray[1]);
+	    Dialog.setInsets(20, 20, 0);
+	    Dialog.addCheckbox("Single analysis (no queuing)", QuitQueuing);
+	    Dialog.setInsets(-3, 20, 0);
+	    Dialog.addMessage("(upon checking, queued data are perfectly safe)");
+	    Dialog.setInsets(40, 10, 0);
+	    Dialog.addMessage("***** BP & RO only ******");
+	    Dialog.addNumber("Manipulate nQueuedExp ", nQueuedExp);
+	//Dialog.show();
+	    QueueFollowUp = Dialog.getRadioButton;
+	    QuitQueuing = Dialog.getCheckbox();
+	    nQueuedExp = Dialog.getNumber();
 }
 // in all cases evaluate this :
 a = QueueMultiple;
@@ -2498,7 +2502,7 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
                         setMinAndMax(minTemp, max);
                         selectWindow("B&C");
                     } //bp43
-                    waitForUser("Set B&C for position " + w + 1 + " (of " + PositionNumber.length + ")"); //bp14 //RO2
+                    //waitForUser("Set B&C for position " + w + 1 + " (of " + PositionNumber.length + ")"); //bp14 //RO2
 
                     for (c = 0; c < PositionChannelAmount[w]; c++) {
                         if (UseChannel[c]) {
@@ -2509,7 +2513,7 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
                         }
                     }
                 }
-            } // vd for
+            } 
             selectWindow(WhiteScreen);
             close();
             run("Tile");
@@ -3501,7 +3505,7 @@ if (Restart) {} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BE
             selectWindow("B&C");
             run("Close");
         }
-        print("exp " + movie_index + " added to queue");
+        print("movie " + movie_index + " added to queue");
         exit;
     }
 
@@ -5319,9 +5323,11 @@ if (RunAllQueued) {
 //TempDisk="F";
 QueueString = "QueueMultiple_0 ; nQueuedExp_0";
 File.saveString(QueueString, TempDisk + ":\\ANALYSIS DUMP\\Queue-info.txt");
+/*
 waitForUser(" Klaar! \n \n All (Cute) Queued Experiments Processed !! ");
 FinalJoke();
 exit(" Klaar! \n \n All (Cute) Queued Experiments Processed !! ");
+*/
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++END OF MACRO!!!!!!!!!!!!!!!!!!!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
