@@ -6743,11 +6743,11 @@ function GetLUTColour(Title)
 
 FirstTime = 1;
 for (i = 0; i < 10; i++) {
-print("i_" + i);
+    print("i_" + i);
 
-if (i == 6 && FirstTime) {
-    i = i - 1;
-    FirstTime = 0;
-}
+    if (i == 6 && FirstTime) {
+        i = i - 1;
+        FirstTime = 0;
+    }
 }
 selectWindow("Log");
