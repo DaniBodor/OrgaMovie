@@ -46,6 +46,8 @@ input_arguments = split(passargument, "$");
             movie_index = "0" + d2s(movie_index,0);
         } else	movie_index = d2s(movie_index,0);
     run_mode = input_arguments[12];	// "queue" OR "process"
+    minOrgaSize = input_arguments[13];
+    cropBoundary = input_arguments[14];
 
 print("macro initiated for movie: " + movie_index);
 print("wait for file to open");
@@ -1759,8 +1761,7 @@ if (Restart) { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART BEGIN >>>>
         }
     } else {
         if (do_autocrop){
-            A=1;    // replace this line!
-            // !!##DB##!! call the auto crop function if wanted
+            autoCrop(minOrgaSize, cropBoundary);    // function defined by ##DB##
         }
     }
 
@@ -6665,6 +6666,49 @@ function PrintSettings() {
         }
     }
 }
+
+
+function autoCrop(minSize, boundary){   // DB
+    // convert minSize (um) to pixel units
+    getPixelSize(unit, pixelWidth, pixelHeight);
+    minPixSize = minSize/(pixelWidth*pixelHeight);
+
+    // project 4D image into 2D (all slices, all timepoints)
+    ori = getTitle();
+    run("Z Project...", "projection=[Max Intensity] all");	// z-projection on all timepoints
+    zprj = getTitle();
+    run("Z Project...", "projection=[Max Intensity]"); // project all timepoints into single image
+    tprj = getTitle();
+
+    // convert units of final projection for identifying region in pixel units (original movie will retain unit info) 
+    Stack.setXUnit("px");	
+    Stack.setYUnit("px");
+    run("Properties...", "pixel_width=1 pixel_height=1");
+    setAutoThreshold("Yen dark");
+    run("Analyze Particles...", "size="+minPixSize+"-Infinity display exclude clear include add");
+
+    // select the first ROI found (probably the biggest one)
+    if( roiManager("count") > 0){
+        roiManager("select", 0);
+        x = getValue("BX") - extra_boundary;
+        y = getValue("BY") - extra_boundary;
+        width = getValue("Width") + extra_boundary*2;
+        height = getValue("Height") + extra_boundary*2;
+        makeRectangle(x, y, width, height)
+    }
+    // in case no region is found use entire
+    else {
+        run("Select All");
+    }
+
+    // recreate ROI on original movie and close projections
+    selectImage(ori);
+    run("Restore Selection");
+
+    close(zprj);
+    close(tprj);
+}
+
 
 //BP37
 

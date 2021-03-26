@@ -24,6 +24,7 @@ Dialog.create("OrgaMovie Setup");
 	Dialog.addCheckbox("Use auto-cropping?", 0);
 	Dialog.addCheckbox("Use auto-detection of last timepoint?", 0);
 	Dialog.addCheckbox("Use auto-detection of Z planes?", 0);
+	Dialog.addCheckbox("Change default automation settings?", 1);
 	Dialog.addMessage("");
 
 	Dialog.addMessage("MOVIE OUTPUT SETTINGS:");
@@ -42,6 +43,7 @@ Dialog.show();
 	do_autocrop = Dialog.getCheckbox();
 	do_autotime = Dialog.getCheckbox();
 	do_autoZ    = Dialog.getCheckbox();
+	autoSettings = Dialog.getCheckbox();		///vhdsiuvgshd
 	//MOVIE OUTPUT SETTINGS
 	gamma_factor = Dialog.getNumber();
 	multiply_factor = Dialog.getNumber();
@@ -49,6 +51,18 @@ Dialog.show();
 	
 	//THESE WILL BE SET WITHIN THIS MACRO
 	movie_index = 0;
+
+
+Dialog.create("Automation Settings");
+	Dialog.addMessage("Auto-crop settings:")
+	Dialog.addNumber("Minimum organoid size:", 1500, 0, 4, "um2");
+	Dialog.addNumber("Boundary around square:", 50, 0, 4, "pixels");
+if (autoSettings) {
+	Dialog.show();
+}
+	minOrgaSize = Dialog.getNumber();
+	cropBoundary = Dialog.getNumber();
+
 
 arguments = newArray(	t_step, // 0
 						date, 	// 1
@@ -62,7 +76,9 @@ arguments = newArray(	t_step, // 0
 						sec_p_frame, //9
 						"filename",	 // 10
 						movie_index, // 11
-						"queue");	// 12
+						"queue",	// 12
+						minOrgaSize, // 13
+						cropBoundary); // 14
 
 
 
