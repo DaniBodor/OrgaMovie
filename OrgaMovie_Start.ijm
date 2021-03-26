@@ -23,11 +23,10 @@ Dialog.create("OrgaMovie Setup");
 	Dialog.addMessage("");
 	
 	Dialog.addMessage("AUTOMATION SETTINGS");
-	Dialog.addMessage("Currently only auto-crop is implemented.\nNext I'm gonna work on drift-correction.");
-	Dialog.addCheckbox("Use drift correction", 0);
+	Dialog.addCheckbox("Use drift correction (adds ~10-15 min processing time per movie)", 0);
 	Dialog.addCheckbox("Use auto-cropping?", 1);
-	Dialog.addCheckbox("Use auto-detection of last timepoint?", 0);
-	Dialog.addCheckbox("Use auto-detection of Z planes?", 0);
+	Dialog.addCheckbox("Use auto-detection of last timepoint? (not implemented)", 0);
+	Dialog.addCheckbox("Use auto-detection of Z planes? (not implemented)", 0);
 	Dialog.addCheckbox("Change default automation settings?", 0);
 	Dialog.addMessage("");
 
