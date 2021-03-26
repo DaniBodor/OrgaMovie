@@ -42,7 +42,10 @@ input_arguments = split(passargument, "$");
     sec_p_frame = input_arguments[9];
     filename = input_arguments[10];
     movie_index = input_arguments[11];
-        if(movie_index<10){
+        if (isNaN( movie_index )){
+            movie_index = movie_index;  // i.e. do nothing
+        }
+        else if (movie_index < 10) {
             movie_index = "0" + d2s(movie_index,0);
         } else	movie_index = d2s(movie_index,0);
     run_mode = input_arguments[12];	// "queue" OR "process"

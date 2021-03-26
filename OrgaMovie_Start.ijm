@@ -2,6 +2,7 @@
 getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec);
 date = "" + dayOfMonth + "-" + month+1 + "-" + year;
 Choice_time_interval_unit = newArray("sec","min","hr");
+IndexingOptions = newArray("read from file","linear");
 
 print("\\Clear");
 
@@ -10,6 +11,7 @@ Dialog.create("OrgaMovie Setup");
 	Dialog.addMessage("SETTING UP YOUR DATA STRUCTURE:");
 	Dialog.addMessage("Put all your analysis data in a single folder.\nMake sure your filetype is opened in 'windowless' mode (Check README for details).\nIf you wish to skip any movies, add an underscore (i.e. _ ) in front of the filename.");
 	Dialog.addMessage("Remove all 'Queued Exp' folders and all *.txt files from the ANALYSIS DUMP before proceeding");
+	Dialog.addString("Filetype extension", "nd2");
 	Dialog.addMessage("");
 
     Dialog.addMessage("DATA INPUT SETTINGS:");
@@ -31,11 +33,12 @@ Dialog.create("OrgaMovie Setup");
 	Dialog.addNumber("Gamma factor:", 0.7, 1, 4,"(brings low and high intensity together)" );
     Dialog.addNumber("Multiply factor:", 1.0, 1, 4,"(for depth coded channel)" );
     Dialog.addNumber("Duration:", 1.3, 1, 4,"sec / frame");
+    Dialog.addChoice("Index by:", IndexingOptions, IndexingOptions[0]);
     
 Dialog.show();    
     // DATA INPUT SETTINGS
+    filetype = Dialog.getString();
     t_step = Dialog.getNumber();	// min
-    // t_unit = Dialog.getChoice();
     date = Dialog.getString();
     prefix = Dialog.getString();	
 	// AUTOMATION SETTINGS
@@ -48,9 +51,8 @@ Dialog.show();
 	gamma_factor = Dialog.getNumber();
 	multiply_factor = Dialog.getNumber();
 	sec_p_frame = Dialog.getNumber();
-	
-	//THESE WILL BE SET WITHIN THIS MACRO
-	movie_index = 0;
+	indexing = Dialog.getChoice();
+		movie_index = 0;
 
 
 Dialog.create("Automation Settings");
@@ -94,12 +96,14 @@ outdir = dir + "output" + File.separator;
 Macro_location = "C:\\Users\\j.fernandes\\Desktop\\TEST" + File.separator;
 
 
-// run macro for all files in "queue" mode
+// run macro for all *.nd2 files in "queue" mode, excluding files starting with an _
 for (f = 0; f < filelist.length; f++) {
-	if (endsWith(filelist[f], ".nd2")){
-		movie_index ++;
+	currfile = filelist[f];
+	if (endsWith(currfile, filetype) &! startsWith(endsWith(currfile, "_") ){
+		if (indexing)	movie_index = substring(currfile, lengthOf(currfile)-7, lengthOf(currfile)-4);
+		else 			movie_index ++;
 		
-		arguments[10] = dir+filelist[f];
+		arguments[10] = dir+currfile;
 		arguments[11] = movie_index;
 		passargument = makeArgument(arguments);
 		
