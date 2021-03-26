@@ -5374,541 +5374,537 @@ exit(" Klaar! \n \n All (Cute) Queued Experiments Processed !! ");
 
 // define splitZslice		
 function splitZslice(title, UitgekozenZplaneVoorTransmitted) {
-//setBatchMode(Hidewindows);
-selectWindow(title);
-Stack.setPosition(1, UitgekozenZplaneVoorTransmitted, 1); // waitForUser("in de function "+getTitle);
-run("Reduce Dimensionality...", " frames"); // waitForUser("2222 in de function "+getTitle);
-// 	if(Singletimepoint[i]!=1) {rename(title);}	//RO 0204 gave errors when processing large tilescans (and not required, is it actually required for normal scans? == virtual vs non-virtual...)
-//rename(title); //waitForUser("kijk");	// extract one Zslice, keep is off, we don't need it anymore!
-//setBatchMode(false); 		
+    selectWindow(title);
+    Stack.setPosition(1, UitgekozenZplaneVoorTransmitted, 1); 
+    run("Reduce Dimensionality...", " frames"); 
 }
 
 // define cropToROI		
 function cropToROI(title) {
-selectWindow(title);
-makeRectangle(ROIx1, ROIy1, ROIx2, ROIy2);
-run("Crop");
+    selectWindow(title);
+    makeRectangle(ROIx1, ROIy1, ROIx2, ROIy2);
+    run("Crop");
 }
 
 //define make rectangle and select halfway Z
 //define make rectangle and select halfway Z
 function drawROI(title) {
-selectWindow(title);
-run("Select None");
-getDimensions(x, y, ch, nZplanes, NumberOfFrames);
-ZHalfwayStack = round(0.5 * nZplanes);
-print("ZHalfwayStack : " + ZHalfwayStack);
-// make rectangle 
-XCoordinate = round(0.1 * x);
-YCoordinate = round(0.1 * y);
-Width = round(0.8 * x);
-Height = round(0.8 * y);
-makeRectangle(XCoordinate, YCoordinate, Width, Height);
+    selectWindow(title);
+    run("Select None");
+    getDimensions(x, y, ch, nZplanes, NumberOfFrames);
+    ZHalfwayStack = round(0.5 * nZplanes);
+    print("ZHalfwayStack : " + ZHalfwayStack);
+    // make rectangle 
+    XCoordinate = round(0.1 * x);
+    YCoordinate = round(0.1 * y);
+    Width = round(0.8 * x);
+    Height = round(0.8 * y);
+    makeRectangle(XCoordinate, YCoordinate, Width, Height);
 }
 
 function TimeProjectionOnTransmitted(title, slice) {
 
-test1 = 0;
-if (test1) {
-    waitForUser("start function");
-}
-test2 = 0;
-if (test2) {
-    wait(400);
-}
-test3 = 0;
-if (test3) {
-    run("Collect Garbage");
-}
-test4 = 0;
-if (test4) {
-    wait(500);
-    run("Collect Garbage");
-}
-
-selectWindow(title);
-run("Select None");
-if (testWait) {
-    wait(ms);
-}
-getDimensions(dummy, dummy, dummy, nZplanes, nTimepoints);
-if (testWait) {
-    wait(ms);
-}
-//RO 0704	waitForUser("slice : "+slice+"___nZplanes___"+nZplanes);
-Step = floor(nTimepoints / nFramesForTimeProject);
-SubstackString = "";
-Comma = ",";
-for (i = 0; i < nFramesForTimeProject; i++) {
-    NextFrame = 1 + i * Step;
-    if (i == nFramesForTimeProject - 1) {
-        Comma = "";
+    test1 = 0;
+    if (test1) {
+        waitForUser("start function");
     }
-    SubstackString = SubstackString + d2s(NextFrame, 0) + Comma;
-}
-wait(200);
-selectWindow(title);
-run("Make Substack...", "slices=" + slice + " frames=" + SubstackString);
-rename("Substack");
-if (testWait) {
-    wait(ms);
-}
-run("Z Project...", "projection=[Sum Slices]");
-rename(title + "_Time-Projected");
-selectWindow("Substack");
-close();
-if (testWait) {
-    wait(ms);
-}
-selectWindow(title);
-Stack.setPosition(1, slice, TIMEPOINTS);
-if (testWait) {
-    wait(ms);
-}
-if (test1) {
-    waitForUser("END function");
-}
+    test2 = 0;
+    if (test2) {
+        wait(400);
+    }
+    test3 = 0;
+    if (test3) {
+        run("Collect Garbage");
+    }
+    test4 = 0;
+    if (test4) {
+        wait(500);
+        run("Collect Garbage");
+    }
+
+    selectWindow(title);
+    run("Select None");
+    if (testWait) {
+        wait(ms);
+    }
+    getDimensions(dummy, dummy, dummy, nZplanes, nTimepoints);
+    if (testWait) {
+        wait(ms);
+    }
+    //RO 0704	waitForUser("slice : "+slice+"___nZplanes___"+nZplanes);
+    Step = floor(nTimepoints / nFramesForTimeProject);
+    SubstackString = "";
+    Comma = ",";
+    for (i = 0; i < nFramesForTimeProject; i++) {
+        NextFrame = 1 + i * Step;
+        if (i == nFramesForTimeProject - 1) {
+            Comma = "";
+        }
+        SubstackString = SubstackString + d2s(NextFrame, 0) + Comma;
+    }
+    wait(200);
+    selectWindow(title);
+    run("Make Substack...", "slices=" + slice + " frames=" + SubstackString);
+    rename("Substack");
+    if (testWait) {
+        wait(ms);
+    }
+    run("Z Project...", "projection=[Sum Slices]");
+    rename(title + "_Time-Projected");
+    selectWindow("Substack");
+    close();
+    if (testWait) {
+        wait(ms);
+    }
+    selectWindow(title);
+    Stack.setPosition(1, slice, TIMEPOINTS);
+    if (testWait) {
+        wait(ms);
+    }
+    if (test1) {
+        waitForUser("END function");
+    }
 
 }
 
 //define subtract background function
 //define subtract background function
 function substractDeadMask(TitleDead, TitleNuclei) {
-setBatchMode(Hidewindows);
-selectWindow(TitleNuclei);
-Zstack = nSlices();
-for (i = 1; i < Zstack; i++) {
-    selectWindow(TitleDead);
-    setSlice(i);
-    run("Create Selection");
+    setBatchMode(Hidewindows);
     selectWindow(TitleNuclei);
-    setSlice(i);
-    run("Restore Selection");
-    run("Clear", "slice");
-}
-close(TitleDead);
-setBatchMode(false);
+    Zstack = nSlices();
+    for (i = 1; i < Zstack; i++) {
+        selectWindow(TitleDead);
+        setSlice(i);
+        run("Create Selection");
+        selectWindow(TitleNuclei);
+        setSlice(i);
+        run("Restore Selection");
+        run("Clear", "slice");
+    }
+    close(TitleDead);
+    setBatchMode(false);
 }
 
 // define removeNoise
 // define removeNoise		Median Blur removes some noise, without blurring too much.
 function removeNoise(Title) {
-setBatchMode(Hidewindows);
-setBatchMode(Hidewindows);
-selectWindow(Title);
-run("Median...", "radius=0.7 stack");
-setBatchMode(false);
+    setBatchMode(Hidewindows);
+    setBatchMode(Hidewindows);
+    selectWindow(Title);
+    run("Median...", "radius=0.7 stack");
+    setBatchMode(false);
 }
 
 // define Ch2Mask	
 // define Ch2Mask	Thresholding Ch2 Image for substraction		//first get, save and load cutoff	DeadMask(TitleDead)		substractDeadMask(TitleDead,TitleNuclei)
 function DeadMask(TitleDead, cutoff) {
-setBatchMode(Hidewindows);
-selectWindow(TitleDead);
-setThreshold(cutoff, 255);
-run("Convert to Mask", "method=Default background=Dark");
-setBatchMode(false);
+    setBatchMode(Hidewindows);
+    selectWindow(TitleDead);
+    setThreshold(cutoff, 255);
+    run("Convert to Mask", "method=Default background=Dark");
+    setBatchMode(false);
 }
 
 // define splitTimepoints
 // define splitTimepoints
 function splitTimepoint(Title, Start, End) {
-setBatchMode(Hidewindows);
-selectWindow(Title);
-id = getTitle(); // remember the original hyperstack
+    setBatchMode(Hidewindows);
+    selectWindow(Title);
+    id = getTitle(); // remember the original hyperstack
 
-for (frame = Start; frame <= End; frame++) { // for each frame...
-    selectImage(id); // select the frame
-    Stack.setPosition(1, 1, frame);
-    run("Reduce Dimensionality...", "channels slices keep"); // extract one frame
-    rename(Title + "_" + frame);
-    cropToROI(Title + "_" + frame);
-    print(Title + "_" + frame + " -van- " + End);
-    setBatchMode(false);
-}
+    for (frame = Start; frame <= End; frame++) { // for each frame...
+        selectImage(id); // select the frame
+        Stack.setPosition(1, 1, frame);
+        run("Reduce Dimensionality...", "channels slices keep"); // extract one frame
+        rename(Title + "_" + frame);
+        cropToROI(Title + "_" + frame);
+        print(Title + "_" + frame + " -van- " + End);
+        setBatchMode(false);
+    }
 }
 
 //	Delete slices first x for Ch2 last x for Ch4 not used at the moment
 function CorrectZ(ChromaticAberration) {
-setBatchMode(Hidewindows);
-for (amount = 1; amount <= ChromaticAberration; amount++) {
-    selectWindow(TitleCh2);
-    setSlice(1);
-    run("Delete Slice");
-    selectWindow(TitleCh4);
-    getDimensions(dummy, dummy, dummy, Z, dummy);
-    setSlice(Z);
-    run("Delete Slice");
-}
-setBatchMode(false);
+    setBatchMode(Hidewindows);
+    for (amount = 1; amount <= ChromaticAberration; amount++) {
+        selectWindow(TitleCh2);
+        setSlice(1);
+        run("Delete Slice");
+        selectWindow(TitleCh4);
+        getDimensions(dummy, dummy, dummy, Z, dummy);
+        setSlice(Z);
+        run("Delete Slice");
+    }
+    setBatchMode(false);
 }
 
 function RemoveBottomZ(Title) {
-setBatchMode(Hidewindows);
-for (amount = 1; amount <= DeleteBottomZ; amount++) {
-    selectWindow(Title);
-    setSlice(1);
-    run("Delete Slice");
-}
-setBatchMode(false);
-}
+    setBatchMode(Hidewindows);
+    for (amount = 1; amount <= DeleteBottomZ; amount++) {
+        selectWindow(Title);
+        setSlice(1);
+        run("Delete Slice");
+    }
+    setBatchMode(false);
+    }
 
-function RemoveTopZ(Title) {
-setBatchMode(Hidewindows);
-for (amount = 1; amount <= DeleteTopZ; amount++) {
-    selectWindow(Title);
+    function RemoveTopZ(Title) {
+    setBatchMode(Hidewindows);
+    for (amount = 1; amount <= DeleteTopZ; amount++) {
+        selectWindow(Title);
 
-    getDimensions(dummy, dummy, dummy, Z, dummy);
-    setSlice(Z);
-    run("Delete Slice");
-}
-setBatchMode(false);
+        getDimensions(dummy, dummy, dummy, Z, dummy);
+        setSlice(Z);
+        run("Delete Slice");
+    }
+    setBatchMode(false);
 }
 
 // Define Make projections// Define Make projections
 // Define Make projections
 function MakeProjections(Title) {
-setBatchMode(Hidewindows);
-selectWindow(Title);
-Zstack = nSlices();
-selectWindow(Title);
-run("Select None");
-if (UpperLeft) {
-    setLocation(1, 1);
-}
-
-//bp21
-if (SplitZ[i] == 0) {
-    GammaCorrApply = GammaCorr[i];
-    MultiplyApply = MultiplyBeforeDepthcoding[i];
-}
-if (SplitZ[i] > 0 && Chunk == 1) {
-    GammaCorrApply = GammaCorr_1[i];
-    MultiplyApply = MultiplyBeforeDepthcoding_1[i];
-}
-if (SplitZ[i] > 0 && Chunk == 2) {
-    GammaCorrApply = GammaCorr_2[i];
-    MultiplyApply = MultiplyBeforeDepthcoding_2[i];
-}
-if (SplitZ[i] > 0 && Chunk == 3) {
-    GammaCorrApply = GammaCorr_3[i];
-    MultiplyApply = MultiplyBeforeDepthcoding_3[i];
-}
-
-run("Gamma...", "value=" + GammaCorrApply + " stack");
-run("Duplicate...", "title=[glow] duplicate range=1-" + Zstack);
-if (UpperLeft) {
-    setLocation(1, 1);
-}
-//}
-if (SkipGlow) {} else {
-    run("The Real Glow");
-}
-
-run("Z Project...", "start=1 stop=" + Zstack + " projection=[Max Intensity]");
-run("RGB Color");
-if (UpperLeft) {
-    setLocation(1, 1);
-}
-rename("Glow" + Title);
-saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
-close();
-selectWindow("glow");
-close();
-if (UseDepthcoding == "With") {
+    setBatchMode(Hidewindows);
+    selectWindow(Title);
+    Zstack = nSlices();
     selectWindow(Title);
     run("Select None");
-    run("Duplicate...", "title=[" + Title + "_temp] duplicate");
-    selectWindow(Title + "_temp");
     if (UpperLeft) {
         setLocation(1, 1);
     }
-    run("Multiply...", "value=" + MultiplyApply + " stack");
-    run("Temporal-Color Code", "lut=[Depth Organoid]");
-    rename("Depth" + Title);
+
+    //bp21
+    if (SplitZ[i] == 0) {
+        GammaCorrApply = GammaCorr[i];
+        MultiplyApply = MultiplyBeforeDepthcoding[i];
+    }
+    if (SplitZ[i] > 0 && Chunk == 1) {
+        GammaCorrApply = GammaCorr_1[i];
+        MultiplyApply = MultiplyBeforeDepthcoding_1[i];
+    }
+    if (SplitZ[i] > 0 && Chunk == 2) {
+        GammaCorrApply = GammaCorr_2[i];
+        MultiplyApply = MultiplyBeforeDepthcoding_2[i];
+    }
+    if (SplitZ[i] > 0 && Chunk == 3) {
+        GammaCorrApply = GammaCorr_3[i];
+        MultiplyApply = MultiplyBeforeDepthcoding_3[i];
+    }
+
+    run("Gamma...", "value=" + GammaCorrApply + " stack");
+    run("Duplicate...", "title=[glow] duplicate range=1-" + Zstack);
+    if (UpperLeft) {
+        setLocation(1, 1);
+    }
+    //}
+    if (SkipGlow) {} else {
+        run("The Real Glow");
+    }
+
+    run("Z Project...", "start=1 stop=" + Zstack + " projection=[Max Intensity]");
+    run("RGB Color");
+    if (UpperLeft) {
+        setLocation(1, 1);
+    }
+    rename("Glow" + Title);
+    saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
+    close();
+    selectWindow("glow");
+    close();
+    if (UseDepthcoding == "With") {
+        selectWindow(Title);
+        run("Select None");
+        run("Duplicate...", "title=[" + Title + "_temp] duplicate");
+        selectWindow(Title + "_temp");
+        if (UpperLeft) {
+            setLocation(1, 1);
+        }
+        run("Multiply...", "value=" + MultiplyApply + " stack");
+        run("Temporal-Color Code", "lut=[Depth Organoid]");
+        rename("Depth" + Title);
+        if (UpperLeft) {
+            setLocation(1, 1);
+        }
+        saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
+        close();
+        selectWindow(Title + "_temp");
+        close();
+    }
+    selectWindow(Title);
+    run("Select None");
+    run("RGB Color");
+    run("Z Project...", "start=1 stop=" + Zstack + " projection=[Max Intensity]");
+    rename("MaxProject" + Title);
     if (UpperLeft) {
         setLocation(1, 1);
     }
     saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
     close();
-    selectWindow(Title + "_temp");
+    selectWindow(Title);
     close();
-}
-selectWindow(Title);
-run("Select None");
-run("RGB Color");
-run("Z Project...", "start=1 stop=" + Zstack + " projection=[Max Intensity]");
-rename("MaxProject" + Title);
-if (UpperLeft) {
-    setLocation(1, 1);
-}
-saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
-close();
-selectWindow(Title);
-close();
-setBatchMode(false);
+    setBatchMode(false);
 }
 
 // Define MergeTimepoint// Define MergeTimepoint
 // Define MergeTimepoint
 function MergeTimepoint(title, start, end) {
-//setBatchMode(Hidewindows);
-open(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\[" + title + "_" + start + ".tif]");
-if (UpperLeft) {
-    setLocation(1, 1);
-}
-selectImage(title + "_" + start + ".tif");
-rename(title + "_" + start);
-getDimensions(width, height, channelCount, sliceCount, frameCount);
-for (image = 1; image < (end); image++) {
-    open(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\[" + title + "_" + (image + start) + ".tif]");
-    run("Concatenate...", "stack1=[" + title + "_" + (image + start - 1) + "] stack2=[" + title + "_" + (image + start) + ".tif]" + " title=[" + title + "_" + start + image + "]");
-    print("en dat was" + image + start + "van" + end);
-}
-rename(title);
-run("Stack to Hyperstack...", "order=xyczt(default) channels=" + channelCount + " slices=" + sliceCount + " frames=" + end + " display=Color");
-print(title + " frames=" + end);
-setBatchMode(false);
-saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
+    //setBatchMode(Hidewindows);
+    open(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\[" + title + "_" + start + ".tif]");
+    if (UpperLeft) {
+        setLocation(1, 1);
+    }
+    selectImage(title + "_" + start + ".tif");
+    rename(title + "_" + start);
+    getDimensions(width, height, channelCount, sliceCount, frameCount);
+    for (image = 1; image < (end); image++) {
+        open(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\[" + title + "_" + (image + start) + ".tif]");
+        run("Concatenate...", "stack1=[" + title + "_" + (image + start - 1) + "] stack2=[" + title + "_" + (image + start) + ".tif]" + " title=[" + title + "_" + start + image + "]");
+        print("en dat was" + image + start + "van" + end);
+    }
+    rename(title);
+    run("Stack to Hyperstack...", "order=xyczt(default) channels=" + channelCount + " slices=" + sliceCount + " frames=" + end + " display=Color");
+    print(title + " frames=" + end);
+    setBatchMode(false);
+    saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
 }
 
 // Define splitTimepoint with jump in Z and T this is part to reduce the dimensionality (for brightness and threshold purposes...// this is part to reduce the dimensionality (for brightness and threshold purposes...
 function splitZplaneTemp(Title, JumpZ) {
-setBatchMode(Hidewindows);
-selectWindow(Title);
-id = getImageID(); // remember the original hyperstack
-getDimensions(dummy, dummy, dummy, Slices, Timepoints); // we need to know only how many frames there are
-run("Collect Garbage");
-toclose = 0;
-ConcatenateString = " title=[ConcatenatedStacks] ";
-for (frame = 1; frame <= Slices; frame++) { // for each frame...
-    selectImage(id); // select the frame
-    Stack.setPosition(1, frame, 1);
-    run("Reduce Dimensionality...", "channels frames keep");
-    rename(Title + frame);
-    run("Z Project...", "start=1 stop=" + Timepoints + " projection=[Max Intensity]");
-    rename("Temp_" + frame);
-    selectWindow(Title + frame);
-    rename("ToClose");
-    close();
-    ConcatenateString = ConcatenateString + " image" + frame + "=Temp_" + frame;
-}
-ConcatenateString = ConcatenateString + " image" + frame + 1 + "=[-- None --]"; //print(ConcatenateString);
-run("Concatenate...", ConcatenateString);
+    setBatchMode(Hidewindows);
+    selectWindow(Title);
+    id = getImageID(); // remember the original hyperstack
+    getDimensions(dummy, dummy, dummy, Slices, Timepoints); // we need to know only how many frames there are
+    run("Collect Garbage");
+    toclose = 0;
+    ConcatenateString = " title=[ConcatenatedStacks] ";
+    for (frame = 1; frame <= Slices; frame++) { // for each frame...
+        selectImage(id); // select the frame
+        Stack.setPosition(1, frame, 1);
+        run("Reduce Dimensionality...", "channels frames keep");
+        rename(Title + frame);
+        run("Z Project...", "start=1 stop=" + Timepoints + " projection=[Max Intensity]");
+        rename("Temp_" + frame);
+        selectWindow(Title + frame);
+        rename("ToClose");
+        close();
+        ConcatenateString = ConcatenateString + " image" + frame + "=Temp_" + frame;
+    }
+    ConcatenateString = ConcatenateString + " image" + frame + 1 + "=[-- None --]"; //print(ConcatenateString);
+    run("Concatenate...", ConcatenateString);
 
-rename("TEMP_0");
-ConcatenateString = "image1=TEMP_0";
-//setBatchMode(false);
-for (i = 1; i < Timepoints; i++) {
-    selectWindow("TEMP_0");
-    run("Duplicate...", "title=[TEMP_" + i + "] duplicate");
-    ConcatenateString = ConcatenateString + " image" + i + 1 + "=TEMP_" + i;
-}
-ConcatenateString = ConcatenateString + " image" + i + 1 + "=[-- None --]"; //print(ConcatenateString);
-run("Concatenate...", " title=[ConcatenatedStacks] " + ConcatenateString);
-// and make it Hyperstack
-run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices=" + Slices + " frames=" + Timepoints + " display=Color");
-selectWindow("ConcatenatedStacks");
-rename("Zselection" + Title); //exit();
-RETURN = getTitle();
-return RETURN;
-setBatchMode(false);
+    rename("TEMP_0");
+    ConcatenateString = "image1=TEMP_0";
+    //setBatchMode(false);
+    for (i = 1; i < Timepoints; i++) {
+        selectWindow("TEMP_0");
+        run("Duplicate...", "title=[TEMP_" + i + "] duplicate");
+        ConcatenateString = ConcatenateString + " image" + i + 1 + "=TEMP_" + i;
+    }
+    ConcatenateString = ConcatenateString + " image" + i + 1 + "=[-- None --]"; //print(ConcatenateString);
+    run("Concatenate...", " title=[ConcatenatedStacks] " + ConcatenateString);
+    // and make it Hyperstack
+    run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices=" + Slices + " frames=" + Timepoints + " display=Color");
+    selectWindow("ConcatenatedStacks");
+    rename("Zselection" + Title); //exit();
+    RETURN = getTitle();
+    return RETURN;
+    setBatchMode(false);
 }
 
 function splitTimepointTemp(Title, JumpT, JumpZ, Reduce) {
-setBatchMode(Hidewindows);
-selectWindow(Title);
-id = getImageID(); // remember the original hyperstack
-getDimensions(dummy, dummy, dummy, Slices, nFrames); // we need to know only how many frames there are
-ConcatenateString = " title=[" + Title + "_Temp] ";
-image = 1; //rename(Title+"_Temp");
-if (Singletimepoint[i] == 1) {
-    LastTimepointTemp = nFrames;
-} //waitForUser(" ");
-for (frame = 1; frame <= LastTimepointTemp; frame += JumpT) { // for each frame...
+    setBatchMode(Hidewindows);
+    selectWindow(Title);
+    id = getImageID(); // remember the original hyperstack
+    getDimensions(dummy, dummy, dummy, Slices, nFrames); // we need to know only how many frames there are
+    ConcatenateString = " title=[" + Title + "_Temp] ";
+    image = 1; //rename(Title+"_Temp");
+    if (Singletimepoint[i] == 1) {
+        LastTimepointTemp = nFrames;
+    } //waitForUser(" ");
+    for (frame = 1; frame <= LastTimepointTemp; frame += JumpT) { // for each frame...
 
-    selectImage(id); // select the frame
-    Stack.setPosition(1, 1, frame);
-    run("Reduce Dimensionality...", "channels slices keep"); // extract one frame
+        selectImage(id); // select the frame
+        Stack.setPosition(1, 1, frame);
+        run("Reduce Dimensionality...", "channels slices keep"); // extract one frame
 
-    run("Reduce...", "reduction=" + JumpZ);
-    ReducedTP = 0; //ReducedTP+1;
-    rename(Title + "_" + frame);
-    getDimensions(dummy, dummy, dummy, Slices, dummy);
-    cropToROI(Title + "_" + frame);
-    print(Title + "_" + frame + " -van- " + LastTimepointTemp);
+        run("Reduce...", "reduction=" + JumpZ);
+        ReducedTP = 0; //ReducedTP+1;
+        rename(Title + "_" + frame);
+        getDimensions(dummy, dummy, dummy, Slices, dummy);
+        cropToROI(Title + "_" + frame);
+        print(Title + "_" + frame + " -van- " + LastTimepointTemp);
 
-    ConcatenateString = ConcatenateString + " image" + image + "=[" + Title + "_" + frame + "]";
-    image = image + 1;
-    //
-}
-ConcatenateString = ConcatenateString + " image" + image + "=[-- None --]"; //print(ConcatenateString);
+        ConcatenateString = ConcatenateString + " image" + image + "=[" + Title + "_" + frame + "]";
+        image = image + 1;
+        //
+    }
+    ConcatenateString = ConcatenateString + " image" + image + "=[-- None --]"; //print(ConcatenateString);
 
-run("Concatenate...", ConcatenateString);
-run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices=" + Slices + " frames=" + image - 1 + " display=Color");
-selectWindow(Title + "_Temp");
-setBatchMode(false);
-RETURN = getTitle();
-return RETURN;
-close();
+    run("Concatenate...", ConcatenateString);
+    run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices=" + Slices + " frames=" + image - 1 + " display=Color");
+    selectWindow(Title + "_Temp");
+    setBatchMode(false);
+    RETURN = getTitle();
+    return RETURN;
+    close();
 }
 // this is part to reduce the dimensionality (for brightness and threshold purposes...
 
 // Define MergeTimepoint temp blocks For reduction purposes
 function MergeTimepointTemp(title, JumpT) {
-setBatchMode(Hidewindows);
+    setBatchMode(Hidewindows);
 
-open(TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\NumberOfTempblocks.tif");
-run("Brightness/Contrast...");
-getMinAndMax(ReducedTP, dummy);
-close();
-print("ReducedTP=" + ReducedTP);
-selectImage(title + "_" + 1);
-getDimensions(width, height, channelCount, sliceCount, frameCount);
-for (image = JumpT; image < LastTimepointTemp; image += JumpT) {
-    run("Concatenate...", "stack1=[" + title + "_" + 1 + "] stack2=[" + title + "_" + (image + 1) + "] title=[" + title + "_" + 1 + "]");
-    print("en dat was" + image + "van" + LastTimepointTemp);
-}
-rename("temp" + title);
-run("Stack to Hyperstack...", "order=xyczt(default) channels=" + channelCount + " slices=" + sliceCount + " frames=" + (ReducedTP) + " display=Color");
-print(title + "frames=" + (LastTimepointTemp));
-setBatchMode(false);
+    open(TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\NumberOfTempblocks.tif");
+    run("Brightness/Contrast...");
+    getMinAndMax(ReducedTP, dummy);
+    close();
+    print("ReducedTP=" + ReducedTP);
+    selectImage(title + "_" + 1);
+    getDimensions(width, height, channelCount, sliceCount, frameCount);
+    for (image = JumpT; image < LastTimepointTemp; image += JumpT) {
+        run("Concatenate...", "stack1=[" + title + "_" + 1 + "] stack2=[" + title + "_" + (image + 1) + "] title=[" + title + "_" + 1 + "]");
+        print("en dat was" + image + "van" + LastTimepointTemp);
+    }
+    rename("temp" + title);
+    run("Stack to Hyperstack...", "order=xyczt(default) channels=" + channelCount + " slices=" + sliceCount + " frames=" + (ReducedTP) + " display=Color");
+    print(title + "frames=" + (LastTimepointTemp));
+    setBatchMode(false);
 }
 
 function MergeTrans_BGYR(ChannelName) { //bp30
-setBatchMode(Hidewindows);
-if (TransmittedChannelPresent) {
-    c = TransmittedChannelNumber[i];
-    selectWindow(ChannelName[c]); //run("RGB Color");
-    getDimensions(width, height, channelCount, sliceCount, frameCount);
-    setMinAndMax(0, 400);
-    StartChannel = 1;
-    //rename("White");
-} else {
-    StartChannel = 0;
-}
-print("ChannelName:");
-Array.print(ChannelName);
-print("ChannelColour:");
-Array.print(ChannelColour);
+    setBatchMode(Hidewindows);
+    if (TransmittedChannelPresent) {
+        c = TransmittedChannelNumber[i];
+        selectWindow(ChannelName[c]); //run("RGB Color");
+        getDimensions(width, height, channelCount, sliceCount, frameCount);
+        setMinAndMax(0, 400);
+        StartChannel = 1;
+        //rename("White");
+    } else {
+        StartChannel = 0;
+    }
+    print("ChannelName:");
+    Array.print(ChannelName);
+    print("ChannelColour:");
+    Array.print(ChannelColour);
 
-for (Merge = 0; Merge < UseChannel.length; Merge++) {
-    if (UseChannel[Merge]) {
-        selectWindow(ChannelName[Merge]);
-        run("8-bit"); //run("Divide...", "value=1.4 stack");
-        rename(ChannelColour[Merge]);
+    for (Merge = 0; Merge < UseChannel.length; Merge++) {
+        if (UseChannel[Merge]) {
+            selectWindow(ChannelName[Merge]);
+            run("8-bit"); //run("Divide...", "value=1.4 stack");
+            rename(ChannelColour[Merge]);
+        }
     }
-}
 
-setBatchMode(false);
+    setBatchMode(false);
 
-Red = "*None*";
-Green = "*None*";
-Blue = "*None*";
-Cyan = "*None*";
-Magenta = "*None*";
-Yellow = "*None*";
-White = "*None*";
-for (j = 0; j < UseChannel.length; j++) {
-    if (ChannelColour[j] == "White") {
-        White = "White";
-    }
-    if (ChannelColour[j] == "Blue") {
-        Blue = "Blue";
-    }
-    if (ChannelColour[j] == "Red") {
-        Red = "Red";
-    }
-    if (ChannelColour[j] == "Green") {
-        Green = "Green";
-    }
-    if (ChannelColour[j] == "Cyan") {
-        Cyan = "Cyan";
-    }
-    if (ChannelColour[j] == "Magenta") {
-        Magenta = "Magenta";
-    }
-    if (ChannelColour[j] == "Yellow") {
-        Yellow = "Yellow";
-    }
-}
-
-if (NumberOfCh == 7) {
-    run("Merge Channels...", "c1=[" + Red + "] c2=[" + Green + "] c3=[" + Blue + "] c4=[" + White + "] c5=[" + Cyan + "] c6=[" + Magenta + "] c7=[" + Yellow + "] create keep ignore ");
-    run("Stack to RGB", "slices");
-    rename("MergedRGBTY");
-    saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
+    Red = "*None*";
+    Green = "*None*";
+    Blue = "*None*";
+    Cyan = "*None*";
+    Magenta = "*None*";
+    Yellow = "*None*";
     White = "*None*";
-}
+    for (j = 0; j < UseChannel.length; j++) {
+        if (ChannelColour[j] == "White") {
+            White = "White";
+        }
+        if (ChannelColour[j] == "Blue") {
+            Blue = "Blue";
+        }
+        if (ChannelColour[j] == "Red") {
+            Red = "Red";
+        }
+        if (ChannelColour[j] == "Green") {
+            Green = "Green";
+        }
+        if (ChannelColour[j] == "Cyan") {
+            Cyan = "Cyan";
+        }
+        if (ChannelColour[j] == "Magenta") {
+            Magenta = "Magenta";
+        }
+        if (ChannelColour[j] == "Yellow") {
+            Yellow = "Yellow";
+        }
+    }
 
-run("Merge Channels...", "c1=[" + Red + "] c2=[" + Green + "] c3=[" + Blue + "] c4=[" + White + "] c5=[" + Cyan + "] c6=[" + Magenta + "] c7=[" + Yellow + "] create ignore ");
-run("Stack to RGB", "slices");
-selectWindow("Composite"); //As of may 2015 this is needed. Apparently the new formed image is no longer automatically selected!
-if (NumberOfCh == 7) {
-    rename("Merged-T");
-} else {
-    rename("MergedRGBTY");
-}
+    if (NumberOfCh == 7) {
+        run("Merge Channels...", "c1=[" + Red + "] c2=[" + Green + "] c3=[" + Blue + "] c4=[" + White + "] c5=[" + Cyan + "] c6=[" + Magenta + "] c7=[" + Yellow + "] create keep ignore ");
+        run("Stack to RGB", "slices");
+        rename("MergedRGBTY");
+        saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
+        White = "*None*";
+    }
 
-saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
+    run("Merge Channels...", "c1=[" + Red + "] c2=[" + Green + "] c3=[" + Blue + "] c4=[" + White + "] c5=[" + Cyan + "] c6=[" + Magenta + "] c7=[" + Yellow + "] create ignore ");
+    run("Stack to RGB", "slices");
+    selectWindow("Composite"); //As of may 2015 this is needed. Apparently the new formed image is no longer automatically selected!
+    if (NumberOfCh == 7) {
+        rename("Merged-T");
+    } else {
+        rename("MergedRGBTY");
+    }
 
-setBatchMode(false);
+    saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
+
+    setBatchMode(false);
 }
 
 // The PUREDENOISE Plugin is very good!! So in principle we use this one; if not, then we do the good-old MEDIAN Filtering
 // Plugin-file required : PureDenoise_.class
 function PureDenoise(Title) {
-setBatchMode(Hidewindows);
-selectWindow(Title);
-getDimensions(x, y, ch, z, t);
-setMinAndMax(0, 255);
-run("PureDenoise ", "parameters='" + DenoiseFrameNumber + " " + DenoiseCycleNumber + "' estimation='Auto Global' ");
-rename(Title + "Denoised");
-selectWindow(Title);
-close();
-selectWindow(Title + "Denoised");
-rename(Title);
-// Denoise-Plugin Automatically converted the Hyperstack into a normal Stack, therefore...
-run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices=" + z + " frames=" + t + " display=Color");
-selectWindow("Nieuwste GroenBlokje");
-run("8-bit");
-setBatchMode(false);
+    setBatchMode(Hidewindows);
+    selectWindow(Title);
+    getDimensions(x, y, ch, z, t);
+    setMinAndMax(0, 255);
+    run("PureDenoise ", "parameters='" + DenoiseFrameNumber + " " + DenoiseCycleNumber + "' estimation='Auto Global' ");
+    rename(Title + "Denoised");
+    selectWindow(Title);
+    close();
+    selectWindow(Title + "Denoised");
+    rename(Title);
+    // Denoise-Plugin Automatically converted the Hyperstack into a normal Stack, therefore...
+    run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices=" + z + " frames=" + t + " display=Color");
+    selectWindow("Nieuwste GroenBlokje");
+    run("8-bit");
+    setBatchMode(false);
 }
 
 function PureDenoiseStack(Title) {
-setBatchMode(Hidewindows);
-selectWindow(Title);
-getDimensions(x, y, ch, z, t);
-setMinAndMax(0, 255);
-run("PureDenoise ", "parameters='" + DenoiseFactor + " " + DenoiseCycleNumber + "' estimation='Auto Global' ");
-rename(Title + "Denoised");
-selectWindow(Title);
-close();
-selectWindow(Title + "Denoised");
-rename(Title);
-selectWindow(Title);
-run("8-bit");
-run("Re-order Hyperstack ...", "channels=[Channels (c)] slices=[Frames (t)] frames=[Slices (z)]");
-getDimensions(x, y, ch, z, t);
-print("ch :" + ch);
-print("z :" + z);
-print("t :" + t);
-setBatchMode(false);
-}
+    setBatchMode(Hidewindows);
+    selectWindow(Title);
+    getDimensions(x, y, ch, z, t);
+    setMinAndMax(0, 255);
+    run("PureDenoise ", "parameters='" + DenoiseFactor + " " + DenoiseCycleNumber + "' estimation='Auto Global' ");
+    rename(Title + "Denoised");
+    selectWindow(Title);
+    close();
+    selectWindow(Title + "Denoised");
+    rename(Title);
+    selectWindow(Title);
+    run("8-bit");
+    run("Re-order Hyperstack ...", "channels=[Channels (c)] slices=[Frames (t)] frames=[Slices (z)]");
+    getDimensions(x, y, ch, z, t);
+    print("ch :" + ch);
+    print("z :" + z);
+    print("t :" + t);
+    setBatchMode(false);
+    }
 
-function DrawText(Title, Text, Size, Colour) {
-if (TextInGlowIsWhite) Colour = "White";
-setBatchMode(Hidewindows);
-selectWindow(Title);
-setFont("SansSerif", Size, " antialiased");
-setColor(Colour);
-getDimensions(x, y, ch, z, t);
-print("DrawText___" + x + "_" + y + "_" + ch + "_" + t + "_" + z);
-for (i = 0; z > i; i++) {
-    setSlice(i + 1);
-    drawString(Text, 1, Size + 2);
-}
-setBatchMode(false);
+    function DrawText(Title, Text, Size, Colour) {
+    if (TextInGlowIsWhite) Colour = "White";
+    setBatchMode(Hidewindows);
+    selectWindow(Title);
+    setFont("SansSerif", Size, " antialiased");
+    setColor(Colour);
+    getDimensions(x, y, ch, z, t);
+    print("DrawText___" + x + "_" + y + "_" + ch + "_" + t + "_" + z);
+    for (i = 0; z > i; i++) {
+        setSlice(i + 1);
+        drawString(Text, 1, Size + 2);
+    }
+    setBatchMode(false);
 }
 // setFont("SansSerif", Size, " antialiased");
 // drawString(Text, Xposition, Yposition); 
@@ -5922,754 +5918,752 @@ setBatchMode(false);
 // Courier size 50 means 30 pixel per character (independent of which)
 
 function DrawTime(Title, Interval, Size, Colour) {
-setBatchMode(Hidewindows);
-Size = parseFloat(Size);
-selectWindow(Title);
-getDimensions(x, y, ch, t, z);
-print("DrawTime___" + x + "_" + y + "_" + ch + "_" + t + "_" + z);
-if (Interval == round(Interval)) {
-    DecimalPlaces = 0;
-} else {
-    DecimalPlaces = 1;
-} //bp + figure out, whether to use decimals or not. only when interval had a decimal other than 0
-if (NumberOfCh == 1 && ColourName == 1) {
-    yPosition = 2 * Size + 4;
-} else {
-    yPosition = Size + 2;
-}
-for (i = 0; t > i; i++) {
-    Totaltime = (i) * Interval;
-    Hours = floor(Totaltime / 60);
-    if (Hours < 10) {
-        Hours = "0" + toString(Hours);
+    setBatchMode(Hidewindows);
+    Size = parseFloat(Size);
+    selectWindow(Title);
+    getDimensions(x, y, ch, t, z);
+    print("DrawTime___" + x + "_" + y + "_" + ch + "_" + t + "_" + z);
+    if (Interval == round(Interval)) {
+        DecimalPlaces = 0;
     } else {
-        Hours = toString(Hours);
-    }
-    Minutes = Totaltime - Hours * 60;
-    if (Minutes < 10) {
-        Minutes = "0" + toString(Minutes, DecimalPlaces);
+        DecimalPlaces = 1;
+    } //bp + figure out, whether to use decimals or not. only when interval had a decimal other than 0
+    if (NumberOfCh == 1 && ColourName == 1) {
+        yPosition = 2 * Size + 4;
     } else {
-        Minutes = toString(Minutes, DecimalPlaces);
+        yPosition = Size + 2;
     }
-    print(Hours + "h " + Minutes + "m");
-    Stamp = Hours + "h " + Minutes + "m";
+    for (i = 0; t > i; i++) {
+        Totaltime = (i) * Interval;
+        Hours = floor(Totaltime / 60);
+        if (Hours < 10) {
+            Hours = "0" + toString(Hours);
+        } else {
+            Hours = toString(Hours);
+        }
+        Minutes = Totaltime - Hours * 60;
+        if (Minutes < 10) {
+            Minutes = "0" + toString(Minutes, DecimalPlaces);
+        } else {
+            Minutes = toString(Minutes, DecimalPlaces);
+        }
+        print(Hours + "h " + Minutes + "m");
+        Stamp = Hours + "h " + Minutes + "m";
 
-    setSlice(i + 1);
-    setFont("SansSerif", Size, " antialiased");
-    setColor(Colour);
-    drawString(Stamp, 1, yPosition);
-}
-setBatchMode(false);
+        setSlice(i + 1);
+        setFont("SansSerif", Size, " antialiased");
+        setColor(Colour);
+        drawString(Stamp, 1, yPosition);
+    }
+    setBatchMode(false);
 }
 
 function DrawScaleBar(Title, Colour, Size) {
-setBatchMode(Hidewindows);
-run("Colors...", "foreground=" + Colour); //	waitForUser("Colour_"+Colour);
-selectWindow(Title);
-getDimensions(x, y, ch, z, t);
-tTemp = t;
-zTemp = z;
-if (z > t) {
-    t = zTemp;
-    z = tTemp;
-}
-print("DrawText___" + x + "_" + y + "_" + ch + "_" + t + "_" + z);
-Y = ScaleBarYArray[i];
-makeLine(MarginForScaleBar, Y, MarginForScaleBar + nPixelsScaleBarArray[i], Y, ScaleBarLineWidth);
-run("Fill", "stack");
-run("Select None");
-if (WriteBarDimensions) {
-    Decimals = 0;
-    if (nMicronsScaleBarArray[i] != floor(nMicronsScaleBarArray[i])) {
-        Decimals = 1;
+    setBatchMode(Hidewindows);
+    run("Colors...", "foreground=" + Colour); //	waitForUser("Colour_"+Colour);
+    selectWindow(Title);
+    getDimensions(x, y, ch, z, t);
+    tTemp = t;
+    zTemp = z;
+    if (z > t) {
+        t = zTemp;
+        z = tTemp;
     }
-    Text = d2s(nMicronsScaleBarArray[i], Decimals) + " µm";
-    print(Text);
-    setFont("SansSerif", Size, " antialiased");
-    for (h = 0; h < t; h++) {
-        setSlice(h + 1);
-        drawString(Text, MarginForScaleBar, Y - 1);
+    print("DrawText___" + x + "_" + y + "_" + ch + "_" + t + "_" + z);
+    Y = ScaleBarYArray[i];
+    makeLine(MarginForScaleBar, Y, MarginForScaleBar + nPixelsScaleBarArray[i], Y, ScaleBarLineWidth);
+    run("Fill", "stack");
+    run("Select None");
+    if (WriteBarDimensions) {
+        Decimals = 0;
+        if (nMicronsScaleBarArray[i] != floor(nMicronsScaleBarArray[i])) {
+            Decimals = 1;
+        }
+        Text = d2s(nMicronsScaleBarArray[i], Decimals) + " µm";
+        print(Text);
+        setFont("SansSerif", Size, " antialiased");
+        for (h = 0; h < t; h++) {
+            setSlice(h + 1);
+            drawString(Text, MarginForScaleBar, Y - 1);
+        }
     }
-}
-setBatchMode(false);
+    setBatchMode(false);
 }
 
 function SetTransmittedBrightness(CurrentWindow) {
-SetBrightness = 150;
-selectWindow(CurrentWindow);
-getDimensions(x, y, ch, z, t);
-Stack.getPosition(channel, slice, frame);
-if (DoSetZ) {
-    SetZ = floor(0.7 * z);
-    SetFrame = floor(0.5 * t);
-    Stack.setPosition(1, SetZ, SetFrame);
-} else {
-    Stack.setPosition(1, slice, 0.5 * frame);
-}
-
-run("Select All");
-run("Duplicate...", "title=temp");
-selectWindow("temp");
-run("Brightness/Contrast...");
-setMinAndMax(1, 255);
-if (bitDepth() == 8) {
-    run("Apply LUT", "stack");
-} else {
-    run("8-bit");
-} // Appy LUT does not work with 12 bit images?! is you use //run("8-bit"); the image is converted to an 8 bit using the current B&C settings 
-
-// new april 0215
-Saturated = 0.35;
-resetMinAndMax();
-run("Enhance Contrast", "saturated=" + Saturated);
-
-run("Measure");
-Mean = getResult("Mean", nResults - 1);
-print("Mean:" + Mean);
-TooDark = SetBrightness - Mean;
-StepsBrightnessCorrection = floor(TooDark / 18);
-print("");
-print("StepsBrightnessCorrection: " + StepsBrightnessCorrection);
-
-for (i = 0; i < StepsBrightnessCorrection; i++) {
+    SetBrightness = 150;
     selectWindow(CurrentWindow);
-    getMinAndMax(TempMin, TempMax);
-    TempMin = TempMin - 10;
-    TempMax = TempMax - 10;
-    setMinAndMax(TempMin, TempMax);
-}
+    getDimensions(x, y, ch, z, t);
+    Stack.getPosition(channel, slice, frame);
+    if (DoSetZ) {
+        SetZ = floor(0.7 * z);
+        SetFrame = floor(0.5 * t);
+        Stack.setPosition(1, SetZ, SetFrame);
+    } else {
+        Stack.setPosition(1, slice, 0.5 * frame);
+    }
 
-Rest = (TooDark / 18) - StepsBrightnessCorrection;
-print("Rest: " + Rest);
-if (Rest > 0.25) {
+    run("Select All");
+    run("Duplicate...", "title=temp");
+    selectWindow("temp");
+    run("Brightness/Contrast...");
+    setMinAndMax(1, 255);
+    if (bitDepth() == 8) {
+        run("Apply LUT", "stack");
+    } else {
+        run("8-bit");
+    } // Appy LUT does not work with 12 bit images?! is you use //run("8-bit"); the image is converted to an 8 bit using the current B&C settings 
+
+    // new april 0215
+    Saturated = 0.35;
+    resetMinAndMax();
+    run("Enhance Contrast", "saturated=" + Saturated);
+
+    run("Measure");
+    Mean = getResult("Mean", nResults - 1);
+    print("Mean:" + Mean);
+    TooDark = SetBrightness - Mean;
+    StepsBrightnessCorrection = floor(TooDark / 18);
+    print("");
+    print("StepsBrightnessCorrection: " + StepsBrightnessCorrection);
+
+    for (i = 0; i < StepsBrightnessCorrection; i++) {
+        selectWindow(CurrentWindow);
+        getMinAndMax(TempMin, TempMax);
+        TempMin = TempMin - 10;
+        TempMax = TempMax - 10;
+        setMinAndMax(TempMin, TempMax);
+    }
+
+    Rest = (TooDark / 18) - StepsBrightnessCorrection;
+    print("Rest: " + Rest);
+    if (Rest > 0.25) {
+        selectWindow(CurrentWindow);
+        getMinAndMax(TempMin, TempMax);
+        TempMin = TempMin - 5;
+        TempMax = TempMax - 5;
+        setMinAndMax(TempMin, TempMax);
+    }
+
+    for (i = 0; i > StepsBrightnessCorrection; i--) {
+        selectWindow(CurrentWindow);
+        getMinAndMax(TempMin, TempMax);
+        TempMin = TempMin + 10;
+        TempMax = TempMax + 10;
+        setMinAndMax(TempMin, TempMax);
+    }
+
+    Rest = (TooDark / 18) - StepsBrightnessCorrection;
+    print("Rest: " + Rest);
+    if (Rest < 0.25) {
+        selectWindow(CurrentWindow);
+        getMinAndMax(TempMin, TempMax);
+        TempMin = TempMin + 5;
+        TempMax = TempMax + 5;
+        setMinAndMax(TempMin, TempMax);
+    }
+
+    selectWindow("temp");
+    close();
+    selectWindow("Results");
+    run("Close");
     selectWindow(CurrentWindow);
-    getMinAndMax(TempMin, TempMax);
-    TempMin = TempMin - 5;
-    TempMax = TempMax - 5;
     setMinAndMax(TempMin, TempMax);
-}
+    run("Select All");
 
-for (i = 0; i > StepsBrightnessCorrection; i--) {
-    selectWindow(CurrentWindow);
-    getMinAndMax(TempMin, TempMax);
-    TempMin = TempMin + 10;
-    TempMax = TempMax + 10;
-    setMinAndMax(TempMin, TempMax);
-}
-
-Rest = (TooDark / 18) - StepsBrightnessCorrection;
-print("Rest: " + Rest);
-if (Rest < 0.25) {
-    selectWindow(CurrentWindow);
-    getMinAndMax(TempMin, TempMax);
-    TempMin = TempMin + 5;
-    TempMax = TempMax + 5;
-    setMinAndMax(TempMin, TempMax);
-}
-
-selectWindow("temp");
-close();
-selectWindow("Results");
-run("Close");
-selectWindow(CurrentWindow);
-setMinAndMax(TempMin, TempMax);
-run("Select All");
-
-wait(150);
+    wait(150);
 }
 
 function GetLUTColour(Title) {
 
-selectWindow(Title);
-getLut(r, g, b);
-print("RGB");
+    selectWindow(Title);
+    getLut(r, g, b);
+    print("RGB");
 
-if (r[1]) {
-    if (g[1]) {
-        if (b[1]) {
-            Colour = 0;
+    if (r[1]) {
+        if (g[1]) {
+            if (b[1]) {
+                Colour = 0;
+            } else {
+                Colour = 6;
+            }
         } else {
-            Colour = 6;
+            if (b[1]) {
+                Colour = 5;
+            } else {
+                Colour = 2;
+            }
         }
     } else {
-        if (b[1]) {
-            Colour = 5;
+        if (g[1]) {
+            if (b[1]) {
+                Colour = 4;
+            } else {
+                Colour = 1;
+            }
         } else {
-            Colour = 2;
+            if (b[1]) {
+                Colour = 3;
+            }
         }
     }
-} else {
-    if (g[1]) {
-        if (b[1]) {
-            Colour = 4;
-        } else {
-            Colour = 1;
-        }
-    } else {
-        if (b[1]) {
-            Colour = 3;
-        }
-    }
-}
 
-return (Colour)
+    return (Colour)
 }
 
 function DuplicateSingleTimepoint(Title, Colour) {
-getDimensions(w, h, c, z, t);
-selectWindow(Title);
-run("Duplicate...", "title=[" + Title + "0] duplicate range=1-" + z);
-run(Colour);
-wait(100); //RO 0204
-run("Duplicate...", "title=[" + Title + "1] duplicate range=1-" + z);
-run(Colour);
-wait(100);
-selectWindow(Title);
-close();
-run("Concatenate...", " title=[" + Title + "] image1=[" + Title + "0] image2=[" + Title + "1] image3=[-- None --]");
-run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices=" + z + " frames=2 display=Color");
-selectWindow(Title);
-if (ReOrder) {
-    run("Re-order Hyperstack ...", "channels=[Channels (c)] slices=[Frames (t)] frames=[Slices (z)]");
-}
+    getDimensions(w, h, c, z, t);
+    selectWindow(Title);
+    run("Duplicate...", "title=[" + Title + "0] duplicate range=1-" + z);
+    run(Colour);
+    wait(100); //RO 0204
+    run("Duplicate...", "title=[" + Title + "1] duplicate range=1-" + z);
+    run(Colour);
+    wait(100);
+    selectWindow(Title);
+    close();
+    run("Concatenate...", " title=[" + Title + "] image1=[" + Title + "0] image2=[" + Title + "1] image3=[-- None --]");
+    run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices=" + z + " frames=2 display=Color");
+    selectWindow(Title);
+    if (ReOrder) {
+        run("Re-order Hyperstack ...", "channels=[Channels (c)] slices=[Frames (t)] frames=[Slices (z)]");
+    }
 }
 
 function ZlevelOfHighestIntensity(Title) {
-selectWindow(Title);
-Width = getWidth;
-Height = getHeight;
-if (DeleteZStacks && one == 1) {
-    makeRectangle(0.5 * Width, 0, 0.5 * Width, Height);
-} else {
-    makeRectangle(0, 0, Width, Height);
-}
-Highest = 0;
-for (i = 0; i < ZSLICE; i++) {
-    Stack.setPosition(1, i, 0.5 * TIMEPOINTS); // Stack.setPosition(channel, slice, frame) 
-    run("Measure");
-    Mean = getResult("Mean", nResults - 1);
-    if (Mean > Highest) {
-        Highest = Mean;
-        SliceOfHighestIntensity = i + 1;
+    selectWindow(Title);
+    Width = getWidth;
+    Height = getHeight;
+    if (DeleteZStacks && one == 1) {
+        makeRectangle(0.5 * Width, 0, 0.5 * Width, Height);
+    } else {
+        makeRectangle(0, 0, Width, Height);
     }
-}
-Stack.setPosition(1, SliceOfHighestIntensity, 0.5 * TIMEPOINTS);
-run("Select None");
+    Highest = 0;
+    for (i = 0; i < ZSLICE; i++) {
+        Stack.setPosition(1, i, 0.5 * TIMEPOINTS); // Stack.setPosition(channel, slice, frame) 
+        run("Measure");
+        Mean = getResult("Mean", nResults - 1);
+        if (Mean > Highest) {
+            Highest = Mean;
+            SliceOfHighestIntensity = i + 1;
+        }
+    }
+    Stack.setPosition(1, SliceOfHighestIntensity, 0.5 * TIMEPOINTS);
+    run("Select None");
 }
 
 function MakeTilesSingleTimepoint(Title) {
-setBatchMode(Hidewindows);
-selectWindow(Title);
-cropToROI(Title);
-run("Select None");
-Zstack = nSlices();
-selectWindow(Title);
-//waitForUser("1870");
-run("Duplicate...", "title=[glow] duplicate range=1-" + Zstack); //waitForUser("1871");
-run("Gamma...", "value=0.45 stack");
-//waitForUser("1873");
-if (SkipGlow) {} else {
-    run("The Real Glow");
-}
+    setBatchMode(Hidewindows);
+    selectWindow(Title);
+    cropToROI(Title);
+    run("Select None");
+    Zstack = nSlices();
+    selectWindow(Title);
+    //waitForUser("1870");
+    run("Duplicate...", "title=[glow] duplicate range=1-" + Zstack); //waitForUser("1871");
+    run("Gamma...", "value=0.45 stack");
+    //waitForUser("1873");
+    if (SkipGlow) {} else {
+        run("The Real Glow");
+    }
 
-run("RGB Color");
-rename("Glow" + Title);
-saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
-close();
-//selectWindow("glow");
-//close();
+    run("RGB Color");
+    rename("Glow" + Title);
+    saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
+    close();
+    //selectWindow("glow");
+    //close();
 
-selectWindow(Title);
-run("Select None");
-run("RGB Color");
-run("Duplicate...", "title=[MaxProject] duplicate range=1-" + Zstack);
-run("Gamma...", "value=0.45 stack");
-rename("MaxProject" + Title); //print("MaxProject"+Title);
-saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
-close();
-selectWindow(Title);
-close();
-setBatchMode(false);
+    selectWindow(Title);
+    run("Select None");
+    run("RGB Color");
+    run("Duplicate...", "title=[MaxProject] duplicate range=1-" + Zstack);
+    run("Gamma...", "value=0.45 stack");
+    rename("MaxProject" + Title); //print("MaxProject"+Title);
+    saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
+    close();
+    selectWindow(Title);
+    close();
+    setBatchMode(false);
 }
 
 function SwapSelectionToVirtualTransm() {
-selectWindow("TransmittedVirtual_" + PositionNumber[p] + "_Time-Projected");
-run("ROI Manager...");
-roiManager("Add");
-roiManager("Add");
-selectWindow("TransmittedVirtual_" + PositionNumber[p]);
-roiManager("Select", 1);
-roiManager("Select", 1);
-roiManager("Select", 0);
-roiManager("Select", 0);
+    selectWindow("TransmittedVirtual_" + PositionNumber[p] + "_Time-Projected");
+    run("ROI Manager...");
+    roiManager("Add");
+    roiManager("Add");
+    selectWindow("TransmittedVirtual_" + PositionNumber[p]);
+    roiManager("Select", 1);
+    roiManager("Select", 1);
+    roiManager("Select", 0);
+    roiManager("Select", 0);
 }
 
 function DrawScaleZLeft(Title, StartZ, EndZ, Size, Colour) {
 
-setBatchMode(Hidewindows);
-selectWindow(Title);
-getDimensions(x, y, ch, t, z);
-print("DrawText___" + x + "_" + y + "_" + ch + "_" + t + "_" + z);
-Y = ScaleBarYArray[i];
-StartZString = d2s(StartZ, 0) + " µm";
-EndZString = d2s(EndZ, 0) + " µm";
-TEMPSize = getStringWidth(EndZString);
-SideBar = TEMPSize + 10;
-WIDTH = x + SideBar;
-HeigthLUT = y - (3 * Size + 2) - (y - Y);
-run("Canvas Size...", "width=" + WIDTH + " height=" + y + " position=Top-Right");
-
-OK = 0;
-ImageJDirectory = getDirectory("imagej");
-if (File.exists(TempDisk + ":\\ANALYSIS DUMP\\Settings\\Depth_Organoid_magenta.tif")) {
-    open(TempDisk + ":\\ANALYSIS DUMP\\Settings\\Depth_Organoid_magenta.tif");
-    NameLUT = getTitle();
-    OK = 1;
-} // print(""); waitForUser("1e OK ? "+OK);
-if (OK == 0 && File.exists(ImageJDirectory + "Depth_Organoid_magenta.tif")) {
-    open(ImageJDirectory + "Depth_Organoid_magenta.tif");
-    NameLUT = getTitle();
-    OK = 1;
-} // print(""); waitForUser("2e OK ? "+OK);
-
-selectWindow(NameLUT);
-
-run("Size...", "width=" + Size + " height=" + HeigthLUT + " average interpolation=Bilinear");
-getDimensions(widthSideBar, heightSideBar, dummy, dummy, dummy); //}
-TopLUTBar = (y - heightSideBar) / 2;
-LeftSideBar = (SideBar - widthSideBar) / 2;
-PositionText = (SideBar - TEMPSize) / 2;
-selectWindow(Title);
-
-for (h = 0; t > h; h++) {
-    selectWindow(NameLUT);
-    run("Copy");
+    setBatchMode(Hidewindows);
     selectWindow(Title);
-    setSlice(h + 1);
-    makeRectangle(LeftSideBar, TopLUTBar, widthSideBar, heightSideBar);
-    run("Paste");
-    setFont("SansSerif", Size, " antialiased");
-    setColor(Colour);
-    drawString(EndZString, PositionText, Size + 2);
-    drawString(StartZString, PositionText, Y - 1);
-}
-close(NameLUT);
-setBatchMode(false);
-return (WIDTH);
+    getDimensions(x, y, ch, t, z);
+    print("DrawText___" + x + "_" + y + "_" + ch + "_" + t + "_" + z);
+    Y = ScaleBarYArray[i];
+    StartZString = d2s(StartZ, 0) + " µm";
+    EndZString = d2s(EndZ, 0) + " µm";
+    TEMPSize = getStringWidth(EndZString);
+    SideBar = TEMPSize + 10;
+    WIDTH = x + SideBar;
+    HeigthLUT = y - (3 * Size + 2) - (y - Y);
+    run("Canvas Size...", "width=" + WIDTH + " height=" + y + " position=Top-Right");
+
+    OK = 0;
+    ImageJDirectory = getDirectory("imagej");
+    if (File.exists(TempDisk + ":\\ANALYSIS DUMP\\Settings\\Depth_Organoid_magenta.tif")) {
+        open(TempDisk + ":\\ANALYSIS DUMP\\Settings\\Depth_Organoid_magenta.tif");
+        NameLUT = getTitle();
+        OK = 1;
+    } // print(""); waitForUser("1e OK ? "+OK);
+    if (OK == 0 && File.exists(ImageJDirectory + "Depth_Organoid_magenta.tif")) {
+        open(ImageJDirectory + "Depth_Organoid_magenta.tif");
+        NameLUT = getTitle();
+        OK = 1;
+    } // print(""); waitForUser("2e OK ? "+OK);
+
+    selectWindow(NameLUT);
+
+    run("Size...", "width=" + Size + " height=" + HeigthLUT + " average interpolation=Bilinear");
+    getDimensions(widthSideBar, heightSideBar, dummy, dummy, dummy); //}
+    TopLUTBar = (y - heightSideBar) / 2;
+    LeftSideBar = (SideBar - widthSideBar) / 2;
+    PositionText = (SideBar - TEMPSize) / 2;
+    selectWindow(Title);
+
+    for (h = 0; t > h; h++) {
+        selectWindow(NameLUT);
+        run("Copy");
+        selectWindow(Title);
+        setSlice(h + 1);
+        makeRectangle(LeftSideBar, TopLUTBar, widthSideBar, heightSideBar);
+        run("Paste");
+        setFont("SansSerif", Size, " antialiased");
+        setColor(Colour);
+        drawString(EndZString, PositionText, Size + 2);
+        drawString(StartZString, PositionText, Y - 1);
+    }
+    close(NameLUT);
+    setBatchMode(false);
+    return (WIDTH);
 }
 
 function DrawScaleZTop(Title, StartZ, EndZ, Size, Colour) {
+    TopBarMargin = 10;
+    FractionOfText = 0.7;
 
-TopBarMargin = 10;
-FractionOfText = 0.7;
-
-setBatchMode(Hidewindows);
-selectWindow(Title);
-getDimensions(x, y, ch, t, z);
-print("DrawText___" + x + "_" + y + "_" + ch + "_" + t + "_" + z);
-Decimals = 1;
-if (StartZ == 0) {
-    Decimals = 0;
-}
-StartZString = d2s(StartZ, Decimals) + " µm";
-EndZString = d2s(EndZ, 1) + " µm";
-TEMPSize = getStringWidth(EndZString);
-HeightTopBar = Size + TopBarMargin;
-HEIGHT = y + HeightTopBar;
-WidthLUT = 0.5 * x - TEMPSize - getStringWidth(StartZString) - 2 * Size; // Size bij wijze van Marge
-run("Colors...", "background=black");
-run("Canvas Size...", "width=" + x + " height=" + HEIGHT + " position=Bottom-Right zero");
-
-OK = 0;
-ImageJDirectory = getDirectory("imagej");
-if (File.exists(TempDisk + ":\\ANALYSIS DUMP\\Settings\\Depth_Organoid_magenta.tif")) {
-    open(TempDisk + ":\\ANALYSIS DUMP\\Settings\\Depth_Organoid_magenta.tif");
-    NameLUT = getTitle();
-    OK = 1;
-} //	print(""); waitForUser("1e OK ? "+OK);
-if (OK == 0 && File.exists(ImageJDirectory + "Depth_Organoid_magenta.tif")) {
-    open(ImageJDirectory + "Depth_Organoid_magenta.tif");
-    NameLUT = getTitle();
-} //	print(""); waitForUser("1e OK ? "+OK);
-
-run("Rotate 90 Degrees Right");
-selectWindow(NameLUT);
-
-run("Size...", "width=" + WidthLUT + " height=" + Size * FractionOfText + " average interpolation=Bilinear");
-getDimensions(widthLUTBar, heightLUTBar, dummy, dummy, dummy); //}
-
-TopLUTBar = 0.5 * HeightTopBar - 0.5 * Size * FractionOfText;
-LeftLUTBar = getStringWidth(StartZString) + Size;
-PositionText = 0.5 * x - TEMPSize - 1;
-YText = 0.5 * HeightTopBar + 0.5 * Size;
-
-selectWindow(Title);
-for (h = 0; t > h; h++) {
-    selectWindow(NameLUT);
-    run("Copy");
+    setBatchMode(Hidewindows);
     selectWindow(Title);
-    setSlice(h + 1);
-    makeRectangle(LeftLUTBar, TopLUTBar, widthLUTBar, heightLUTBar);
-    run("Paste");
-    setFont("SansSerif", Size, " antialiased");
-    setColor(Colour);
-    drawString(StartZString, 1, YText);
-    drawString(EndZString, PositionText, YText);
-}
-close(NameLUT);
-setBatchMode(false);
+    getDimensions(x, y, ch, t, z);
+    print("DrawText___" + x + "_" + y + "_" + ch + "_" + t + "_" + z);
+    Decimals = 1;
+    if (StartZ == 0) {
+        Decimals = 0;
+    }
+    StartZString = d2s(StartZ, Decimals) + " µm";
+    EndZString = d2s(EndZ, 1) + " µm";
+    TEMPSize = getStringWidth(EndZString);
+    HeightTopBar = Size + TopBarMargin;
+    HEIGHT = y + HeightTopBar;
+    WidthLUT = 0.5 * x - TEMPSize - getStringWidth(StartZString) - 2 * Size; // Size bij wijze van Marge
+    run("Colors...", "background=black");
+    run("Canvas Size...", "width=" + x + " height=" + HEIGHT + " position=Bottom-Right zero");
+
+    OK = 0;
+    ImageJDirectory = getDirectory("imagej");
+    if (File.exists(TempDisk + ":\\ANALYSIS DUMP\\Settings\\Depth_Organoid_magenta.tif")) {
+        open(TempDisk + ":\\ANALYSIS DUMP\\Settings\\Depth_Organoid_magenta.tif");
+        NameLUT = getTitle();
+        OK = 1;
+    } //	print(""); waitForUser("1e OK ? "+OK);
+    if (OK == 0 && File.exists(ImageJDirectory + "Depth_Organoid_magenta.tif")) {
+        open(ImageJDirectory + "Depth_Organoid_magenta.tif");
+        NameLUT = getTitle();
+    } //	print(""); waitForUser("1e OK ? "+OK);
+
+    run("Rotate 90 Degrees Right");
+    selectWindow(NameLUT);
+
+    run("Size...", "width=" + WidthLUT + " height=" + Size * FractionOfText + " average interpolation=Bilinear");
+    getDimensions(widthLUTBar, heightLUTBar, dummy, dummy, dummy); //}
+
+    TopLUTBar = 0.5 * HeightTopBar - 0.5 * Size * FractionOfText;
+    LeftLUTBar = getStringWidth(StartZString) + Size;
+    PositionText = 0.5 * x - TEMPSize - 1;
+    YText = 0.5 * HeightTopBar + 0.5 * Size;
+
+    selectWindow(Title);
+    for (h = 0; t > h; h++) {
+        selectWindow(NameLUT);
+        run("Copy");
+        selectWindow(Title);
+        setSlice(h + 1);
+        makeRectangle(LeftLUTBar, TopLUTBar, widthLUTBar, heightLUTBar);
+        run("Paste");
+        setFont("SansSerif", Size, " antialiased");
+        setColor(Colour);
+        drawString(StartZString, 1, YText);
+        drawString(EndZString, PositionText, YText);
+    }
+    close(NameLUT);
+    setBatchMode(false);
 }
 
 function AddSideBar(Title, Size) {
-setBatchMode(Hidewindows);
-selectWindow(Title);
-getDimensions(x, y, ch, z, t);
-print("DrawText___" + x + "_" + y + "_" + ch + "_" + t + "_" + z);
-WIDTH = Size;
-run("Canvas Size...", "width=" + WIDTH + " height=" + y + " position=Top-Right");
+    setBatchMode(Hidewindows);
+    selectWindow(Title);
+    getDimensions(x, y, ch, z, t);
+    print("DrawText___" + x + "_" + y + "_" + ch + "_" + t + "_" + z);
+    WIDTH = Size;
+    run("Canvas Size...", "width=" + WIDTH + " height=" + y + " position=Top-Right");
 
-setBatchMode(false);
+    setBatchMode(false);
 }
 
 function FinalJoke() {
-JokeInterval = 15;
-nCircleIntervals = 25; // aantal jumps om 1 ronde te maken
-UitwaaierSpeed = 200; // pixels opzij per ronde
-ColorArray = newArray("Grays", "Red", "Green", "Cyan", "Blue", "Yellow", "Magenta");
+    JokeInterval = 15;
+    nCircleIntervals = 25; // aantal jumps om 1 ronde te maken
+    UitwaaierSpeed = 200; // pixels opzij per ronde
+    ColorArray = newArray("Grays", "Red", "Green", "Cyan", "Blue", "Yellow", "Magenta");
 
-newImage("Joke", "8-bit white", 100, 100, 1);
-getDimensions(xJoke, yJoke, dummy, dummy, dummy);
-middleX = 0.5 * screenWidth;
-middleY = 0.5 * screenHeight;
-setLocation(middleX - xJoke, middleY - yJoke);
+    newImage("Joke", "8-bit white", 100, 100, 1);
+    getDimensions(xJoke, yJoke, dummy, dummy, dummy);
+    middleX = 0.5 * screenWidth;
+    middleY = 0.5 * screenHeight;
+    setLocation(middleX - xJoke, middleY - yJoke);
 
-Continue = 1;
-Count = 0;
-ColorArrayNumber = 0;
-while (Continue) {
-    Count = Count + 1;
+    Continue = 1;
+    Count = 0;
+    ColorArrayNumber = 0;
+    while (Continue) {
+        Count = Count + 1;
 
-    Angle = Count * (2 * PI / nCircleIntervals);
-    Radius = Count * (UitwaaierSpeed / nCircleIntervals);
-    xLocation = middleX + Radius * cos(Angle);
-    yLocation = middleY + Radius * sin(Angle);
-    setLocation(xLocation - xJoke, yLocation - yJoke);
+        Angle = Count * (2 * PI / nCircleIntervals);
+        Radius = Count * (UitwaaierSpeed / nCircleIntervals);
+        xLocation = middleX + Radius * cos(Angle);
+        yLocation = middleY + Radius * sin(Angle);
+        setLocation(xLocation - xJoke, yLocation - yJoke);
 
-    Color = ColorArray[ColorArrayNumber];
-    ColorArrayNumber = ColorArrayNumber + 1;
-    if (ColorArrayNumber > ColorArray.length - 1) {
-        ColorArrayNumber = 0;
+        Color = ColorArray[ColorArrayNumber];
+        ColorArrayNumber = ColorArrayNumber + 1;
+        if (ColorArrayNumber > ColorArray.length - 1) {
+            ColorArrayNumber = 0;
+        }
+        run(Color);
+
+        if (xLocation > 1.1 * screenWidth) {
+            Continue = 0;
+        }
+        wait(JokeInterval);
     }
-    run(Color);
-
-    if (xLocation > 1.1 * screenWidth) {
-        Continue = 0;
-    }
-    wait(JokeInterval);
-}
-selectWindow("Joke");
-close();
+    selectWindow("Joke");
+    close();
 }
 
 //bp12
 function WriteStatus() {
-StatusString = "Position " + i + 1 + " (of " + PositionNumber.length + ")";
-setFont("SansSerif", 20, " antialiased");
-run("Colors...", "foreground=magenta");
-selectWindow(WhiteScreen);
-drawString(StatusString, 10, 50 + (0.3 * i) * 50);
-StatusWidth = getStringWidth(StatusString);
-return StatusWidth;
+    StatusString = "Position " + i + 1 + " (of " + PositionNumber.length + ")";
+    setFont("SansSerif", 20, " antialiased");
+    run("Colors...", "foreground=magenta");
+    selectWindow(WhiteScreen);
+    drawString(StatusString, 10, 50 + (0.3 * i) * 50);
+    StatusWidth = getStringWidth(StatusString);
+    return StatusWidth;
 }
 
 function SetSettings() {
 
-List.set("TransmittedChannelPresent", TransmittedChannelPresent);
-List.set("CheckPositionNumber", CheckPositionNumber);
-List.set("CheckPositionName", CheckPositionName);
-List.set("nQueuedExp", nQueuedExp);
-List.set("file", file);
-List.set("CodedFile", CodedFile);
-List.set("ReadFileName", ReadFileName); //bp33
-List.set("maxNumberOfChannels", maxNumberOfChannels);
-List.set("ArraySizeForChannelUseandColour", ArraySizeForChannelUseandColour);
-List.set("Date", Date);
-List.set("NameExperiment", NameExperiment);
-List.set("Interval", Interval);
-List.set("RedDeadDye", RedDeadDye);
-List.set("DeleteZStacks", DeleteZStacks);
-List.set("SetLastTimepoint", SetLastTimepoint);
-List.set("TimeProjectTransm", TimeProjectTransm);
-List.set("ExtendedSettings", ExtendedSettings);
-List.set("UseDepthcoding", UseDepthcoding);
-List.set("NumberOfTPTempStacks", NumberOfTPTempStacks);
-List.set("NumberOfZsTempStacks", NumberOfZsTempStacks);
-List.set("SetMultiplyBeforeDepthcoding", SetMultiplyBeforeDepthcoding);
-List.set("ColourName", ColourName);
-List.set("AddTime", AddTime);
-List.set("AddScaleBar", AddScaleBar);
-List.set("AddScaleBarZ", AddScaleBarZ);
-List.set("PlaceScaleBarZ", PlaceScaleBarZ);
-List.set("FractionForBar", FractionForBar);
-List.set("WriteBarDimensions", WriteBarDimensions);
-List.set("ScaleBarLineWidth", ScaleBarLineWidth);
-List.set("FractionForText", FractionForText);
-List.set("ColorTime", ColorTime);
-List.set("GuidedBC", GuidedBC);
-List.set("UpperLeft", UpperLeft);
-List.set("Hidewindows", Hidewindows);
-List.set("TransmittedChannelPresent", TransmittedChannelPresent);
-List.set("DefaultGamma", DefaultGamma);
-List.set("DefaultMultiply", DefaultMultiply);
-List.set("CheckLastTimepointBlack", CheckLastTimepointBlack);
-List.set("TimeForPause", TimeForPause);
-List.set("PauseInterval", PauseInterval);
-List.set("GarbageInterval", GarbageInterval);
-List.set("SaveProgressToNetwork", SaveProgressToNetwork);
-List.set("TextInGlowIsWhite", TextInGlowIsWhite);
-List.set("WindowForPause", WindowForPause);
-List.set("AmountOfPositions", AmountOfPositions);
-List.set("NucleiChannel", NucleiChannel);
-List.set("DeadChannel", DeadChannel);
-List.set("AspectChoice", AspectChoice);
-List.set("DefineFrameRate", DefineFrameRate);
-List.set("DefineAviLength", DefineAviLength);
-List.set("FrameRateAvi", FrameRateAvi);
-List.set("AviLength", AviLength);
-
-if (CheckPositionName) {
-    List.set("AddPositionName", AddPositionName);
-}
-if (SaveProgressToNetwork) {
-    List.set("NetworkDirectory", NetworkDirectory);
-    List.set("CodedNetworkDirectory", CodedNetworkDirectory);
-}
-Position = 0;
-for (Channel = 0; Channel < PositionChannelAmount[Position]; Channel++) {
-    if (TransmittedChannelNumber[Position] != Channel) {
-        List.set("UseChannel" + Channel, UseChannel[Channel]);
-        List.set("ChannelColour" + Channel, ChannelColour[Channel]);
-        List.set("ChannelName" + Channel, ChannelName[Channel]);
-
-        if (UseChannel[Channel]) {
-            List.set("RedDeadChannelUse" + Channel, RedDeadChannelUse[Channel]);
-        } else {
-            List.set("RedDeadChannelUse" + Channel, "Other");
-        }
-    } else {
-        List.set("UseChannel" + Channel, 0);
-        List.set("ChannelColour" + Channel, "White");
-        List.set("ChannelName" + Channel, "Trans");
-    }
-}
-for (Position = 0; Position < PositionNumber.length; Position++) {
-    List.set("PositionNumber" + Position, PositionNumber[Position]);
-    List.set("PositionChannelAmount" + Position, PositionChannelAmount[Position]);
-    List.set("TransmittedChannelNumber" + Position, TransmittedChannelNumber[Position]);
-    List.set("LastTimepointBlack" + Position, LastTimepointBlack[Position]);
-    List.set("NumberOfTimepoints" + Position, NumberOfTimepoints[Position]);
+    List.set("TransmittedChannelPresent", TransmittedChannelPresent);
+    List.set("CheckPositionNumber", CheckPositionNumber);
+    List.set("CheckPositionName", CheckPositionName);
+    List.set("nQueuedExp", nQueuedExp);
+    List.set("file", file);
+    List.set("CodedFile", CodedFile);
+    List.set("ReadFileName", ReadFileName); //bp33
+    List.set("maxNumberOfChannels", maxNumberOfChannels);
+    List.set("ArraySizeForChannelUseandColour", ArraySizeForChannelUseandColour);
+    List.set("Date", Date);
+    List.set("NameExperiment", NameExperiment);
+    List.set("Interval", Interval);
+    List.set("RedDeadDye", RedDeadDye);
+    List.set("DeleteZStacks", DeleteZStacks);
+    List.set("SetLastTimepoint", SetLastTimepoint);
+    List.set("TimeProjectTransm", TimeProjectTransm);
+    List.set("ExtendedSettings", ExtendedSettings);
+    List.set("UseDepthcoding", UseDepthcoding);
+    List.set("NumberOfTPTempStacks", NumberOfTPTempStacks);
+    List.set("NumberOfZsTempStacks", NumberOfZsTempStacks);
+    List.set("SetMultiplyBeforeDepthcoding", SetMultiplyBeforeDepthcoding);
+    List.set("ColourName", ColourName);
+    List.set("AddTime", AddTime);
+    List.set("AddScaleBar", AddScaleBar);
+    List.set("AddScaleBarZ", AddScaleBarZ);
+    List.set("PlaceScaleBarZ", PlaceScaleBarZ);
+    List.set("FractionForBar", FractionForBar);
+    List.set("WriteBarDimensions", WriteBarDimensions);
+    List.set("ScaleBarLineWidth", ScaleBarLineWidth);
+    List.set("FractionForText", FractionForText);
+    List.set("ColorTime", ColorTime);
+    List.set("GuidedBC", GuidedBC);
+    List.set("UpperLeft", UpperLeft);
+    List.set("Hidewindows", Hidewindows);
+    List.set("TransmittedChannelPresent", TransmittedChannelPresent);
+    List.set("DefaultGamma", DefaultGamma);
+    List.set("DefaultMultiply", DefaultMultiply);
+    List.set("CheckLastTimepointBlack", CheckLastTimepointBlack);
+    List.set("TimeForPause", TimeForPause);
+    List.set("PauseInterval", PauseInterval);
+    List.set("GarbageInterval", GarbageInterval);
+    List.set("SaveProgressToNetwork", SaveProgressToNetwork);
+    List.set("TextInGlowIsWhite", TextInGlowIsWhite);
+    List.set("WindowForPause", WindowForPause);
+    List.set("AmountOfPositions", AmountOfPositions);
+    List.set("NucleiChannel", NucleiChannel);
+    List.set("DeadChannel", DeadChannel);
+    List.set("AspectChoice", AspectChoice);
+    List.set("DefineFrameRate", DefineFrameRate);
+    List.set("DefineAviLength", DefineAviLength);
+    List.set("FrameRateAvi", FrameRateAvi);
+    List.set("AviLength", AviLength);
 
     if (CheckPositionName) {
-        List.set("PositionName" + Position, PositionName[Position]);
+        List.set("AddPositionName", AddPositionName);
     }
+    if (SaveProgressToNetwork) {
+        List.set("NetworkDirectory", NetworkDirectory);
+        List.set("CodedNetworkDirectory", CodedNetworkDirectory);
+    }
+    Position = 0;
+    for (Channel = 0; Channel < PositionChannelAmount[Position]; Channel++) {
+        if (TransmittedChannelNumber[Position] != Channel) {
+            List.set("UseChannel" + Channel, UseChannel[Channel]);
+            List.set("ChannelColour" + Channel, ChannelColour[Channel]);
+            List.set("ChannelName" + Channel, ChannelName[Channel]);
 
-    if (ArraySkipPositions[Position] == 0) {
-        List.set("SelectionX1_" + Position, SelectionX1[Position]);
-        List.set("SelectionX2_" + Position, SelectionX2[Position]);
-        List.set("SelectionY1_" + Position, SelectionY1[Position]);
-        List.set("SelectionY2_" + Position, SelectionY2[Position]);
-        List.set("TransmittedZslice" + Position, TransmittedZslice[Position]);
-        List.set("Singletimepoint" + Position, Singletimepoint[Position]);
-        List.set("ArrayZResolution_" + Position, ArrayZResolution[Position]); //RO corrected mistake in range!
-        List.set("ScaleBarY_" + Position, ScaleBarYArray[Position]);
-        List.set("nPixelsScaleBar_" + Position, nPixelsScaleBarArray[Position]);
-        List.set("nMicronsScaleBar_" + Position, nMicronsScaleBarArray[Position]);
-        List.set("ArraySkipPositions_" + Position, ArraySkipPositions[Position]);
-        List.set("PileUpChunks_" + Position, PileUpChunks[Position]); //bp37
-        List.set("SplitAndUnsplit_" + Position, SplitAndUnsplit[Position]); //bp37
+            if (UseChannel[Channel]) {
+                List.set("RedDeadChannelUse" + Channel, RedDeadChannelUse[Channel]);
+            } else {
+                List.set("RedDeadChannelUse" + Channel, "Other");
+            }
+        } else {
+            List.set("UseChannel" + Channel, 0);
+            List.set("ChannelColour" + Channel, "White");
+            List.set("ChannelName" + Channel, "Trans");
+        }
+    }
+    for (Position = 0; Position < PositionNumber.length; Position++) {
+        List.set("PositionNumber" + Position, PositionNumber[Position]);
+        List.set("PositionChannelAmount" + Position, PositionChannelAmount[Position]);
+        List.set("TransmittedChannelNumber" + Position, TransmittedChannelNumber[Position]);
+        List.set("LastTimepointBlack" + Position, LastTimepointBlack[Position]);
+        List.set("NumberOfTimepoints" + Position, NumberOfTimepoints[Position]);
 
-        if (SetLastTimepoint) {
-            List.set("NumberOfTimepoints" + Position, NumberOfTimepoints[Position]);
+        if (CheckPositionName) {
+            List.set("PositionName" + Position, PositionName[Position]);
         }
 
-        if (RedDeadDye) {
-            List.set("Threshold" + Position, Threshold[Position]);
-        }
+        if (ArraySkipPositions[Position] == 0) {
+            List.set("SelectionX1_" + Position, SelectionX1[Position]);
+            List.set("SelectionX2_" + Position, SelectionX2[Position]);
+            List.set("SelectionY1_" + Position, SelectionY1[Position]);
+            List.set("SelectionY2_" + Position, SelectionY2[Position]);
+            List.set("TransmittedZslice" + Position, TransmittedZslice[Position]);
+            List.set("Singletimepoint" + Position, Singletimepoint[Position]);
+            List.set("ArrayZResolution_" + Position, ArrayZResolution[Position]); //RO corrected mistake in range!
+            List.set("ScaleBarY_" + Position, ScaleBarYArray[Position]);
+            List.set("nPixelsScaleBar_" + Position, nPixelsScaleBarArray[Position]);
+            List.set("nMicronsScaleBar_" + Position, nMicronsScaleBarArray[Position]);
+            List.set("ArraySkipPositions_" + Position, ArraySkipPositions[Position]);
+            List.set("PileUpChunks_" + Position, PileUpChunks[Position]); //bp37
+            List.set("SplitAndUnsplit_" + Position, SplitAndUnsplit[Position]); //bp37
 
-        if (DeleteZStacks) {
-            List.set("BottomZ_" + Position, BottomZ[Position]);
-            List.set("TopZ_" + Position, TopZ[Position]);
-            List.set("SplitZ" + Position, SplitZ[Position]);
-            if (SplitZ[Position] > 0) {
-                List.set("BottomZ_1_" + Position, BottomZ_1[Position]);
-                List.set("TopZ_1_" + Position, TopZ_1[Position]);
-                List.set("BottomZ_2_" + Position, BottomZ_2[Position]);
-                List.set("TopZ_2_" + Position, TopZ_2[Position]);
-            }
-            if (SplitZ[Position] == 3) {
-                List.set("BottomZ_3_" + Position, BottomZ_3[Position]);
-                List.set("TopZ_3_" + Position, TopZ_3[Position]);
+            if (SetLastTimepoint) {
+                List.set("NumberOfTimepoints" + Position, NumberOfTimepoints[Position]);
             }
 
-            if (UseDepthcoding == "With") {
-                List.set("GammaCorr" + Position, GammaCorr[Position]);
-                List.set("MultiplyBeforeDepthcoding" + Position, MultiplyBeforeDepthcoding[Position]);
+            if (RedDeadDye) {
+                List.set("Threshold" + Position, Threshold[Position]);
+            }
+
+            if (DeleteZStacks) {
+                List.set("BottomZ_" + Position, BottomZ[Position]);
+                List.set("TopZ_" + Position, TopZ[Position]);
+                List.set("SplitZ" + Position, SplitZ[Position]);
                 if (SplitZ[Position] > 0) {
-                    List.set("GammaCorr_1_" + Position, GammaCorr_1[Position]);
-                    List.set("MultiplyBeforeDepthcoding_1_" + Position, MultiplyBeforeDepthcoding_1[Position]);
-                    List.set("GammaCorr_2_" + Position, GammaCorr_2[Position]);
-                    List.set("MultiplyBeforeDepthcoding_2_" + Position, MultiplyBeforeDepthcoding_2[Position]);
+                    List.set("BottomZ_1_" + Position, BottomZ_1[Position]);
+                    List.set("TopZ_1_" + Position, TopZ_1[Position]);
+                    List.set("BottomZ_2_" + Position, BottomZ_2[Position]);
+                    List.set("TopZ_2_" + Position, TopZ_2[Position]);
                 }
                 if (SplitZ[Position] == 3) {
-                    List.set("GammaCorr_3_" + Position, GammaCorr_3[Position]);
-                    List.set("MultiplyBeforeDepthcoding_3_" + Position, MultiplyBeforeDepthcoding_3[Position]);
+                    List.set("BottomZ_3_" + Position, BottomZ_3[Position]);
+                    List.set("TopZ_3_" + Position, TopZ_3[Position]);
                 }
-            }
 
+                if (UseDepthcoding == "With") {
+                    List.set("GammaCorr" + Position, GammaCorr[Position]);
+                    List.set("MultiplyBeforeDepthcoding" + Position, MultiplyBeforeDepthcoding[Position]);
+                    if (SplitZ[Position] > 0) {
+                        List.set("GammaCorr_1_" + Position, GammaCorr_1[Position]);
+                        List.set("MultiplyBeforeDepthcoding_1_" + Position, MultiplyBeforeDepthcoding_1[Position]);
+                        List.set("GammaCorr_2_" + Position, GammaCorr_2[Position]);
+                        List.set("MultiplyBeforeDepthcoding_2_" + Position, MultiplyBeforeDepthcoding_2[Position]);
+                    }
+                    if (SplitZ[Position] == 3) {
+                        List.set("GammaCorr_3_" + Position, GammaCorr_3[Position]);
+                        List.set("MultiplyBeforeDepthcoding_3_" + Position, MultiplyBeforeDepthcoding_3[Position]);
+                    }
+                }
+
+            }
         }
     }
-}
 }
 
 function PrintSettings() {
-
-print("TransmittedChannelPresent: " + TransmittedChannelPresent);
-print("CheckPositionNumber: " + CheckPositionNumber);
-print("CheckPositionName: " + CheckPositionName);
-print("nQueuedExp: " + nQueuedExp);
-print("file: " + file);
-print("CodedFile: " + CodedFile);
-print("ReadFileName: " + ReadFileName); //bp33
-print("maxNumberOfChannels: " + maxNumberOfChannels);
-print("ArraySizeForChannelUseandColour: " + ArraySizeForChannelUseandColour);
-print("Date: " + Date);
-print("NameExperiment: " + NameExperiment);
-print("Interval: " + Interval);
-print("RedDeadDye: " + RedDeadDye);
-print("DeleteZStacks: " + DeleteZStacks);
-print("SetLastTimepoint: " + SetLastTimepoint);
-print("TimeProjectTransm: " + TimeProjectTransm);
-print("ExtendedSettings: " + ExtendedSettings);
-print("UseDepthcoding: " + UseDepthcoding);
-print("NumberOfTPTempStacks: " + NumberOfTPTempStacks);
-print("NumberOfZsTempStacks: " + NumberOfZsTempStacks);
-print("SetMultiplyBeforeDepthcoding: " + SetMultiplyBeforeDepthcoding);
-print("ColourName: " + ColourName);
-print("AddTime: " + AddTime);
-print("AddScaleBar: " + AddScaleBar);
-print("AddScaleBarZ: " + AddScaleBarZ);
-print("PlaceScaleBarZ: " + PlaceScaleBarZ);
-print("FractionForBar: " + FractionForBar);
-print("WriteBarDimensions: " + WriteBarDimensions);
-print("ScaleBarLineWidth: " + ScaleBarLineWidth);
-print("FractionForText: " + FractionForText);
-print("ColorTime: " + ColorTime);
-print("GuidedBC: " + GuidedBC);
-print("UpperLeft: " + UpperLeft);
-print("Hidewindows: " + Hidewindows);
-print("TransmittedChannelPresent: " + TransmittedChannelPresent);
-print("DefaultGamma: " + DefaultGamma);
-print("DefaultMultiply: " + DefaultMultiply);
-print("CheckLastTimepointBlack: " + CheckLastTimepointBlack);
-print("TimeForPause: " + TimeForPause);
-print("PauseInterval: " + PauseInterval);
-print("GarbageInterval: " + GarbageInterval);
-print("SaveProgressToNetwork: " + SaveProgressToNetwork);
-print("TextInGlowIsWhite: " + TextInGlowIsWhite);
-print("WindowForPause: " + WindowForPause);
-print("AmountOfPositions: " + AmountOfPositions);
-print("NucleiChannel: " + NucleiChannel);
-print("DeadChannel: " + DeadChannel);
-print("AspectChoice: " + AspectChoice);
-print("DefineFrameRate: " + DefineFrameRate);
-print("DefineAviLength: " + DefineAviLength);
-print("FrameRateAvi: " + FrameRateAvi);
-print("AviLength: " + AviLength);
-
-if (CheckPositionName) {
-    print("AddPositionName: " + AddPositionName);
-}
-if (SaveProgressToNetwork) {
-    print("NetworkDirectory: " + NetworkDirectory);
-    print("CodedNetworkDirectory: " + CodedNetworkDirectory);
-}
-Position = 0;
-for (Channel = 0; Channel < PositionChannelAmount[Position]; Channel++) {
-
-    print("UseChannel" + Channel + " : " + UseChannel[Channel]);
-    print("ChannelColour" + Channel + " : " + ChannelColour[Channel]);
-    print("ChannelName" + Channel + " : " + ChannelName[Channel]);
-
-    print("RedDeadChannelUse" + Channel + " : " + RedDeadChannelUse[Channel]);
-
-}
-for (Position = 0; Position < PositionNumber.length; Position++) {
-    print("PositionNumber" + Position + " : " + PositionNumber[Position]);
-    print("PositionChannelAmount" + Position + " : " + PositionChannelAmount[Position]);
-    print("TransmittedChannelNumber" + Position + " : " + TransmittedChannelNumber[Position]);
-    print("LastTimepointBlack" + Position + " : " + LastTimepointBlack[Position]);
-    print("NumberOfTimepoints" + Position + " : " + NumberOfTimepoints[Position]);
+    print("TransmittedChannelPresent: " + TransmittedChannelPresent);
+    print("CheckPositionNumber: " + CheckPositionNumber);
+    print("CheckPositionName: " + CheckPositionName);
+    print("nQueuedExp: " + nQueuedExp);
+    print("file: " + file);
+    print("CodedFile: " + CodedFile);
+    print("ReadFileName: " + ReadFileName); //bp33
+    print("maxNumberOfChannels: " + maxNumberOfChannels);
+    print("ArraySizeForChannelUseandColour: " + ArraySizeForChannelUseandColour);
+    print("Date: " + Date);
+    print("NameExperiment: " + NameExperiment);
+    print("Interval: " + Interval);
+    print("RedDeadDye: " + RedDeadDye);
+    print("DeleteZStacks: " + DeleteZStacks);
+    print("SetLastTimepoint: " + SetLastTimepoint);
+    print("TimeProjectTransm: " + TimeProjectTransm);
+    print("ExtendedSettings: " + ExtendedSettings);
+    print("UseDepthcoding: " + UseDepthcoding);
+    print("NumberOfTPTempStacks: " + NumberOfTPTempStacks);
+    print("NumberOfZsTempStacks: " + NumberOfZsTempStacks);
+    print("SetMultiplyBeforeDepthcoding: " + SetMultiplyBeforeDepthcoding);
+    print("ColourName: " + ColourName);
+    print("AddTime: " + AddTime);
+    print("AddScaleBar: " + AddScaleBar);
+    print("AddScaleBarZ: " + AddScaleBarZ);
+    print("PlaceScaleBarZ: " + PlaceScaleBarZ);
+    print("FractionForBar: " + FractionForBar);
+    print("WriteBarDimensions: " + WriteBarDimensions);
+    print("ScaleBarLineWidth: " + ScaleBarLineWidth);
+    print("FractionForText: " + FractionForText);
+    print("ColorTime: " + ColorTime);
+    print("GuidedBC: " + GuidedBC);
+    print("UpperLeft: " + UpperLeft);
+    print("Hidewindows: " + Hidewindows);
+    print("TransmittedChannelPresent: " + TransmittedChannelPresent);
+    print("DefaultGamma: " + DefaultGamma);
+    print("DefaultMultiply: " + DefaultMultiply);
+    print("CheckLastTimepointBlack: " + CheckLastTimepointBlack);
+    print("TimeForPause: " + TimeForPause);
+    print("PauseInterval: " + PauseInterval);
+    print("GarbageInterval: " + GarbageInterval);
+    print("SaveProgressToNetwork: " + SaveProgressToNetwork);
+    print("TextInGlowIsWhite: " + TextInGlowIsWhite);
+    print("WindowForPause: " + WindowForPause);
+    print("AmountOfPositions: " + AmountOfPositions);
+    print("NucleiChannel: " + NucleiChannel);
+    print("DeadChannel: " + DeadChannel);
+    print("AspectChoice: " + AspectChoice);
+    print("DefineFrameRate: " + DefineFrameRate);
+    print("DefineAviLength: " + DefineAviLength);
+    print("FrameRateAvi: " + FrameRateAvi);
+    print("AviLength: " + AviLength);
 
     if (CheckPositionName) {
-        print("PositionName" + Position + " : " + PositionName[Position]);
+        print("AddPositionName: " + AddPositionName);
     }
+    if (SaveProgressToNetwork) {
+        print("NetworkDirectory: " + NetworkDirectory);
+        print("CodedNetworkDirectory: " + CodedNetworkDirectory);
+    }
+    Position = 0;
+    for (Channel = 0; Channel < PositionChannelAmount[Position]; Channel++) {
 
-    if (ArraySkipPositions[Position] == 0) {
-        print("SelectionX1_" + Position + " : " + SelectionX1[Position]);
-        print("SelectionX2_" + Position + " : " + SelectionX2[Position]);
-        print("SelectionY1_" + Position + " : " + SelectionY1[Position]);
-        print("SelectionY2_" + Position + " : " + SelectionY2[Position]);
-        print("TransmittedZslice" + Position + " : " + TransmittedZslice[Position]);
-        print("Singletimepoint" + Position + " : " + Singletimepoint[Position]);
-        print("ArrayZResolution_" + Position + " : " + ArrayZResolution[Position]); //RO corrected mistake in range!
-        print("ScaleBarY_" + Position + " : " + ScaleBarYArray[Position]);
-        print("nPixelsScaleBar_" + Position + " : " + nPixelsScaleBarArray[Position]);
-        print("nMicronsScaleBar_" + Position + " : " + nMicronsScaleBarArray[Position]);
-        print("ArraySkipPositions_" + Position + " : " + ArraySkipPositions[Position]);
-        print("PileUpChunks_" + Position + " : " + PileUpChunks[Position]); //bp37
-        print("SplitAndUnsplit_" + Position + " : " + SplitAndUnsplit[Position]); //bp37
+        print("UseChannel" + Channel + " : " + UseChannel[Channel]);
+        print("ChannelColour" + Channel + " : " + ChannelColour[Channel]);
+        print("ChannelName" + Channel + " : " + ChannelName[Channel]);
 
-        if (SetLastTimepoint) {
-            print("NumberOfTimepoints" + Position + " : " + NumberOfTimepoints[Position]);
+        print("RedDeadChannelUse" + Channel + " : " + RedDeadChannelUse[Channel]);
+
+    }
+    for (Position = 0; Position < PositionNumber.length; Position++) {
+        print("PositionNumber" + Position + " : " + PositionNumber[Position]);
+        print("PositionChannelAmount" + Position + " : " + PositionChannelAmount[Position]);
+        print("TransmittedChannelNumber" + Position + " : " + TransmittedChannelNumber[Position]);
+        print("LastTimepointBlack" + Position + " : " + LastTimepointBlack[Position]);
+        print("NumberOfTimepoints" + Position + " : " + NumberOfTimepoints[Position]);
+
+        if (CheckPositionName) {
+            print("PositionName" + Position + " : " + PositionName[Position]);
         }
 
-        if (RedDeadDye) {
-            print("Threshold" + Position + " : " + Threshold[Position]);
-        }
+        if (ArraySkipPositions[Position] == 0) {
+            print("SelectionX1_" + Position + " : " + SelectionX1[Position]);
+            print("SelectionX2_" + Position + " : " + SelectionX2[Position]);
+            print("SelectionY1_" + Position + " : " + SelectionY1[Position]);
+            print("SelectionY2_" + Position + " : " + SelectionY2[Position]);
+            print("TransmittedZslice" + Position + " : " + TransmittedZslice[Position]);
+            print("Singletimepoint" + Position + " : " + Singletimepoint[Position]);
+            print("ArrayZResolution_" + Position + " : " + ArrayZResolution[Position]); //RO corrected mistake in range!
+            print("ScaleBarY_" + Position + " : " + ScaleBarYArray[Position]);
+            print("nPixelsScaleBar_" + Position + " : " + nPixelsScaleBarArray[Position]);
+            print("nMicronsScaleBar_" + Position + " : " + nMicronsScaleBarArray[Position]);
+            print("ArraySkipPositions_" + Position + " : " + ArraySkipPositions[Position]);
+            print("PileUpChunks_" + Position + " : " + PileUpChunks[Position]); //bp37
+            print("SplitAndUnsplit_" + Position + " : " + SplitAndUnsplit[Position]); //bp37
 
-        if (DeleteZStacks) {
-            print("BottomZ_" + Position + " : " + BottomZ[Position]);
-            print("TopZ_" + Position + " : " + TopZ[Position]);
-            print("SplitZ" + Position + " : " + SplitZ[Position]);
-            if (SplitZ[Position] > 0) {
-                print("BottomZ_1_" + Position + " : " + BottomZ_1[Position]);
-                print("TopZ_1_" + Position + " : " + TopZ_1[Position]);
-                print("BottomZ_2_" + Position + " : " + BottomZ_2[Position]);
-                print("TopZ_2_" + Position + " : " + TopZ_2[Position]);
-            }
-            if (SplitZ[Position] == 3) {
-                print("BottomZ_3_" + Position + " : " + BottomZ_3[Position]);
-                print("TopZ_3_" + Position + " : " + TopZ_3[Position]);
+            if (SetLastTimepoint) {
+                print("NumberOfTimepoints" + Position + " : " + NumberOfTimepoints[Position]);
             }
 
-            if (UseDepthcoding == "With") {
-                print("GammaCorr" + Position + " : " + GammaCorr[Position]);
-                print("MultiplyBeforeDepthcoding" + Position + " : " + MultiplyBeforeDepthcoding[Position]);
+            if (RedDeadDye) {
+                print("Threshold" + Position + " : " + Threshold[Position]);
+            }
+
+            if (DeleteZStacks) {
+                print("BottomZ_" + Position + " : " + BottomZ[Position]);
+                print("TopZ_" + Position + " : " + TopZ[Position]);
+                print("SplitZ" + Position + " : " + SplitZ[Position]);
                 if (SplitZ[Position] > 0) {
-                    print("GammaCorr_1_" + Position + " : " + GammaCorr_1[Position]);
-                    print("MultiplyBeforeDepthcoding_1_" + Position + " : " + MultiplyBeforeDepthcoding_1[Position]);
-                    print("GammaCorr_2_" + Position + " : " + GammaCorr_2[Position]);
-                    print("MultiplyBeforeDepthcoding_2_" + Position + " : " + MultiplyBeforeDepthcoding_2[Position]);
+                    print("BottomZ_1_" + Position + " : " + BottomZ_1[Position]);
+                    print("TopZ_1_" + Position + " : " + TopZ_1[Position]);
+                    print("BottomZ_2_" + Position + " : " + BottomZ_2[Position]);
+                    print("TopZ_2_" + Position + " : " + TopZ_2[Position]);
                 }
                 if (SplitZ[Position] == 3) {
-                    print("GammaCorr_3_" + Position + " : " + GammaCorr_3[Position]);
-                    print("MultiplyBeforeDepthcoding_3_" + Position + " : " + MultiplyBeforeDepthcoding_3[Position]);
+                    print("BottomZ_3_" + Position + " : " + BottomZ_3[Position]);
+                    print("TopZ_3_" + Position + " : " + TopZ_3[Position]);
                 }
-            }
 
+                if (UseDepthcoding == "With") {
+                    print("GammaCorr" + Position + " : " + GammaCorr[Position]);
+                    print("MultiplyBeforeDepthcoding" + Position + " : " + MultiplyBeforeDepthcoding[Position]);
+                    if (SplitZ[Position] > 0) {
+                        print("GammaCorr_1_" + Position + " : " + GammaCorr_1[Position]);
+                        print("MultiplyBeforeDepthcoding_1_" + Position + " : " + MultiplyBeforeDepthcoding_1[Position]);
+                        print("GammaCorr_2_" + Position + " : " + GammaCorr_2[Position]);
+                        print("MultiplyBeforeDepthcoding_2_" + Position + " : " + MultiplyBeforeDepthcoding_2[Position]);
+                    }
+                    if (SplitZ[Position] == 3) {
+                        print("GammaCorr_3_" + Position + " : " + GammaCorr_3[Position]);
+                        print("MultiplyBeforeDepthcoding_3_" + Position + " : " + MultiplyBeforeDepthcoding_3[Position]);
+                    }
+                }
+
+            }
         }
     }
-}
 }
 
 //BP37
