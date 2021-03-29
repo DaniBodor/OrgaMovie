@@ -3769,7 +3769,11 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                 }
 
                 print("net na de Bio-Formats");
-                if (do_registration)	correctDriftOnStack;
+
+                waitForUser("pre-drift correction");
+                if (do_registration){	correctDriftOnStack;
+                waitForUser("check drift correction");
+                
                 //setBatchMode(Hidewindows);
                 if (UpperLeft) {
                     setLocation(1, 1);
