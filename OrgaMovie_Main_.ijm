@@ -6730,7 +6730,10 @@ function autoCrop(minSize, boundary) { // DB
 
 function makeRegistrationFile(Z_project){
 	    // make Z projection
-    	if(Z_project)	run("Z Project...", "projection=[Max Intensity] all");
+    	if(Z_project){
+    		run("Z Project...", "projection=[Max Intensity] all");
+    		prj_reg = getTitle();
+    	}
     	
     	// register projection
 		run("Duplicate...", "title=registered_projection duplicate");
@@ -6740,21 +6743,15 @@ function makeRegistrationFile(Z_project){
 
 
 function correctDriftOnStack(){
-	// best guess for correct save location. Need to check that
-	if (File.exists( TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\TransfMatrix.txt") == 0){
-		makeRegistrationFile(1);
-	}
-
 	// import stack info
 	ori = getTitle();
 	Stack.getDimensions(width, height, channels, slices, frames);
 	
-	// Z project
-	run("Z Project...", "projection=[Max Intensity] all");
-	prj = getTitle();
-	
-	
-	
+	if (File.exists( TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\TransfMatrix.txt") == 0){
+		makeRegistrationFile(1);
+	}
+
+
 	// register individual Z-slices
 	concat_arg = "  title=" + ori + "_registered open keep"
 	for (z = 1; z < slices+1; z++) {
