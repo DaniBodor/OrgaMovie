@@ -1774,12 +1774,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                 waitForUser(" - Set ROI in all positions \n \n - Set Zplane in all positions \n \n - and then click OK");
             }
         } else {
-        	if (do_registration) {
-                correctDrift(); // function defined by ##DB##
-            }
-            if (do_autocrop) {
-                autoCrop(minOrgaSize, cropBoundary); // function defined by ##DB##
-            }
+//       	if (do_registration)	correctDrift(); // function defined by ##DB##
+            if (do_autocrop)		autoCrop(minOrgaSize, cropBoundary); // function defined by ##DB##
         }
 
         // bp
@@ -6694,6 +6690,11 @@ function autoCrop(minSize, boundary) { // DB
     ori = getTitle();
     run("Z Project...", "projection=[Max Intensity] all"); // z-projection on all timepoints
     zprj = getTitle();
+
+    if (do_registration){
+    	// add code here to generate registration matrix file
+    }
+    
     run("Z Project...", "projection=[Max Intensity]"); // project all timepoints into single image
     tprj = getTitle();
 
