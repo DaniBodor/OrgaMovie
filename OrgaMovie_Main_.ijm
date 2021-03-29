@@ -3769,6 +3769,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                 }
 
                 print("net na de Bio-Formats");
+                if (do_registration)	correctDriftOnStack;
                 //setBatchMode(Hidewindows);
                 if (UpperLeft) {
                     setLocation(1, 1);
@@ -6740,7 +6741,9 @@ function makeRegistrationFile(Z_project){
 
 function correctDriftOnStack(){
 	// best guess for correct save location. Need to check that
-	Registration_save_location = TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\TransfMatrix.txt";
+	if (File.exists( TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\TransfMatrix.txt") == 0){
+		makeRegistrationFile(1);
+	}
 
 	// import stack info
 	ori = getTitle();
