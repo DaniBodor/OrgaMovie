@@ -6729,8 +6729,8 @@ function autoCrop(minSize, boundary) { // DB
 
 
 function correctDrift(){
-	// this is quite slow!
-	Registration_save_location = TempDisk + ":\\ANALYSIS DUMP\\TransfMatrix.txt";
+	// best guess for correct save location. Need to check that
+	Registration_save_location = TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\TransfMatrix.txt";
 
 	// import stack info
 	ori = getTitle();
