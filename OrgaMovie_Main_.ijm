@@ -6734,7 +6734,6 @@ function makeRegistrationFile(Z_project){
     	// register projection
     	Registration_save_location = TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\TransfMatrix.txt";	// this needs to be pulled out of the function somewhere
 		run("Duplicate...", "title=registered_projection duplicate");
-		prj_reg = getTitle();
 		run("MultiStackReg", "stack_1=" + prj_reg + " action_1=Align file_1=" + Registration_save_location + " stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body] save");
 }
 
