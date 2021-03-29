@@ -6691,9 +6691,8 @@ function autoCrop(minSize, boundary) { // DB
     run("Z Project...", "projection=[Max Intensity] all"); // z-projection on all timepoints
     zprj = getTitle();
 
-    if (do_registration){
-    	// add code here to generate registration matrix file
-    }
+    if (do_registration)	makeRegistrationFile(0);
+    pre_tprj = getTitle();
     
     run("Z Project...", "projection=[Max Intensity]"); // project all timepoints into single image
     tprj = getTitle();
@@ -6724,6 +6723,21 @@ function autoCrop(minSize, boundary) { // DB
 
     close(zprj);
     close(tprj);
+    if (isOpen(pre_tprj))	close(pre_tprj);
+}
+
+
+function makeRegistrationFile(Z_project){
+	    // make Z projection
+    	if(Z_project){
+    		run("Z Project...", "projection=[Max Intensity] all");
+    	}
+    	
+    	// register projection
+    	Registration_save_location = TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\TransfMatrix.txt";	// this needs to be pulled out of the function somewhere
+		run("Duplicate...", "title=registered_projection duplicate");
+		prj_reg = getTitle();
+		run("MultiStackReg", "stack_1=" + prj_reg + " action_1=Align file_1=" + Registration_save_location + " stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body] save");
 }
 
 
@@ -6740,10 +6754,7 @@ function correctDrift(){
 	run("Z Project...", "projection=[Max Intensity] all");
 	prj = getTitle();
 	
-	// register projection
-	run("Duplicate...", "title=registered duplicate");
-	prj_reg = getTitle();
-	run("MultiStackReg", "stack_1=" + prj_reg + " action_1=Align file_1=" + Registration_save_location + " stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body] save");
+	
 	
 	// register individual Z-slices
 	concat_arg = "  title=" + ori + "_registered open keep"
