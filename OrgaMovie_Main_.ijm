@@ -6729,9 +6729,7 @@ function autoCrop(minSize, boundary) { // DB
 
 function makeRegistrationFile(Z_project){
 	    // make Z projection
-    	if(Z_project){
-    		run("Z Project...", "projection=[Max Intensity] all");
-    	}
+    	if(Z_project)	run("Z Project...", "projection=[Max Intensity] all");
     	
     	// register projection
     	Registration_save_location = TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\TransfMatrix.txt";	// this needs to be pulled out of the function somewhere
