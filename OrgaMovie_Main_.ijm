@@ -1774,6 +1774,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                 waitForUser(" - Set ROI in all positions \n \n - Set Zplane in all positions \n \n - and then click OK");
             }
         } else {
+        	Registration_save_location = TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\TransfMatrix.txt";	// I hope this is the right place
 //       	if (do_registration)	correctDrift(); // function defined by ##DB##
             if (do_autocrop)		autoCrop(minOrgaSize, cropBoundary); // function defined by ##DB##
         }
@@ -6732,14 +6733,13 @@ function makeRegistrationFile(Z_project){
     	if(Z_project)	run("Z Project...", "projection=[Max Intensity] all");
     	
     	// register projection
-    	Registration_save_location = TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\TransfMatrix.txt";	// this needs to be pulled out of the function somewhere
 		run("Duplicate...", "title=registered_projection duplicate");
 		run("MultiStackReg", "stack_1=" + prj_reg + " action_1=Align file_1=" + Registration_save_location + " stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body] save");
 }
 
 
 
-function correctDrift(){
+function correctDriftOnStack(){
 	// best guess for correct save location. Need to check that
 	Registration_save_location = TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\TransfMatrix.txt";
 
