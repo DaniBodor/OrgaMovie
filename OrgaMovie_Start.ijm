@@ -1,12 +1,15 @@
 // Dialog settings
-getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec);
-date = "" + dayOfMonth + "-" + month+1 + "-" + year;
-Choice_time_interval_unit = newArray("sec","min","hr");
+date = makeDateString();
+
+//Choice_time_interval_unit = newArray("sec","min","hr");
 IndexingOptions = newArray("read from file","linear");
 
+
 print("\\Clear");
+print("start");
 run("Close All");
 run("Collect Garbage");
+run("Set Measurements...", "area mean standard min bounding stack limit redirect=None decimal=1");
 
 Dialog.create("OrgaMovie Setup");
 	Dialog.addMessage("SETTING UP YOUR DATA STRUCTURE:");
@@ -19,12 +22,13 @@ Dialog.create("OrgaMovie Setup");
     Dialog.addNumber("Time interval:", 3, 0, 2, "min");
     //    Dialog.addChoice("Time interval unit", Choice_time_interval_unit[1])
     Dialog.addString("Date experiment:", date);
-    Dialog.addString("Experiment prefix:", "Pos_");
+    Dialog.addString("Experiment prefix:", "");
 	Dialog.addMessage("");
 	
 	Dialog.addMessage("AUTOMATION SETTINGS");
-	Dialog.addCheckbox("Use drift correction (adds ~10-15 min processing time per movie)", 0);
+	Dialog.addCheckbox("Use drift correction", 1);
 	Dialog.addCheckbox("Use auto-cropping?", 1);
+	Dialog.addCheckbox("Use auto-contrasting?", 1);
 	Dialog.addCheckbox("Use auto-detection of last timepoint? (not implemented)", 0);
 	Dialog.addCheckbox("Use auto-detection of Z planes? (not implemented)", 0);
 	Dialog.addCheckbox("Change default automation settings?", 0);
@@ -41,13 +45,14 @@ Dialog.show();
     filetype = Dialog.getString();
     t_step = Dialog.getNumber();	// min
     date = Dialog.getString();
-    prefix = Dialog.getString();	
+    prefix = Dialog.getString() + "_";	
 	// AUTOMATION SETTINGS
 	do_registration = Dialog.getCheckbox();
 	do_autocrop = Dialog.getCheckbox();
+	do_autoBC = Dialog.getCheckbox();
 	do_autotime = Dialog.getCheckbox();
 	do_autoZ    = Dialog.getCheckbox();
-	autoSettings = Dialog.getCheckbox();		///vhdsiuvgshd
+	changeSettings = Dialog.getCheckbox();
 	//MOVIE OUTPUT SETTINGS
 	gamma_factor = Dialog.getNumber();
 	multiply_factor = Dialog.getNumber();
@@ -55,37 +60,49 @@ Dialog.show();
 	indexing = Dialog.getChoice();
 		movie_index = 0;
 
+T_options = getList("threshold.methods");
 
 Dialog.create("Automation Settings");
-	Dialog.addMessage("Auto-crop settings:")
-	Dialog.addNumber("Minimum organoid size:", 1500, 0, 4, "um2");
-	Dialog.addNumber("Boundary around square:", 75, 0, 4, "pixels");
-if (autoSettings) {
+	if(do_autocrop){
+		Dialog.addMessage("Auto-crop settings:")
+		Dialog.addNumber("Minimum organoid size:", 350, 0, 4, "um2");
+		Dialog.addNumber("Boundary around square:", 30, 0, 4, "pixels");
+	}
+	if(do_autoBC){
+		Dialog.addMessage("Contrast automation:")
+		Dialog.addChoice("Threshold Method:", T_options, "Percentile");
+	}
+if (changeSettings && (do_autocrop + do_autoBC) > 1) {
 	Dialog.show();
 }
 	minOrgaSize = Dialog.getNumber();
 	cropBoundary = Dialog.getNumber();
+	BC_thresh_meth = Dialog.getChoice();
 
 arguments = newArray(	t_step, // 0
 						date, 	// 1
 						prefix,	// 2
 						do_registration, // 3 
 						do_autocrop, // 4
-						do_autotime, // 5 
-						do_autoZ,	// 6
-						gamma_factor, // 7
-						multiply_factor, // 8
-						sec_p_frame, //9
-						"filename",	 // 10
-						movie_index, // 11
-						"queue",	// 12
-						minOrgaSize, // 13
-						cropBoundary); // 14
+						do_autoBC, // 5
+						do_autotime, // 6 
+						do_autoZ,	// 7
+						gamma_factor, // 8
+						multiply_factor, // 9
+						sec_p_frame, //10
+						"filename",	 // 11
+						movie_index, // 12
+						"queue",	// 13
+						minOrgaSize, // 14
+						cropBoundary, //15
+						"loop_number", // 16
+						BC_thresh_meth); // 17
 
 
 
 
 dir = getDirectory("Choose Directory");
+if (dir == "")		exit("macro aborted\nno input directory given");
 	// dir should contain all image data and the autocrop and movie assembly macro
 filelist = getFileList(dir);
 
@@ -93,7 +110,8 @@ filelist = getFileList(dir);
 outdir = dir + "output" + File.separator;
 //File.makeDirectory(outdir);
 
-Macro_location = "C:\\Users\\j.fernandes\\Desktop\\TEST" + File.separator;
+// Macro_location = "C:\\Users\\j.fernandes\\Desktop\\TEST" + File.separator;
+Macro_location = "C:\\Users\\TEMP\\Desktop\\OrgaMovie_Macro" + File.separator;
 
 
 // run macro for all *.nd2 files in "queue" mode, excluding files starting with an _
@@ -103,8 +121,10 @@ for (f = 0; f < filelist.length; f++) {
 		if (indexing)	movie_index = substring(currfile, lengthOf(currfile)-7, lengthOf(currfile)-4);
 		else 			movie_index ++;
 		
-		arguments[10] = dir+currfile;
-		arguments[11] = movie_index;
+		arguments[11] = dir+currfile;
+		arguments[12] = movie_index;
+		arguments[16] = f+1;	// loop number
+		
 		passargument = makeArgument(arguments);
 
 		//Array.print(arguments);
@@ -118,13 +138,18 @@ print("*****************queue finished");
 
 // Now re-run macro in process mode
 print("***************** entering process mode");
-print("this mode is untested as of 25-03-2021 and might crash");
-arguments[12] = "process";	// run_mode = "process"
+arguments[13] = "process";	// i.e. the run mode
+arguments[16] = 0;	// loop number
 passargument = makeArgument(arguments);
 runMacro(Macro_location + "OrgaMovie_Main_.ijm",passargument);
 
 
-print("*****************process mode finished");
+// close macro
+if (isOpen("ROI Manager")){
+	selectWindow("ROI Manager");
+	run("Close");
+}
+print("*****************initiation macro finished");
 
 
 function makeArgument(arg_array){
@@ -138,3 +163,17 @@ function makeArgument(arg_array){
 
 
 
+function makeDateString(){
+	getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec);
+	y = substring (d2s(year,0),2);
+	
+	if (month > 8)	m = d2s(month+1,0);
+	else			m = "0" + d2s(month+1,0);
+
+	if (dayOfMonth > 9)		d = d2s(dayOfMonth,0);
+	else					d = "0" + d2s(dayOfMonth,0);
+	
+	date = y + m + d;
+	return date;
+
+}
