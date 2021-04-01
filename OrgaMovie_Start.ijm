@@ -1,8 +1,8 @@
 // Dialog options settings
 date = makeDateString();
 IndexingOptions = newArray("linear","read from file");
-InputFileTypes = newArray("nd2");
-OutputFormatOptions = newArray("*.avi AND *.tif", "*.avi", "*.tif");
+InputFileTypeList = newArray("nd2");
+OutputFormatOptions = newArray("*.avi AND *.tif", "*.avi only", "*.tif only");
 T_options = getList("threshold.methods");
 
 // startup
@@ -20,7 +20,7 @@ Dialog.create("OrgaMovie Setup");
 	Dialog.addMessage("");
 
     Dialog.addMessage("DATA INPUT SETTINGS:");
-    Dialog.addChoice("Input filetype extension", InputFileTypes, InputFileTypes[0]);
+    Dialog.addChoice("Input filetype extension", InputFileTypeList, InputFileTypeList[0]);
     Dialog.addNumber("Time interval:", 3, 0, 2, "min");
     //Dialog.addString("Date experiment", date);
     Dialog.addString("Experiment name", date);
@@ -44,7 +44,7 @@ Dialog.create("OrgaMovie Setup");
     
 Dialog.show();    
     // DATA INPUT SETTINGS
-    filetype = Dialog.getChoice();
+    input_filetype = Dialog.getChoice();
     t_step = Dialog.getNumber();	// min
     obsolete = "";	// date = Dialog.getString();
     prefix = Dialog.getString() + "_";	
@@ -56,7 +56,7 @@ Dialog.show();
 	do_autoZ = = "";	//do_autoZ = Dialog.getCheckbox();
 	changeSettings = Dialog.getCheckbox();
 	// MOVIE OUTPUT SETTINGS
-	format = Dialog.getChoice();
+	output_format = Dialog.getChoice();
 	sec_p_frame = Dialog.getNumber();
 	gamma_factor = Dialog.getNumber();
 	multiply_factor = Dialog.getNumber();
@@ -99,7 +99,7 @@ arguments = newArray(	t_step, // 0
 						cropBoundary, //15
 						"loop_number", // 16
 						BC_thresh_meth, // 17
-						format); // 18
+						output_format); // 18
 
 
 
@@ -117,7 +117,7 @@ Macro_location = "C:\\Users\\TEMP\\Desktop\\OrgaMovie_Macro" + File.separator;
 // run macro for all *.nd2 files in "queue" mode, excluding files starting with an _
 for (f = 0; f < filelist.length; f++) {
 	currfile = filelist[f];
-	if (endsWith(currfile, filetype) &! startsWith(currfile, "_") )  {
+	if (endsWith(currfile, input_filetype) &! startsWith(currfile, "_") )  {
 		if (indexing)	movie_index = substring(currfile, 0, indexOf(currfile,"_"));
 		else 			movie_index ++;
 		

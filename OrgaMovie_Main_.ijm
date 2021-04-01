@@ -55,8 +55,8 @@ loop_number = input_arguments[16];
 	loop_number = parseInt(loop_number);
 BC_thresh_meth = input_arguments[17];
 export_format = input_arguments[18];
-	if (export_format <  2)	makeAVI = true;
-	if (export_format != 1) makeTIF = true;
+	if (export_format != "*.tif only") makeAVI = true;
+	if (export_format != "*.avi only") makeTIF = true;
 
 micron = getInfo("micrometer.abbreviation");
 /*
