@@ -63,7 +63,6 @@ Dialog.show();
 	indexing = Dialog.getChoice();
 		movie_index = 0;
 
-// test commit
 	
 Dialog.create("Automation Settings");
 	if(do_autocrop){
@@ -110,9 +109,6 @@ if (dir == "")		exit("macro aborted\nno input directory given");
 	// dir should contain all image data and the autocrop and movie assembly macro
 filelist = getFileList(dir);
 
-
-outdir = dir + "output" + File.separator;
-//File.makeDirectory(outdir);
 
 // Macro_location = "C:\\Users\\j.fernandes\\Desktop\\TEST" + File.separator;
 Macro_location = "C:\\Users\\TEMP\\Desktop\\OrgaMovie_Macro" + File.separator;

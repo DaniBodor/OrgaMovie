@@ -370,6 +370,10 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         File.makeDirectory(OutputDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Temp + "\\Settings\\");
         File.makeDirectory(OutputDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Temp + "\\RESULT\\");
     } // altijd 1 folder vooruit maken ; beetje raar maar kan geen kwaad 
+    
+    // DB output image to better place
+    image_output_location = OutputDisk + ":\\ANALYSIS DUMP\\outdir" + File.separator;
+    File.makeDirectory(image_output_location);
 
     ChannelColourOriginal = newArray("White", "Green", "Red", "Blue", "Cyan", "Magenta", "Yellow");
     ChannelColour = newArray("None", "Green", "Red", "Blue", "Cyan", "Magenta", "Yellow");
@@ -6813,7 +6817,7 @@ function correctDriftOnStack(){
 
 
 function exportFinalProduct(){
-	savename = OutputDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\" + prefix + "_" + movie_index;
+	savename = image_output_location + prefix + "_" + movie_index;
 	
 	if (makeAVI){
 		run("AVI... ", "compression=JPEG frame=" + FrameRateAvi + " save=[" + savename + ".avi]" );
