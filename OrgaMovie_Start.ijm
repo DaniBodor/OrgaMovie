@@ -1,12 +1,14 @@
-// Dialog settings
+// Dialog options settings
 date = makeDateString();
+IndexingOptions = newArray("linear","read from file");
+InputFileTypes = newArray("nd2");
+OutputFormatOptions = newArray("*.avi AND *.tif", "*.avi", "*.tif");
+T_options = getList("threshold.methods");
 
-//Choice_time_interval_unit = newArray("sec","min","hr");
-IndexingOptions = newArray("read from file","linear");
-
+// startup
 
 print("\\Clear");
-print("start");
+print("start OrgaMovie macro");
 run("Close All");
 run("Collect Garbage");
 run("Set Measurements...", "area mean standard min bounding stack limit redirect=None decimal=1");
@@ -18,50 +20,51 @@ Dialog.create("OrgaMovie Setup");
 	Dialog.addMessage("");
 
     Dialog.addMessage("DATA INPUT SETTINGS:");
-    Dialog.addString("Filetype extension", "nd2");
+    Dialog.addChoice("Input filetype extension", InputFileTypes, InputFileTypes[0]);
     Dialog.addNumber("Time interval:", 3, 0, 2, "min");
-    //    Dialog.addChoice("Time interval unit", Choice_time_interval_unit[1])
-    Dialog.addString("Date experiment:", date);
-    Dialog.addString("Experiment prefix:", "");
+    //Dialog.addString("Date experiment", date);
+    Dialog.addString("Experiment name", date);
 	Dialog.addMessage("");
 	
 	Dialog.addMessage("AUTOMATION SETTINGS");
 	Dialog.addCheckbox("Use drift correction", 1);
 	Dialog.addCheckbox("Use auto-cropping?", 1);
 	Dialog.addCheckbox("Use auto-contrasting?", 1);
-	Dialog.addCheckbox("Use auto-detection of last timepoint? (not implemented)", 0);
-	Dialog.addCheckbox("Use auto-detection of Z planes? (not implemented)", 0);
+	// Dialog.addCheckbox("Use auto-detection of last timepoint? (not implemented)", 0);
+	// Dialog.addCheckbox("Use auto-detection of Z planes? (not implemented)", 0);
 	Dialog.addCheckbox("Change default automation settings?", 0);
 	Dialog.addMessage("");
 
 	Dialog.addMessage("MOVIE OUTPUT SETTINGS:");
-	Dialog.addNumber("Gamma factor:", 0.7, 1, 4,"(brings low and high intensity together)" );
-    Dialog.addNumber("Multiply factor:", 1.0, 1, 4,"(for depth coded channel)" );
-    Dialog.addNumber("Duration:", 1.3, 1, 4,"sec / frame");
-    Dialog.addChoice("Index by:", IndexingOptions, IndexingOptions[0]);
+	Dialog.addChoice("Output format", OutputFormatOptions, OutputFormatOptions[0]);
+	Dialog.addNumber("Duration", 1.3, 1, 4,"sec / frame");
+	Dialog.addNumber("Gamma factor", 0.7, 1, 4,"(brings low and high intensity together)" );
+    Dialog.addNumber("Multiply factor", 1.0, 1, 4,"(for depth coded channel)" );
+    Dialog.addChoice("Index by", IndexingOptions, IndexingOptions[1]);
     
 Dialog.show();    
     // DATA INPUT SETTINGS
-    filetype = Dialog.getString();
+    filetype = Dialog.getChoice();
     t_step = Dialog.getNumber();	// min
-    date = Dialog.getString();
+    obsolete = "";	// date = Dialog.getString();
     prefix = Dialog.getString() + "_";	
 	// AUTOMATION SETTINGS
 	do_registration = Dialog.getCheckbox();
 	do_autocrop = Dialog.getCheckbox();
 	do_autoBC = Dialog.getCheckbox();
-	do_autotime = Dialog.getCheckbox();
-	do_autoZ    = Dialog.getCheckbox();
+	do_autotime = "";	//do_autotime = Dialog.getCheckbox();
+	do_autoZ = = "";	//do_autoZ = Dialog.getCheckbox();
 	changeSettings = Dialog.getCheckbox();
-	//MOVIE OUTPUT SETTINGS
+	// MOVIE OUTPUT SETTINGS
+	format = Dialog.getChoice();
+	sec_p_frame = Dialog.getNumber();
 	gamma_factor = Dialog.getNumber();
 	multiply_factor = Dialog.getNumber();
-	sec_p_frame = Dialog.getNumber();
 	indexing = Dialog.getChoice();
 		movie_index = 0;
 
-T_options = getList("threshold.methods");
-
+// test commit
+	
 Dialog.create("Automation Settings");
 	if(do_autocrop){
 		Dialog.addMessage("Auto-crop settings:")
@@ -80,7 +83,7 @@ if (changeSettings && (do_autocrop + do_autoBC) > 1) {
 	BC_thresh_meth = Dialog.getChoice();
 
 arguments = newArray(	t_step, // 0
-						date, 	// 1
+						obsolete, // 1
 						prefix,	// 2
 						do_registration, // 3 
 						do_autocrop, // 4
@@ -96,7 +99,8 @@ arguments = newArray(	t_step, // 0
 						minOrgaSize, // 14
 						cropBoundary, //15
 						"loop_number", // 16
-						BC_thresh_meth); // 17
+						BC_thresh_meth, // 17
+						format); // 18
 
 
 
@@ -118,7 +122,7 @@ Macro_location = "C:\\Users\\TEMP\\Desktop\\OrgaMovie_Macro" + File.separator;
 for (f = 0; f < filelist.length; f++) {
 	currfile = filelist[f];
 	if (endsWith(currfile, filetype) &! startsWith(currfile, "_") )  {
-		if (indexing)	movie_index = substring(currfile, lengthOf(currfile)-7, lengthOf(currfile)-4);
+		if (indexing)	movie_index = substring(currfile, 0, indexOf(currfile,"_"));
 		else 			movie_index ++;
 		
 		arguments[11] = dir+currfile;
