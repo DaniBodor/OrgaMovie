@@ -30,7 +30,7 @@
 passargument = getArgument();
 input_arguments = split(passargument, "$");
 t_step = input_arguments[0];
-date = input_arguments[1];
+unused = input_arguments[1];
 prefix = input_arguments[2];
 do_registration = input_arguments[3];
 do_autocrop = input_arguments[4];
@@ -1331,7 +1331,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
         TCP = TransmittedChannelPresent;
         Dialog.create("Settings");
-            Dialog.addString("Date experiment:", date); // ##DB## picked up from input arguments
+            Dialog.addString("Date experiment:", "");
             Dialog.addString("Name Experiment:", prefix + "_" + movie_index); //##DB## picked up from input arguments
             if (t_step == round(t_step)) {
                 DecimalPlaces = 0;
@@ -3953,7 +3953,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                         getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
                         print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec First do Trans 10");
                     }
-                    selectWindow(Transmitted); // waitForUser("B komt i hier ?");print("");																if(PrintLikeCrazy){getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS); print(plcH+"hr "+plcM+"min "+plcS+"sec "+plcMS+"msec First do Trans 11");}
+                    selectWindow(Transmitted);
                     run("Select None");
                     if (PrintLikeCrazy) {
                         getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
