@@ -54,6 +54,9 @@ cropBoundary = input_arguments[15];
 loop_number = input_arguments[16];
 	loop_number = parseInt(loop_number);
 BC_thresh_meth = input_arguments[17];
+export_format = input_arguments[18];
+	if (export_format <  2)	makeAVI = true;
+	if (export_format != 1) makeTIF = true;
 
 micron = getInfo("micrometer.abbreviation");
 /*
@@ -1329,7 +1332,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
         TCP = TransmittedChannelPresent;
         Dialog.create("Settings");
             Dialog.addString("Date experiment:", date); // ##DB## picked up from input arguments
-            Dialog.addString("Name Experiment:", prefix + movie_index); //##DB## picked up from input arguments
+            Dialog.addString("Name Experiment:", prefix + "_" + movie_index); //##DB## picked up from input arguments
             if (t_step == round(t_step)) {
                 DecimalPlaces = 0;
             } else {
@@ -5184,8 +5187,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                             PRINT = getTitle();
                             rename("END");
                         } else {
-                            run("AVI... ", "compression=JPEG frame=" + FrameRateAvi + " save=[" + OutputDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\" + Date + " " + NameExperiment + " Position " + PositionNumber[i] + " - " + PositionName[i] + SplitZText + ScaleBarText + ".avi]");
-                            PRINT = getTitle();
+                        	exportFinalProduct();
                         }
                         if (PrintLikeCrazy) {
                             getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
@@ -5198,8 +5200,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
                             PRINT = getTitle();
                             rename("END");
                         } else {
-                            run("AVI... ", "compression=JPEG frame=" + FrameRateAvi + " save=[" + OutputDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\" + Date + " " + NameExperiment + " Position " + PositionNumber[i] + SplitZText + ScaleBarText + ".avi]");
-                            PRINT = getTitle();
+                        	exportFinalProduct();
                         }
                         if (PrintLikeCrazy) {
                             getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
@@ -6808,6 +6809,21 @@ function correctDriftOnStack(){
 	run("Concatenate...", concat_arg);
 	run("Stack to Hyperstack...", "order=xyctz channels=1 slices="+slices+" frames="+frames+" display=Grayscale");
 	rename(ori);
+}
+
+
+function exportFinalProduct(){
+	savename = OutputDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\" + prefix + "_" + movie_index;
+	
+	if (makeAVI){
+		run("AVI... ", "compression=JPEG frame=" + FrameRateAvi + " save=[" + savename + ".avi]" );
+		print("saved: " + savename + ".avi");
+	}
+	if (makeTIF){
+		saveAs("Tiff", savename + ".tif");
+		print("saved: " + savename + ".tif");
+	}
+
 }
 
 
