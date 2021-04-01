@@ -6823,7 +6823,6 @@ function exportFinalProduct(){
 		saveAs("Tiff", savename + ".tif");
 		print("saved: " + savename + ".tif");
 	}
-
 }
 
 
