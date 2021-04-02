@@ -5,33 +5,34 @@ InputFileTypeList = newArray("nd2");
 OutputFormatOptions = newArray("*.avi AND *.tif", "*.avi only", "*.tif only");
 T_options = getList("threshold.methods");
 
-// startup
-
+// Startup
 print("\\Clear");
 print("start OrgaMovie macro");
 run("Close All");
 run("Collect Garbage");
 run("Set Measurements...", "area mean standard min bounding stack limit redirect=None decimal=1");
 
+
+// Make dialog window for input settings
 Dialog.create("OrgaMovie Setup");
 	Dialog.addMessage("SETTING UP YOUR DATA STRUCTURE:");
 	Dialog.addMessage("Put all your analysis data in a single folder.\nMake sure your filetype is opened in 'windowless' mode (Check README for details).\nIf you wish to skip any movies, add an underscore (i.e. _ ) in front of the filename.");
 	Dialog.addMessage("Remove all 'Queued Exp' folders and all *.txt files from the ANALYSIS DUMP before proceeding");
 	Dialog.addMessage("");
 
-    Dialog.addMessage("DATA INPUT SETTINGS:");
-    Dialog.addChoice("Input filetype extension", InputFileTypeList, InputFileTypeList[0]);
-    Dialog.addNumber("Time interval:", 3, 0, 2, "min");
-    //Dialog.addString("Date experiment", date);
-    Dialog.addString("Experiment name", date);
+	Dialog.addMessage("DATA INPUT SETTINGS:");
+	Dialog.addChoice("Input filetype extension", InputFileTypeList, InputFileTypeList[0]);
+	Dialog.addNumber("Time interval:", 3, 0, 2, "min");
+	//Dialog.addString("Date experiment", date);		// DB: removed this because all it did was add more complexity to filename
+	Dialog.addString("Experiment name", date);
 	Dialog.addMessage("");
 	
 	Dialog.addMessage("AUTOMATION SETTINGS");
 	Dialog.addCheckbox("Use drift correction", 1);
 	Dialog.addCheckbox("Use auto-cropping?", 1);
 	Dialog.addCheckbox("Use auto-contrasting?", 1);
-	// Dialog.addCheckbox("Use auto-detection of last timepoint? (not implemented)", 0);
-	// Dialog.addCheckbox("Use auto-detection of Z planes? (not implemented)", 0);
+	// Dialog.addCheckbox("Use auto-detection of last timepoint? (not implemented)", 0);	// DB: decided not to implement this (for now)
+	// Dialog.addCheckbox("Use auto-detection of Z planes? (not implemented)", 0);		// DB: decided not to implement this (for now)
 	Dialog.addCheckbox("Change default automation settings?", 0);
 	Dialog.addMessage("");
 
@@ -39,21 +40,21 @@ Dialog.create("OrgaMovie Setup");
 	Dialog.addChoice("Output format", OutputFormatOptions, OutputFormatOptions[0]);
 	Dialog.addNumber("Duration", 1.3, 1, 4,"sec / frame");
 	Dialog.addNumber("Gamma factor", 0.7, 1, 4,"(brings low and high intensity together)" );
-    Dialog.addNumber("Multiply factor", 1.0, 1, 4,"(for depth coded channel)" );
-    Dialog.addChoice("Index by", IndexingOptions, IndexingOptions[1]);
-    
-Dialog.show();    
-    // DATA INPUT SETTINGS
-    input_filetype = Dialog.getChoice();
-    t_step = Dialog.getNumber();	// min
-    obsolete = "";	// date = Dialog.getString();
-    prefix = Dialog.getString() + "_";	
+	Dialog.addNumber("Multiply factor", 1.0, 1, 4,"(for depth coded channel)" );
+	Dialog.addChoice("Index by", IndexingOptions, IndexingOptions[1]);
+	
+Dialog.show();	
+	// DATA INPUT SETTINGS
+	input_filetype = Dialog.getChoice();
+	t_step = Dialog.getNumber();	// min
+	date = "obsolete";	// date = Dialog.getString();
+	prefix = Dialog.getString() + "_";	
 	// AUTOMATION SETTINGS
 	do_registration = Dialog.getCheckbox();
 	do_autocrop = Dialog.getCheckbox();
 	do_autoBC = Dialog.getCheckbox();
-	do_autotime = "";	//do_autotime = Dialog.getCheckbox();
-	do_autoZ = = "";	//do_autoZ = Dialog.getCheckbox();
+	do_autotime = "obsolete";;	//do_autotime = Dialog.getCheckbox();	// DB: decided not to implement this (for now)
+	do_autoZ = "obsolete";;	//do_autoZ = Dialog.getCheckbox();		// DB: decided not to implement this (for now)
 	changeSettings = Dialog.getCheckbox();
 	// MOVIE OUTPUT SETTINGS
 	output_format = Dialog.getChoice();
@@ -63,7 +64,7 @@ Dialog.show();
 	indexing = Dialog.getChoice();
 		movie_index = 0;
 
-	
+// Second dialog in case of non-default automation settings
 Dialog.create("Automation Settings");
 	if(do_autocrop){
 		Dialog.addMessage("Auto-crop settings:")
@@ -81,8 +82,10 @@ if (changeSettings && (do_autocrop + do_autoBC) > 1) {
 	cropBoundary = Dialog.getNumber();
 	BC_thresh_meth = Dialog.getChoice();
 
+
+// Assemble dialog data to single array, used to pass argument
 arguments = newArray(	t_step, // 0
-						obsolete, // 1
+						date, // 1
 						prefix,	// 2
 						do_registration, // 3 
 						do_autocrop, // 4
@@ -103,11 +106,11 @@ arguments = newArray(	t_step, // 0
 
 
 
-
-dir = getDirectory("Choose Directory");
+// select directory to open files from
+dir = getDirectory("Choose Data Directory");
 if (dir == "")		exit("macro aborted\nno input directory given");
-	// dir should contain all image data and the autocrop and movie assembly macro
 filelist = getFileList(dir);
+if (filelist.length == 0)	exit("no data found in input directory\n" + dir);
 
 
 // Macro_location = "C:\\Users\\j.fernandes\\Desktop\\TEST" + File.separator;
@@ -123,11 +126,11 @@ for (f = 0; f < filelist.length; f++) {
 		
 		arguments[11] = dir+currfile;
 		arguments[12] = movie_index;
-		arguments[16] = f+1;	// loop number
+		arguments[16] = f+1;	// loop number // DB: identical to movie_index if indexing == false. Could probably be consolidated, but I can't be bothered to.
 		
 		passargument = makeArgument(arguments);
 
-		//Array.print(arguments);
+		Array.print(arguments);
 		print("run macro in queue mode on movie: " + movie_index);
 		run("Collect Garbage");
 		runMacro(Macro_location + "OrgaMovie_Main_.ijm",passargument);

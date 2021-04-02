@@ -28,7 +28,10 @@
 
 
 passargument = getArgument();
+Array.print(arguments);
 input_arguments = split(passargument, "$");
+Array.print(arguments);
+
 t_step = input_arguments[0];
 unused = input_arguments[1];
 prefix = input_arguments[2];
