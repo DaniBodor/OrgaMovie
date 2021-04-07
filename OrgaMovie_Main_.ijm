@@ -28,9 +28,11 @@
 
 
 passargument = getArgument();
-Array.print(arguments);
+if (passargument == ""){
+	exit("You started the wrong macro. Please run:\n OrgaMovie Start")
+}
+
 input_arguments = split(passargument, "$");
-Array.print(arguments);
 
 t_step = input_arguments[0];
 unused = input_arguments[1];
@@ -60,8 +62,25 @@ BC_thresh_meth = input_arguments[17];
 export_format = input_arguments[18];
 	if (export_format != "*.tif only") makeAVI = true;
 	if (export_format != "*.avi only") makeTIF = true;
+maxBrightnessFactor = input_arguments[19];
+covCutoff = input_arguments[20];
+minMovieLength = input_arguments[21];
 
+if (run_mode == "process"){
+	for(i = 0; i < input_arguments.length; i++){
+		if (input_arguments[i] == "Movie_index_1_follows"){
+			movie_index_1 = i+1;
+			i += 1000000;
+		}
+	}
+	movie_index_list = Array.slice(input_arguments, movie_index_1, input_arguments.length);
+}
+
+
+export_folder = "Final_Movies";
 micron = getInfo("micrometer.abbreviation");
+lastframe = 0;
+
 /*
 t_step = 3;
 date = "25-3-2021";
@@ -85,6 +104,7 @@ cropBoundary = 75;
 if (run_mode == "queue"){
 	print("macro initiated for movie: " + movie_index);
 	print("wait for file to open");
+	print(inputfilename);
 } else  print("macro entered in process mode");
 
 
@@ -375,7 +395,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 	} // altijd 1 folder vooruit maken ; beetje raar maar kan geen kwaad 
 	
 	// DB output image to better place
-	image_output_location = OutputDisk + ":\\ANALYSIS DUMP\\outdir" + File.separator;
+	image_output_location = OutputDisk + ":\\ANALYSIS DUMP\\" + export_folder + File.separator;
 	File.makeDirectory(image_output_location);
 
 	ChannelColourOriginal = newArray("White", "Green", "Red", "Blue", "Cyan", "Magenta", "Yellow");
@@ -908,11 +928,11 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 			ReadFileName = 0;
 		}
 
-	run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
-	setLocation(1,1);
+		run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
+		setLocation(1,1);
+		print("CURRENT TIME -", makeDateOrTimeString("time"));
 
 		FilePathForInCase = File.directory;
-		setLocation(1, 1);
 
 		if (Timo == 3) {
 			waitForUser("open tif");
@@ -1787,7 +1807,10 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				waitForUser(" - Set ROI in all positions \n \n - Set Zplane in all positions \n \n - and then click OK");
 			}
 		} else {
-			if (do_autocrop)		autoCrop(minOrgaSize, cropBoundary); // function defined by ##DB##
+			if (do_autocrop){
+				if(do_autotime && lastframe == 0)		lastframe = detectLastTimepoint();
+				autoCrop(minOrgaSize, cropBoundary, lastframe); // function defined by ##DB##
+			}
 		}
 
 		// bp
@@ -2124,10 +2147,15 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					if (testWait) {
 						wait(ms);
 					}
-					if (do_autotime) {
-						// !!##DB##!! use auto last timepoint detection
-						KJNFBDIF = 1;
+					if(do_autotime){
+						 if (lastframe == 0){
+						 	lastframe = detectLastTimepoint();
+						 } else{
+						 	Stack.getDimensions(width, height, channels, slices, frames);
+						 	Stack.setPosition(channels, slices, lastframe);
+						 }
 					}
+					
 					if (testWait) {
 						wait(ms);
 					}
@@ -2229,6 +2257,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					setLocation(1,1);
 				} else {
 					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT use_virtual_stack series_" + (PositionNumber[i]));
+					print("biof2 - CURRENT TIME -", makeDateOrTimeString("time"));
 					setLocation(1,1);
 				}
 				getDimensions(width, height, channels, slices, frames);
@@ -2293,9 +2322,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 						c = j;
 						selectWindow(TempTitle + c);
 						rename("Temp_" + ChannelName[c]);
-						if (UpperLeft) {
-							setLocation(1, 1);
-						}
 						setBatchMode(false);
 						run("Put Behind [tab]");
 					}
@@ -2310,9 +2336,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 						}
 						rename("Temp_" + ChannelName[c]);
 						print("ok?");
-						if (UpperLeft) {
-							setLocation(1, 1);
-						}
 						setBatchMode(false);
 						run("Put Behind [tab]");
 					}
@@ -2526,14 +2549,14 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 							selectWindow("B&C");
 						} //bp43
 
-			// set B&C properly
-			resetMinAndMax();
-			if (do_autoBC){
-				getMinAndMax(min,MaxBC);
-				setAutoThreshold(BC_thresh_meth);
-				getThreshold(min,maxT);
-				setMinAndMax(maxT,MaxBC);
-			}
+						// set B&C properly
+						resetMinAndMax();
+						if (do_autoBC){
+							getMinAndMax(min,MaxBC);
+							setAutoThreshold(BC_thresh_meth);
+							getThreshold(min,maxT);
+							setMinAndMax(maxT,MaxBC * maxBrightnessFactor);
+						}
 						//waitForUser("Set B&C for position " + w + 1 + " (of " + PositionNumber.length + ")"); //bp14 //RO2	// !!##DB test ABC
 
 						for (c = 0; c < PositionChannelAmount[w]; c++) {
@@ -3766,9 +3789,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					ChannelName[c] = "Transmitted";
 					ChannelColour[c] = "White";
 				}
-				selectWindow("Log");
-				//setLocation(1, 1);
 				print("net voor de Bio-Formats");
+				print("CURRENT TIME -", makeDateOrTimeString("time"));
 				if (RunAllQueued) {
 					tiffFile = 0;
 					if (endsWith(file, ".tif")) {
@@ -3786,20 +3808,12 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				} else {
 					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT use_virtual_stack series_" + (PositionNumber[i]));
 					setLocation(1,1);
-					print(loop_number);
 					loop_number = loop_number + 1;
 				}
 
 				print("net na de Bio-Formats");
-
-				//waitForUser("pre-drift correction");
-				if (do_registration)	correctDriftOnStack();
-				//waitForUser("check drift correction");
+				if (do_registration)	correctDriftOnStack(lastframe);
 				
-				//setBatchMode(Hidewindows);
-				if (UpperLeft) {
-					setLocation(1, 1);
-				}
 				getDimensions(width, height, channels, slices, frames);
 				LastTimepointTemp = parseFloat(NumberOfTimepoints[i]);
 
@@ -3863,9 +3877,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 						selectWindow(TempTitle);
 					}
 					rename("Temp_" + ChannelName[j]);
-					if (UpperLeft) {
-						setLocation(1, 1);
-					}
+
 					setBatchMode(false);
 					print("i__" + j + "__rename...getTitle__" + getTitle);
 					run("Put Behind [tab]");
@@ -3885,9 +3897,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					}
 					selectWindow("Temp_" + ChannelName[c]);
 					Transmitted = getTitle();
-					if (UpperLeft) {
-						setLocation(1, 1);
-					}
+
 					if (PrintLikeCrazy) {
 						getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
 						print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec First do Trans 3");
@@ -4017,8 +4027,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
 					print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec First do Trans 21");
 				}
-				selectWindow("Log");
-				//setLocation(1, 1);
 
 				// ===========================================================That was the Transmitted ====================================
 				//ALL, PROCESS CHANNELS
@@ -4126,9 +4134,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 									selectWindow(id);
 								}
 								selectImage(id);
-								if (UpperLeft) {
-									setLocation(1, 1);
-								} // select the frame
+								// select the frame
 								Stack.setPosition(1, 1, frame);
 								if (PrintLikeCrazy) {
 									getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
@@ -4175,28 +4181,16 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 								id = getTitle;
 
 								rename(id + frame);
-								if (UpperLeft) {
-									selectWindow(id + frame);
-									setLocation(1, 1);
-								}
 								if (PrintLikeCrazy) {
 									getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
 									print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec Now we do each channel 15");
 								}
 								cropToROI(id + frame);
-								if (UpperLeft) {
-									selectWindow(id + frame);
-									setLocation(1, 1);
-								}
 								if (PrintLikeCrazy) {
 									getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
 									print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec Now we do each channel 16");
 								}
 								removeNoise(id + frame);
-								if (UpperLeft) {
-									selectWindow(id + frame);
-									setLocation(1, 1);
-								}
 								if (PrintLikeCrazy) {
 									getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
 									print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec Now we do each channel 17");
@@ -4282,10 +4276,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 									print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec Now we do each channel 32");
 								}
 								selectWindow(id + frame);
-								if (UpperLeft) {
-									selectWindow(id + frame);
-									setLocation(1, 1);
-								}
 								if (PrintLikeCrazy) {
 									getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
 									print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec Now we do each channel 33");
@@ -4621,9 +4611,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					c = TransmittedChannelNumber[i];
 					open(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\Temp_Trans.tif");
 					rename(ChannelName[c]);
-					if (UpperLeft) {
-						setLocation(1, 1);
-					}
 				}
 				if (PrintLikeCrazy) {
 					getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
@@ -4878,9 +4865,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					if (UseDepthcoding == "With") {
 						if (TransmittedChannelPresent) {
 							open(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\Temp_Trans.tif");
-							if (UpperLeft) {
-								setLocation(1, 1);
-							}
 							run("RGB Color");
 							rename(T[1]);
 							TimeChannel = T[1];
@@ -4924,9 +4908,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					print("160225-TEST 15 getTitle = " + getTitle);
 					if (TransmittedChannelPresent) {
 						open(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\Temp_Trans.tif");
-						if (UpperLeft) {
-							setLocation(1, 1);
-						}
 						run("RGB Color");
 						rename(T[1]);
 						TimeChannel = T[1];
@@ -5215,8 +5196,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 						}
 					}
 					//bp37 
-					selectWindow("END");
-					print("Saved: [" + OutputDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\" + PRINT + "]");
+					//selectWindow("END");
+					//print("Saved: [" + OutputDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\" + PRINT + "]");
 					if (PrintLikeCrazy) {
 						getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
 						print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec COMBINE THE CHANNELS AND TRANS/DEPTHCODING 33");
@@ -5360,6 +5341,35 @@ if (RunAllQueued) {
 	QueueString = "QueueMultiple_0 ; nQueuedExp_0";
 	File.saveString(QueueString, TempDisk + ":\\ANALYSIS DUMP\\Queue-info.txt");
 	print("*****************process mode finished");
+	print("CURRENT TIME -", makeDateOrTimeString("time"));
+
+	// close macro
+	closeTheseWindows = newArray("ROI Manager","Results");
+	for(i = 0; i < closeTheseWindows.length; i++){
+		current_check = closeTheseWindows[i];
+		if (isOpen (current_check) ){
+			selectWindow(current_check);
+			run("Close");
+		}
+	}
+	while (isOpen("Exception")){
+		selectWindow("Exception");
+		run("Close");
+	}
+	print("input arguments used for experiment: ");
+	for(i = 0; i < input_arguments.length; i++){
+		print("input argument " + i + ": " + input_arguments[i]);
+	}
+
+	// print settings and save Log for future reference
+	selectWindow("Log");
+	currdate = makeDateOrTimeString("D");
+	currtime = makeDateOrTimeString("T");
+	print("CURRENT TIME -", currtime);
+	currtime = replace(currtime,":","");
+	savetextfile = image_output_location + prefix + "_" + currdate + "_" + currtime + "_Settings.txt";
+	savetextfile = replace(savetextfile,"__","_");
+	saveAs("Text", savetextfile);	
 	
 	waitForUser(" Klaar! \n \n All (Cute) Queued Experiments Processed !! ");
 	FinalJoke();
@@ -5605,9 +5615,6 @@ function MakeProjections(Title) {
 	Zstack = nSlices();
 	selectWindow(Title);
 	run("Select None");
-	if (UpperLeft) {
-		setLocation(1, 1);
-	}
 
 	//bp21
 	if (SplitZ[i] == 0) {
@@ -5629,9 +5636,6 @@ function MakeProjections(Title) {
 
 	run("Gamma...", "value=" + GammaCorrApply + " stack");
 	run("Duplicate...", "title=[glow] duplicate range=1-" + Zstack);
-	if (UpperLeft) {
-		setLocation(1, 1);
-	}
 	//}
 	if (SkipGlow) {} else {
 		run("The Real Glow");
@@ -5639,9 +5643,7 @@ function MakeProjections(Title) {
 
 	run("Z Project...", "start=1 stop=" + Zstack + " projection=[Max Intensity]");
 	run("RGB Color");
-	if (UpperLeft) {
-		setLocation(1, 1);
-	}
+
 	rename("Glow" + Title);
 	saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
 	close();
@@ -5652,15 +5654,9 @@ function MakeProjections(Title) {
 		run("Select None");
 		run("Duplicate...", "title=[" + Title + "_temp] duplicate");
 		selectWindow(Title + "_temp");
-		if (UpperLeft) {
-			setLocation(1, 1);
-		}
 		run("Multiply...", "value=" + MultiplyApply + " stack");
 		run("Temporal-Color Code", "lut=[Depth Organoid]");
 		rename("Depth" + Title);
-		if (UpperLeft) {
-			setLocation(1, 1);
-		}
 		saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
 		close();
 		selectWindow(Title + "_temp");
@@ -5671,9 +5667,7 @@ function MakeProjections(Title) {
 	run("RGB Color");
 	run("Z Project...", "start=1 stop=" + Zstack + " projection=[Max Intensity]");
 	rename("MaxProject" + Title);
-	if (UpperLeft) {
-		setLocation(1, 1);
-	}
+
 	saveAs(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\" + getTitle() + ".tif");
 	close();
 	selectWindow(Title);
@@ -5686,9 +5680,6 @@ function MakeProjections(Title) {
 function MergeTimepoint(title, start, end) {
 	//setBatchMode(Hidewindows);
 	open(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\[" + title + "_" + start + ".tif]");
-	if (UpperLeft) {
-		setLocation(1, 1);
-	}
 	selectImage(title + "_" + start + ".tif");
 	rename(title + "_" + start);
 	getDimensions(width, height, channelCount, sliceCount, frameCount);
@@ -6363,6 +6354,7 @@ function AddSideBar(Title, Size) {
 }
 
 function FinalJoke() {
+	print("CURRENT TIME -", makeDateOrTimeString("time"));
 	run("Close All");
 	JokeInterval = 15;
 	nCircleIntervals = 25; // aantal jumps om 1 ronde te maken
@@ -6709,17 +6701,24 @@ function PrintSettings() {
 ///// **************** DB FUNCTIONS BELOW ************************
 ///// **************** DB FUNCTIONS BELOW ************************
 
-function autoCrop(minSize, boundary) { // DB
+function autoCrop(minSize, boundary, endframe) { // DB
 	run("Select None");
 	// convert minSize (um) to pixel units
 	getPixelSize(unit, pixelWidth, pixelHeight);
 	minPixSize = minSize / (pixelWidth * pixelHeight);
 
 	// project 4D image into 2D (all slices, all timepoints)
-	ori = getTitle();
+	ori = getTitle();	
+
+	if(endframe > 0){
+		Stack.getDimensions(width, height, channels, slices, frames);
+		run("Duplicate...", "title=substack duplicate slices=1-" + slices +" frames=1-" + endframe);
+	}
+
 	run("Z Project...", "projection=[Max Intensity] all"); // z-projection on all timepoints
 	zprj = getTitle();
-
+	if(isOpen("substack"))		close("substack");
+	
 	if (do_registration){
 		makeRegistrationFile(0);
 	}
@@ -6779,14 +6778,14 @@ function makeRegistrationFile(Z_project){
 	
 	prj_reg = getTitle();
 	print(prj_reg);
-	
+
 	// register projection
-	run("MultiStackReg", "stack_1=" + prj_reg + " action_1=Align file_1=[" + Registration_save_location + "] stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body] save");
+	run("MultiStackReg", "stack_1=[" + prj_reg + "] action_1=Align file_1=[" + Registration_save_location + "] stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body] save");
 }
 
 
 
-function correctDriftOnStack(){
+function correctDriftOnStack(endframe){
 	Registration_save_location = TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + loop_number + "\\Settings\\TransfMatrix.txt"; // !!##DB#!! I hope this is the right place!
 	
 	// import stack info
@@ -6799,15 +6798,19 @@ function correctDriftOnStack(){
 
 	// register individual Z-slices
 	concat_arg = "  title=" + ori + "_registered open";
+	print("correct drift on stack");
+	print("CURRENT TIME -", makeDateOrTimeString("time"));
 	for (z = 1; z < slices+1; z++) {
 		selectImage(ori);
 		
-		run("Duplicate...", "title=" + ori + "_slice" + z +" duplicate slices="+z);
+		run("Duplicate...", "title=[" + ori + "_slice" + z +"] duplicate slices="+z);
 		curr_IM = getTitle();
-		run("MultiStackReg", "stack_1=" + curr_IM + " action_1=[Load Transformation File] file_1=[" + Registration_save_location + "] stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body]");
+		run("MultiStackReg", "stack_1=[" + curr_IM + "] action_1=[Load Transformation File] file_1=[" + Registration_save_location + "] stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body]");
 		concat_arg = concat_arg + " image" + z + "=" + ori + "_slice" + z;
 	}
-
+	print("drift correction done");
+	print("CURRENT TIME -", makeDateOrTimeString("time"));
+	print(concat_arg);
 	close(ori);
 	
 	// concatenate slices back together
@@ -6820,8 +6823,21 @@ function correctDriftOnStack(){
 
 
 function exportFinalProduct(){
-	savename = image_output_location + prefix + "_" + movie_index;
-	
+	curr_movie = movie_index_list [loop_number-1];	// loop number - 1 because loop numbers 1-indexed rather than 0-indexed
+	savename = image_output_location + prefix + "_" + curr_movie;
+	savename = replace(savename,"__","_");
+
+	// avoid overwriting files in case of duplicate filenames
+	test = savename;
+	counter = 0;
+	while (File.exists (test + ".avi") || File.exists (test + ".tif") ){
+		counter ++;
+		test = savename + "_" + counter;
+	}
+	savename = test;
+
+	// save files as AVI and/or TIF
+	run("Select None");
 	if (makeAVI){
 		run("AVI... ", "compression=JPEG frame=" + FrameRateAvi + " save=[" + savename + ".avi]" );
 		print("saved: " + savename + ".avi");
@@ -6830,6 +6846,71 @@ function exportFinalProduct(){
 		saveAs("Tiff", savename + ".tif");
 		print("saved: " + savename + ".tif");
 	}
+}
+
+
+function makeDateOrTimeString(DorT){
+	getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec);
+
+	if(DorT == "date" || DorT == "Date" || DorT == "DATE" || DorT == "D" || DorT == "d"){
+		// year
+		y = substring (d2s(year,0),2);
+		// month
+		if (month > 8)	m = d2s(month+1,0);
+		else			m = "0" + d2s(month+1,0);
+		// day
+		if (dayOfMonth > 9)		d = d2s(dayOfMonth,0);
+		else					d = "0" + d2s(dayOfMonth,0);
+		// return string
+		string = y + m + d;
+	}
+
+	if(DorT == "time" || DorT == "Time" || DorT == "TIME" || DorT == "T" || DorT == "t"){
+		// hour
+		if (hour > 9)	h = d2s(hour,0);
+		else			h = "0" + d2s(hour,0);
+		// minute
+		if (minute > 9)	m = d2s(minute+1,0);
+		else			m = "0" + d2s(minute+1,0);
+		// day
+		if (second > 9)	s = d2s(second,0);
+		else			s = "0" + d2s(second,0);
+		// return string
+		string = h + ":" + m + ":" + s;
+	}
+	
+	return string;
+}
+
+function detectLastTimepoint(){
+	run("Select None");
+	ori_im = getTitle();
+	run("Z Project...", "projection=[Max Intensity] all");
+	prj = getTitle();
+	selectImage(prj);
+	for (i = 0; i < nSlices; i++){
+		setSlice(i + 1);
+		run("Measure");
+		CV = getResult("Mean")/getResult("StdDev");
+		if (CV > covCutoff){
+			lastframe = i+1;
+			i += nSlices;	// ends current for loop.
+		}
+	}
+	
+	if(lastframe == 0)	lastframe = nSlices;
+	else if(lastframe < minMovieLength)	lastframe = minOf(minMovieLength,nSlices);
+	print("last timepoint " + lastframe);
+	setSlice(lastframe);
+	print("CURRENT TIME -", makeDateOrTimeString("time"));
+
+	selectImage(prj);
+	close();
+
+	selectImage(ori_im);
+	Stack.setPosition(1, 1, lastframe);
+	return lastframe;
+	
 }
 
 
