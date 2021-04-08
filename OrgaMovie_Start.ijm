@@ -19,7 +19,7 @@ run("Set Measurements...", "area mean standard min bounding stack limit redirect
 
 // Make dialog window for input settings
 Dialog.create("OrgaMovie Settings");
-	Dialog.addHelp("https://github.com/DaniBodor/OrgaMovie/blob/master/README.md");
+	Dialog.addHelp("https://github.com/DaniBodor/OrgaMovie_dummy#readme");
 	Dialog.addMessage("SETTING UP YOUR DATA STRUCTURE:");
 	Dialog.addMessage("Put all your analysis data in a single folder.\nIf you wish to skip any movies, add an underscore (i.e. _ ) in front of the filename.");
 	Dialog.setInsets(-5,20,0);
@@ -74,7 +74,7 @@ Dialog.show();
 
 // Second dialog in case of non-default automation settings
 Dialog.create("Automation Settings");
-	Dialog.addHelp("https://github.com/DaniBodor/OrgaMovie/blob/master/README.md");
+	Dialog.addHelp("https://github.com/DaniBodor/OrgaMovie_dummy#readme");
 	Dialog.addMessage("Auto-crop Settings:");
 	Dialog.addNumber("Minimum organoid size:", 350, 0, 4, micron+"^2");
 	Dialog.addNumber("Boundary around organoid:", 30, 0, 4, "pixels");
