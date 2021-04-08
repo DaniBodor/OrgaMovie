@@ -22,7 +22,7 @@ The code is a fully automated adaptation of a macro poreviously created by Bas P
 #### Data Input Settings
 - Filetype: currently the only option is '.nd2'.
 - Time interval: set the interval (in minutes) between consecutive frames.
-- Experiment name: Used for output file naming. Default is current date in yymmdd format.
+- Experiment name: Used for output file naming. Set a prefix for all output files, which is then combined with the file naming setting below to create unique filenames for each movie. Default is current date in yymmdd format.
 #### Automation Settings
 These settings can all be turned on or off.
 - Drift correction - Uses _MultiStackReg_ plugin (default in FiJi) to correct drift and shaking of organoid.
@@ -33,8 +33,12 @@ These settings can all be turned on or off.
 #### Movie Output Settings
 - Output format: Choose whether output videos should be in between \*.avi or \*.tif or both. Tifs are easier to use for downstream analysis in ImageJ but require significantly more diskspace.
 - Duration: The frame-rate of the output movie. Set how many seconds each frame stays in view when playing the movie.
-- Gamma factor: applies a [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction) on the output images. It is unclear to me what exactly this setting does, but the original macro stated "brings low and high intensities together".
-
+- Gamma factor: Copied from original macro. Applies a [Gamma correction](https://en.wikipedia.org/wiki/Gamma_correction) on the output images. It is unclear to me what exactly this setting does, but the original macro stated "brings low and high intensities together".
+- Multiply factor: Copied from original macro. It is unclear to me what exactly this setting does, but the original macro stated "for depth coded channel".
+- Movie naming: What to use after the prefix (set above) to name individual output movies. Options are:
+  - _linear_ = number movies consecutively from 1-N.
+  - _filename_ = use the entire original filename (minus the extension).
+  - _file index_ = use the original filename until the first underscore ( \_ ). Often filenames are numbered by the microsope software and this number is repeated after the underscore. E.g., the output resulting from _Point0004_Seq0004.nd2_, will be named \[date\]\_Point0004.avi.
 
 
 
