@@ -48,7 +48,7 @@ The code is a fully automated adaptation of a macro poreviously created by Bas P
 - Change default settings: If this is checked, another dialog will be opened after this to set default automation settings. If few movies turn out imperfect, try running those manually (press F10) rather than changing the settings for all movies. If many movies turn out weird, perhaps changing default parameters can help. See below for details on these.
 
 ## Automation Settings Dialog
-<img src="https://user-images.githubusercontent.com/14219087/114038849-81748680-9882-11eb-8ed9-b599a6ef462e.PNG" width="292" height="256">
+<img src="https://user-images.githubusercontent.com/14219087/114039595-2b541300-9883-11eb-8b56-d8218963c0ae.png" width="322" height="256">
 If few movies turn out imperfect, try running those manually (press F10) rather than changing the settings for all movies. If many movies turn out weird, perhaps changing default parameters can help.
 
 #### Auto-crop Settings
