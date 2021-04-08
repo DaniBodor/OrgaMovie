@@ -78,7 +78,7 @@ Dialog.create("Automation Settings");
 	Dialog.addNumber("Brightest Point Factor", 0.85,2,4,"(lower means brighter images)");
 	Dialog.addMessage("Time-crop automation:")
 	Dialog.addNumber("Coefficient of Variation cutoff:",5,1,4,"");
-	Dialog.addNumber("Minimum length of movie:",100,0,4,"time points");
+	Dialog.addNumber("Minimum length of movie:",20,0,4,"time points");
 if (changeSettings && (do_autocrop + do_autoBC) > 1) {
 	Dialog.show();
 }
