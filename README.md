@@ -39,8 +39,7 @@ The code is a fully automated adaptation of a macro poreviously created by Bas P
   - _linear_ = number movies consecutively from 1-N.
   - _filename_ = use the entire original filename (minus the extension).
   - _file index_ = use the original filename until the first underscore ( \_ ). Often filenames are numbered by the microsope software and this number is repeated after the underscore. E.g., the output resulting from _Point0004_Seq0004.nd2_, will be named \[date\]\_Point0004.avi.
-#### Automation Settings
-These settings can all be turned on or off.
+#### Automation Settings (on/off settings)
 - Drift correction - Uses _MultiStackReg_ plugin (default in FiJi) to correct drift and shaking of organoid.  If unchecked: the organoid will move across the frame as happened during filming. As a knock-on effect, this will require a larger crop-area (see next setting) leading to larger output file size.
     - Note that the drift correction can lead to movies where it appears that a blacked out region is 'wiping' across your movie. This is in fact the organoid moving out of the field of view.
 - Auto-cropping: Detects portion of frame (XY) that is visited by the organoid in any Z or T and crops around tshis. If multiple organoid regions are found, cropping occurs around the largest organoid only. If unchecked: the entire frame is used leading to (unnecessarily) large file sizes and more cluttered movies. See default automation settings for more details.
