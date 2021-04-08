@@ -2,10 +2,11 @@
 
 // Dialog options settings
 currdate = makeDateOrTimeString("date");
-IndexingOptions = newArray("linear","filename","file index (until 1st '_')");
+IndexingOptions = newArray("linear","input filename","input file index (until 1st '_')");
 InputFileTypeList = newArray(".nd2");
 OutputFormatOptions = newArray("*.avi AND *.tif", "*.avi only", "*.tif only");
 T_options = getList("threshold.methods");
+micron = getInfo("micrometer.abbreviation");
 
 // Startup
 print("\\Clear");
@@ -17,34 +18,38 @@ run("Set Measurements...", "area mean standard min bounding stack limit redirect
 
 
 // Make dialog window for input settings
-Dialog.create("OrgaMovie Setup");
+Dialog.create("OrgaMovie Settings");
+	Dialog.addHelp("https://github.com/DaniBodor/OrgaMovie/blob/master/README.md");
 	Dialog.addMessage("SETTING UP YOUR DATA STRUCTURE:");
-	Dialog.addMessage("Put all your analysis data in a single folder.\nMake sure your filetype is opened in 'windowless' mode (Check README for details).\nIf you wish to skip any movies, add an underscore (i.e. _ ) in front of the filename.");
-	Dialog.addMessage("Remove all 'Queued Exp' folders and all *.txt files from the ANALYSIS DUMP before proceeding");
-	Dialog.addMessage("");
-
-	Dialog.addMessage("DATA INPUT SETTINGS:");
-	Dialog.addChoice("Input filetype extension", InputFileTypeList, InputFileTypeList[0]);
-	Dialog.addNumber("Time interval:", 3, 0, 2, "min");
-	//Dialog.addString("Date experiment", date);		// DB: removed this because all it did was add more complexity to filename
-	Dialog.addString("Experiment name", currdate);
-	Dialog.addMessage("");
+	Dialog.addMessage("Put all your analysis data in a single folder.\nIf you wish to skip any movies, add an underscore (i.e. _ ) in front of the filename.");
+	Dialog.setInsets(-5,20,0);
+	Dialog.addMessage("Avoid confusion with previous experiments by deleting all 'Queued Exp' folders and the \nOutput_Movies folder and all *.txt files from D:\\ANALYSIS DUMP before proceeding.");
 	
-	Dialog.addMessage("AUTOMATION SETTINGS");
-	Dialog.addCheckbox("Use drift correction", 1);
-	Dialog.addCheckbox("Use auto-cropping?", 1);
-	Dialog.addCheckbox("Use auto-contrasting?", 1);
-	 Dialog.addCheckbox("Use auto-detection of last timepoint?", 1);
-	// Dialog.addCheckbox("Use auto-detection of Z planes? (not implemented)", 0);		// DB: decided not to implement this (for now)
-	Dialog.addCheckbox("Change default automation settings?", 0);
+	Dialog.addMessage("Press 'Help' (next to Cancel) to open the ReadMe containing extensive information on all settings below.");
+	Dialog.addMessage("");
+	Dialog.addMessage("GENERAL SETTINGS:");											Dialog.setInsets(0,0,5);
+	Dialog.addChoice("Input filetype", InputFileTypeList, InputFileTypeList[0]);	Dialog.setInsets(0,0,5);
+	Dialog.addNumber("Time interval:", 3, 0, 2, "min");								Dialog.setInsets(0,0,5);
+	//Dialog.addString("Date experiment", date);		// DB: removed this because all it did was add unnece complexity to filename
+	Dialog.addString("Experiment name", currdate);
 	Dialog.addMessage("");
 
 	Dialog.addMessage("MOVIE OUTPUT SETTINGS:");
 	Dialog.addChoice("Output format", OutputFormatOptions, OutputFormatOptions[0]);
-	Dialog.addNumber("Duration", 1.3, 1, 4,"sec / frame");
-	Dialog.addNumber("Gamma factor", 0.7, 1, 4,"(brings low and high intensity together)" );
-	Dialog.addNumber("Multiply factor", 1.0, 1, 4,"(for depth coded channel)" );
-	Dialog.addChoice("Name movies according to ", IndexingOptions, IndexingOptions[1]);
+	Dialog.addNumber("Frame rate", 1.3, 1, 4,"sec / frame");
+	Dialog.addChoice("Output naming ", IndexingOptions, IndexingOptions[2]);
+	Dialog.addMessage("");
+	
+	Dialog.addMessage("AUTOMATION SETTINGS");
+	Dialog.setInsets(0,20,0);
+	Dialog.addCheckbox("Use drift correction", 1);
+	Dialog.addCheckbox("Use auto-cropping?", 1);
+	Dialog.addCheckbox("Use auto-contrasting?", 1);
+	Dialog.addCheckbox("Use auto-detection of last timepoint?", 1);
+	// Dialog.addCheckbox("Use auto-detection of Z planes? (not implemented)", 0);		// DB: decided not to implement this (for now)
+	Dialog.addMessage("");
+	Dialog.addCheckbox("Change default automation settings?", 0);
+
 	
 Dialog.show();	
 	// DATA INPUT SETTINGS
@@ -52,40 +57,50 @@ Dialog.show();
 	t_step = Dialog.getNumber();	// min
 	date = "obsolete";	// date = Dialog.getString();
 	prefix = Dialog.getString() + "_";	
+	// MOVIE OUTPUT SETTINGS
+	output_format = Dialog.getChoice();
+	sec_p_frame = Dialog.getNumber();
+	indexing = Dialog.getChoice();
+		movie_index = 0;
+		movie_index_list = newArray(0);
 	// AUTOMATION SETTINGS
 	do_registration = Dialog.getCheckbox();
 	do_autocrop = Dialog.getCheckbox();
 	do_autoBC = Dialog.getCheckbox();
-	do_autotime = Dialog.getCheckbox();	// DB: decided not to implement this (for now)
+	do_autotime = Dialog.getCheckbox();
 	do_autoZ = "obsolete";;	//do_autoZ = Dialog.getCheckbox();		// DB: decided not to implement this (for now)
 	changeSettings = Dialog.getCheckbox();
-	// MOVIE OUTPUT SETTINGS
-	output_format = Dialog.getChoice();
-	sec_p_frame = Dialog.getNumber();
-	gamma_factor = Dialog.getNumber();
-	multiply_factor = Dialog.getNumber();
-	indexing = Dialog.getChoice();
-		movie_index = 0;
-		movie_index_list = newArray(0);
+
 
 // Second dialog in case of non-default automation settings
 Dialog.create("Automation Settings");
-	Dialog.addMessage("Auto-crop settings:");
-	Dialog.addNumber("Minimum organoid size:", 350, 0, 4, "um2");
-	Dialog.addNumber("Boundary around square:", 30, 0, 4, "pixels");
-	Dialog.addMessage("Contrast automation:");
-	Dialog.addChoice("Threshold Method:", T_options, "Percentile");
-	Dialog.addNumber("Brightest Point Factor", 0.85,2,4,"(lower means brighter images)");
-	Dialog.addMessage("Time-crop automation:")
-	Dialog.addNumber("Coefficient of Variation cutoff:",5,1,4,"");
-	Dialog.addNumber("Minimum length of movie:",20,0,4,"time points");
+	Dialog.addHelp("https://github.com/DaniBodor/OrgaMovie/blob/master/README.md");
+	Dialog.addMessage("Auto-crop Settings:");
+	Dialog.addNumber("Minimum organoid size:", 350, 0, 4, micron+"^2");
+	Dialog.addNumber("Boundary around organoid:", 30, 0, 4, "pixels");
+	
+	Dialog.addMessage("Contrast Automation Settings:");
+	Dialog.addChoice("Threshold method:", T_options, "Percentile");
+	Dialog.addNumber("Brightest-point factor", 0.85,2,4,"(lower means brighter images)");
+	Dialog.addNumber("Gamma factor", 0.7, 1, 4,"(brings low and high intensity together)" );
+	Dialog.addNumber("Multiply factor", 1.0, 1, 4,"(for depth coded channel)" );
+
+	Dialog.addMessage("Time-crop Settings:")
+	Dialog.addNumber("CoV cutoff:",5,1,4,"(higher values leads to a higher inclusion");
+	Dialog.addNumber("Minimum length:",10,0,4,"time points");
+
+	Dialog.addMessage("Press 'Help' to open the ReadMe containing extensive information on these settings.");
 if (changeSettings && (do_autocrop + do_autoBC) > 1) {
 	Dialog.show();
 }
 	minOrgaSize = Dialog.getNumber();
 	cropBoundary = Dialog.getNumber();
+	
 	BC_thresh_meth = Dialog.getChoice();
 	maxBrightnessFactor = Dialog.getNumber();
+	gamma_factor = Dialog.getNumber();
+	multiply_factor = Dialog.getNumber();
+	
 	covCutoff = Dialog.getNumber();
 	minMovieLength = Dialog.getNumber();
 

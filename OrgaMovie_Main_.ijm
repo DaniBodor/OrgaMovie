@@ -77,7 +77,7 @@ if (run_mode == "process"){
 }
 
 
-export_folder = "Final_Movies";
+export_folder = "Output_Movies";
 micron = getInfo("micrometer.abbreviation");
 lastframe = 0;
 
