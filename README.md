@@ -17,7 +17,7 @@ The code is a fully automated adaptation of a macro poreviously created by Bas P
 
 
 # Macro Settings
-<img src="https://user-images.githubusercontent.com/14219087/114029820-33f41b80-987a-11eb-9585-685b72dae27e.PNG" width="329" height="463">
+<img src="https://user-images.githubusercontent.com/14219087/114033156-4a4fa680-987d-11eb-9d75-38829f41b059.PNG" width="388" height="452">
 
 #### Data Input Settings
 - Filetype: currently the only option is '.nd2'.
