@@ -7,13 +7,20 @@ The code is a fully automated adaptation of a macro poreviously created by Bas P
 
 # Running the OrgaMovie Macro on the Workstation (DED-KOPS-001)
 
-1) Start FiJi
-2) Start OrgaMovie code by hitting F11, or go to _plugins > OrgaMovies > OrgaMovie_Start_
-3) Input your favorite settings (see below)
-4) Choose input folder where your raw data (\*.nd2 files) are located. Please work from local or external hard disks and NOT from the server. 
-5) Wait overnight (rough time estimate: ~14h for 33 movies totalling ~200 GB)
-6) Collect your output data from _D:\ANALYSIS DUMP\Final_Movies_
-7) Check that your movies are ok and then delete them from the D-drive
+1) Check that previous user has collected all their data, otherwise store/rename the _Output_Movies_ folder.
+2) Delete old files from D:\ANALYSIS DUMP. This is not essential but avoids confusion with new analysis.
+    - Delete all folders called _Queue Exp \[\#\]_.
+    - Delete previous output movies from _Output_Movies_ folder, or delete/rename the entire folder.
+      - MAKE SURE PREVIOUS USER HAS COLLECTED THEIR DATA BEFORE DELETING!.
+    - Delete all _\*.txt_ files.
+3) Start FiJi.
+4) Start OrgaMovie code by hitting F11, or go to _Plugins > OrgaMovies > OrgaMovie Start
+5) Input your favorite settings (see below).
+6) Choose input folder where your raw data (\*.nd2 files) are located.
+    - Please work from local or external hard disks and NOT from the server. 
+8) Wait overnight (rough time estimate: ~14h for 33 movies totalling ~200 GB).
+9) Collect your output data from _D:\ANALYSIS DUMP\Final_Movies_.
+10) Check that your movies are ok and then delete them from the D-drive.
 
 
 # Macro Settings
