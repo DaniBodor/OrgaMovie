@@ -58,13 +58,14 @@ minOrgaSize = input_arguments[14];
 cropBoundary = input_arguments[15];
 loop_number = input_arguments[16];
 	loop_number = parseInt(loop_number);
-BC_thresh_meth = input_arguments[17];
-export_format = input_arguments[18];
+min_thresh_meth = input_arguments[17];
+max_thresh_meth = input_arguments[18];
+export_format = input_arguments[19];
 	if (export_format != "*.tif only") makeAVI = true;
 	if (export_format != "*.avi only") makeTIF = true;
-maxBrightnessFactor = input_arguments[19];
-covCutoff = input_arguments[20];
-minMovieLength = input_arguments[21];
+maxBrightnessFactor = input_arguments[20];
+covCutoff = input_arguments[21];
+minMovieLength = input_arguments[22];
 
 if (run_mode == "process"){
 	for(i = 0; i < input_arguments.length; i++){
@@ -2552,10 +2553,16 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 						// set B&C properly
 						resetMinAndMax();
 						if (do_autoBC){
-							getMinAndMax(min,MaxBC);
-							setAutoThreshold(BC_thresh_meth);
-							getThreshold(min,maxT);
-							setMinAndMax(maxT,MaxBC * maxBrightnessFactor);
+							getMinAndMax(no,MaxBC);
+							
+							setAutoThreshold(min_thresh_meth);
+							getThreshold(no,minT);
+							
+							setAutoThreshold(max_thresh_meth);
+							getThreshold(no,maxT);
+							
+							//setMinAndMax(minT,MaxBC * maxBrightnessFactor);
+							setMinAndMax(minT,maxT * maxBrightnessFactor);
 						}
 						//waitForUser("Set B&C for position " + w + 1 + " (of " + PositionNumber.length + ")"); //bp14 //RO2	// !!##DB test ABC
 

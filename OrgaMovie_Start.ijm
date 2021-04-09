@@ -80,8 +80,9 @@ Dialog.create("Automation Settings");
 	Dialog.addNumber("Boundary around organoid:", 30, 0, 4, "pixels");
 	
 	Dialog.addMessage("Contrast Automation Settings:");
-	Dialog.addChoice("Threshold method:", T_options, "Percentile");
-	Dialog.addNumber("Brightest-point factor", 0.85,2,4,"(lower means brighter images)");
+	Dialog.addChoice("Minimum threshold method:", T_options, "Percentile");
+	Dialog.addChoice("Maximum threshold method:", T_options, "Minimum");
+	Dialog.addNumber("Maximum brightness multiplier", 1.00, 2, 4, "(lower means brighter images)");
 	Dialog.addNumber("Gamma factor", 0.7, 1, 4,"(brings low and high intensity together)" );
 	Dialog.addNumber("Multiply factor", 1.0, 1, 4,"(for depth coded channel)" );
 
@@ -96,8 +97,9 @@ if (changeSettings && (do_autocrop + do_autoBC) > 1) {
 	minOrgaSize = Dialog.getNumber();
 	cropBoundary = Dialog.getNumber();
 	
-	BC_thresh_meth = Dialog.getChoice();
-	maxBrightnessFactor = Dialog.getNumber();
+	min_thresh_meth = Dialog.getChoice();
+	max_thresh_meth = Dialog.getChoice();
+	maxBrightnessFactor = "obsolete";	// maxBrightnessFactor = Dialog.getNumber();
 	gamma_factor = Dialog.getNumber();
 	multiply_factor = Dialog.getNumber();
 	
@@ -125,11 +127,12 @@ arguments = newArray(	t_step, // 0
 						minOrgaSize, // 14
 						cropBoundary, //15
 						0, // 16 (loop_number)
-						BC_thresh_meth, // 17
-						output_format, // 18
-						maxBrightnessFactor, // 19
-						covCutoff, // 20
-						minMovieLength ); // 20
+						min_thresh_meth, // 17
+						max_thresh_meth, // 18
+						output_format, // 19
+						maxBrightnessFactor, // 20
+						covCutoff, // 21
+						minMovieLength ); // 22
 
 // select directory to open files from
 dir = getDirectory("Choose Data Directory");
