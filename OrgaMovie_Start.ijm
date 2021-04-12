@@ -8,6 +8,11 @@ OutputFormatOptions = newArray("*.avi AND *.tif", "*.avi only", "*.tif only");
 T_options = getList("threshold.methods");
 micron = getInfo("micrometer.abbreviation");
 
+while (isOpen("Exception")) {
+	selectWindow("Exception");
+	run("Close");
+}
+
 // Startup
 print("\\Clear");
 print("start OrgaMovie macro");
@@ -68,7 +73,7 @@ Dialog.show();
 	do_autocrop = Dialog.getCheckbox();
 	do_autoBC = Dialog.getCheckbox();
 	do_autotime = Dialog.getCheckbox();
-	do_autoZ = "obsolete";;	//do_autoZ = Dialog.getCheckbox();		// DB: decided not to implement this (for now)
+	do_autoZ = 0;	//do_autoZ = Dialog.getCheckbox();		// DB: decided not to implement this (for now)
 	changeSettings = Dialog.getCheckbox();
 
 
@@ -143,8 +148,9 @@ if (filelist.length == 0)	exit("no data found in input directory\n" + dir);
 
 //Macro_location = "C:\\Users\\j.fernandes\\Desktop\\TEST" + File.separator;
 //Macro_location = "C:\\Users\\TEMP\\Desktop\\OrgaMovie_Macro" + File.separator;
+Macro_location = "C:\\Users\\dani\\Documents\\MyCodes\\OrgaMovie" + File.separator;
+//Macro_location = getDirectory("plugins") + "OrgaMovie" + File.separator;
 
-Macro_location = getDirectory("plugins") + "OrgaMovie" + File.separator;
 if (File.exists(Macro_location) == 0)	exit("main macro not found at location\n" + Macro_location);
 
 // run macro for all *.nd2 files in "queue" mode, excluding files starting with an _

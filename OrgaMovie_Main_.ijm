@@ -27,10 +27,12 @@
 // VERBETER DE SetBrightness etc....... ook CONTRAST standaardiseren
 
 
+
 passargument = getArgument();
 if (passargument == ""){
 	exit("You started the wrong macro. Please run:\n OrgaMovie Start")
 }
+
 
 input_arguments = split(passargument, "$");
 
@@ -186,6 +188,10 @@ if (File.exists("D:\\ANALYSIS DUMP\\")) {
 if (File.exists("F:\\ANALYSIS DUMP\\")) {
 	TempDisk = "F";
 } // kan met length of string omdat-i achteraan staat!!!
+
+// ## DB !! test TempDisk C
+TempDisk = "C";
+OutputDisk = "C";
 
 if (File.exists(TempDisk + ":\\ANALYSIS DUMP\\Queue-info.txt")) {
 	QueueString = File.openAsRawString(TempDisk + ":\\ANALYSIS DUMP\\Queue-info.txt");
@@ -1403,7 +1409,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				Dialog.addCheckbox("Add Position Name to Filename?", AddPositionName);
 			}
 			Dialog.setInsets(5, 40, 0);
-			Dialog.addCheckbox("Show Extended Settings?", ExtendedSettings);
+			Dialog.addCheckbox("Show Extended Settings?", 0);	// DB ##!!
 		//Dialog.show();
 		// !!!!!!!!!!!!!!! =========== Here We open a window to define all settings ===============!!!!!!!!!!!!!
 		NumberOfChannelsToBeProcessed = 0;
@@ -5644,9 +5650,7 @@ function MakeProjections(Title) {
 	run("Gamma...", "value=" + GammaCorrApply + " stack");
 	run("Duplicate...", "title=[glow] duplicate range=1-" + Zstack);
 	//}
-	if (SkipGlow) {} else {
-		run("The Real Glow");
-	}
+	run("The Real Glow");
 
 	run("Z Project...", "start=1 stop=" + Zstack + " projection=[Max Intensity]");
 	run("RGB Color");
@@ -6198,9 +6202,7 @@ function MakeTilesSingleTimepoint(Title) {
 	run("Duplicate...", "title=[glow] duplicate range=1-" + Zstack); //waitForUser("1871");
 	run("Gamma...", "value=0.45 stack");
 	//waitForUser("1873");
-	if (SkipGlow) {} else {
-		run("The Real Glow");
-	}
+	run("The Real Glow");
 
 	run("RGB Color");
 	rename("Glow" + Title);
