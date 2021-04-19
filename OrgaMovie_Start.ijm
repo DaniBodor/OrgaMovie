@@ -1,12 +1,13 @@
 
 
 // Dialog options settings
-currdate = makeDateOrTimeString("date");
 IndexingOptions = newArray("linear","input filename","input file index (until 1st '_')");
 InputFileTypeList = newArray(".nd2");
 OutputFormatOptions = newArray("*.avi AND *.tif", "*.avi only", "*.tif only");
 T_options = getList("threshold.methods");
 micron = getInfo("micrometer.abbreviation");
+currdate = makeDateOrTimeString("date");
+curr_user = getCurrUser();
 
 // Startup
 print("\\Clear");
@@ -15,6 +16,7 @@ print("CURRENT TIME -", makeDateOrTimeString("time"));
 run("Close All");
 run("Collect Garbage");
 run("Set Measurements...", "area mean standard min bounding stack limit redirect=None decimal=1");
+crash_test = "";
 
 
 // Make dialog window for input settings
@@ -29,9 +31,10 @@ Dialog.create("OrgaMovie Settings");
 	Dialog.addMessage("");
 	Dialog.addMessage("GENERAL SETTINGS:");											Dialog.setInsets(0,0,5);
 	Dialog.addChoice("Input filetype", InputFileTypeList, InputFileTypeList[0]);	Dialog.setInsets(0,0,5);
+	Dialog.addNumber("Channel number:", 1, 0, 2, "");								Dialog.setInsets(0,0,5);
 	Dialog.addNumber("Time interval:", 3, 0, 2, "min");								Dialog.setInsets(0,0,5);
 	//Dialog.addString("Date experiment", date);		// DB: removed this because all it did was add unnece complexity to filename
-	Dialog.addString("Experiment name", currdate);
+	Dialog.addString("Experiment name", curr_user + "_" + currdate, 20);
 	Dialog.addMessage("");
 
 	Dialog.addMessage("MOVIE OUTPUT SETTINGS:");
@@ -54,9 +57,11 @@ Dialog.create("OrgaMovie Settings");
 Dialog.show();	
 	// DATA INPUT SETTINGS
 	input_filetype = Dialog.getChoice();
+	channel_number = Dialog.getNumber() - 1;
 	t_step = Dialog.getNumber();	// min
 	date = "obsolete";	// date = Dialog.getString();
-	prefix = Dialog.getString() + "_";	
+	prefix = Dialog.getString() + "_";
+		prefix = replace(prefix,"\\.","_");
 	// MOVIE OUTPUT SETTINGS
 	output_format = Dialog.getChoice();
 	sec_p_frame = Dialog.getNumber();
@@ -87,8 +92,8 @@ Dialog.create("Automation Settings");
 	Dialog.addNumber("Multiply factor", 1.0, 1, 4,"(for depth coded channel)" );
 
 	Dialog.addMessage("Time-crop Settings:")
-	Dialog.addNumber("CoV cutoff:",5,1,4,"(higher values leads to a higher inclusion");
-	Dialog.addNumber("Minimum length:",10,0,4,"time points");
+	Dialog.addNumber("CoV cutoff:", 5, 1, 4, "(higher values leads to a higher inclusion)");
+	Dialog.addNumber("Minimum length:", 999, 0, 4, "time points");
 
 	Dialog.addMessage("Press 'Help' to open the ReadMe containing extensive information on these settings.");
 if (changeSettings && (do_autocrop + do_autoBC) > 1) {
@@ -99,7 +104,7 @@ if (changeSettings && (do_autocrop + do_autoBC) > 1) {
 	
 	min_thresh_meth = Dialog.getChoice();
 	max_thresh_meth = Dialog.getChoice();
-	maxBrightnessFactor = "obsolete";	// maxBrightnessFactor = Dialog.getNumber();
+	maxBrightnessFactor = Dialog.getNumber();
 	gamma_factor = Dialog.getNumber();
 	multiply_factor = Dialog.getNumber();
 	
@@ -132,7 +137,11 @@ arguments = newArray(	t_step, // 0
 						output_format, // 19
 						maxBrightnessFactor, // 20
 						covCutoff, // 21
-						minMovieLength ); // 22
+						minMovieLength, // 22
+						channel_number, // 23
+						"");
+//for(i = 0; i < arguments.length; i++)		print(i,arguments[i]);
+
 
 // select directory to open files from
 dir = getDirectory("Choose Data Directory");
@@ -163,21 +172,30 @@ for (f = 0; f < filelist.length; f++) {
 		if (indexing == IndexingOptions[0])			movie_index ++;		// linear
 		else if(indexing == IndexingOptions[1])		movie_index = substring(currfile, 0, indexOf(currfile,input_filetype));		// filename
 		else if (indexing == IndexingOptions[2])	movie_index = substring(currfile, 0, indexOf(currfile,"_"));	// index (until 1st '_'")
+		if (movie_index == "")						movie_index = substring(currfile, 0, indexOf(currfile,input_filetype));		// revert to filename if empty
 		movie_index_list = Array.concat(movie_index_list,movie_index);
 		
 		// set file specific arguments to pass
-		arguments[11] = dir+currfile;
-		arguments[12] = movie_index;
-		arguments[16] ++;	// loop number // DB: identical to movie_index if indexing is linear. Could probably be consolidated, but I can't be bothered to.
+		arguments[11] = dir + currfile;	// filename
+		arguments[12] = movie_index;	// movie index
+		arguments[16] ++;				// loop number // DB: identical to movie_index if indexing is linear. Could probably be consolidated, but I can't be bothered to.
 
 		// initiate main macro and do memory dumps
+		//for(i = 0; i < arguments.length; i++)		print(i,arguments[i]);
+		
 		run("Collect Garbage");
 		print("run macro in queue mode on movie: " + movie_index);
 		print("CURRENT TIME -", makeDateOrTimeString("time"));
 		
 		passargument = makeArgument(arguments);
-		runMacro(Macro_location + "OrgaMovie_Main_.ijm", passargument);
+		crash_test = runMacro(Macro_location + "OrgaMovie_Main_.ijm", passargument);	// returns empty string if ok, or [aborted] if main macro crashed
 		run("Collect Garbage");
+
+		// exit start macro if main macro crashed
+		if (crash_test == "[aborted]"){
+			saveCrashLog();
+			exit("Exit macro.\nOrgaMovie_Main crashed during last run.\nCurrent Log has been saved as CrashReport.txt\nPlease save a screenshot or pic of the current screen for debugging purposes.");
+		}
 	}
 }
 
@@ -217,7 +235,7 @@ function makeArgument(arg_array){
 function makeDateOrTimeString(DorT){
 	getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec);
 
-	if(DorT == "date" || DorT == "Date" || DorT == "DATE"){
+	if(DorT == "date" || DorT == "Date" || DorT == "DATE" || DorT == "D" || DorT == "d"){
 		y = substring (d2s(year,0),2);
 		
 		if (month > 8)	m = d2s(month+1,0);
@@ -229,12 +247,12 @@ function makeDateOrTimeString(DorT){
 		string = y + m + d;
 	}
 
-	if(DorT == "time" || DorT == "Time" || DorT == "TIME"){
+	if(DorT == "time" || DorT == "Time" || DorT == "TIME" || DorT == "T" || DorT == "t"){
 		if (hour > 9)	h = d2s(hour,0);
 		else			h = "0" + d2s(hour,0);
 		
-		if (minute > 9)	m = d2s(minute+1,0);
-		else			m = "0" + d2s(minute+1,0);
+		if (minute > 9)	m = d2s(minute,0);
+		else			m = "0" + d2s(minute,0);
 		
 		if (second > 9)	s = d2s(second,0);
 		else			s = "0" + d2s(second,0);
@@ -243,4 +261,26 @@ function makeDateOrTimeString(DorT){
 	}
 	
 	return string;
+}
+
+function getCurrUser(){
+	curr_user = getDirectory("home");
+	parent = File.getParent(curr_user);
+	curr_user = substring(curr_user, lengthOf(parent)+1, lengthOf(curr_user)-1);
+	curr_user = replace(curr_user,"\\.","");
+	
+	return curr_user;
+}
+
+
+function saveCrashLog(){
+	// print settings and save Log for future reference
+	currdate = makeDateOrTimeString("D");
+	currtime = makeDateOrTimeString("T");
+	print("CURRENT TIME -", currtime);
+	print("!!!!! main macro crashed");
+	currtime = replace(currtime,":","");
+	savetextfile = "D:\\ANALYSIS DUMP\\_Movies_" + prefix + File.separator + prefix + "_" + currdate + "_" + currtime + "_CrashReport.txt";
+	selectWindow("Log");
+	saveAs("Text", savetextfile);
 }

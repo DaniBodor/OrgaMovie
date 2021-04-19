@@ -1,6 +1,5 @@
 // !!!!!!!!!!!!!!!!!!!!!!! in settings wegschrijven definitie Ch, Slice, Frames
 //As of may 2015 the new formed image (make substack..., merge channels...) is no longer automatically selected!
-
 /// data op X (NIET lokaal gehaald)
 /// nog eens fiji op D terwijl F leeg is. beter?
 /// verhuis Fiji naa de F en run
@@ -33,6 +32,7 @@ if (passargument == ""){
 }
 
 input_arguments = split(passargument, "$");
+//for(i = 0; i < input_arguments.length; i++)		print(i,input_arguments[i]);
 
 t_step = input_arguments[0];
 unused = input_arguments[1];
@@ -61,11 +61,15 @@ loop_number = input_arguments[16];
 min_thresh_meth = input_arguments[17];
 max_thresh_meth = input_arguments[18];
 export_format = input_arguments[19];
-	if (export_format != "*.tif only") makeAVI = true;
-	if (export_format != "*.avi only") makeTIF = true;
+	makeAVI = true;
+	if (export_format == "*.tif only") makeAVI = false;
+	makeTIF = true;
+	if (export_format == "*.avi only") makeTIF = false;
 maxBrightnessFactor = input_arguments[20];
 covCutoff = input_arguments[21];
 minMovieLength = input_arguments[22];
+channel_number_for_use = input_arguments[23];
+
 
 if (run_mode == "process"){
 	for(i = 0; i < input_arguments.length; i++){
@@ -396,7 +400,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 	} // altijd 1 folder vooruit maken ; beetje raar maar kan geen kwaad 
 	
 	// DB output image to better place
-	image_output_location = OutputDisk + ":\\ANALYSIS DUMP\\" + export_folder + File.separator;
+	image_output_location = OutputDisk + ":\\ANALYSIS DUMP\\_Movies_" + prefix + File.separator;
 	File.makeDirectory(image_output_location);
 
 	ChannelColourOriginal = newArray("White", "Green", "Red", "Blue", "Cyan", "Magenta", "Yellow");
@@ -929,7 +933,10 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 			ReadFileName = 0;
 		}
 
+		pre = nImages;
 		run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
+		closeWrongChannels(pre);
+		
 		setLocation(1,1);
 		print("CURRENT TIME -", makeDateOrTimeString("time"));
 
@@ -937,16 +944,17 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
 		if (Timo == 3) {
 			waitForUser("open tif");
-			run("Bio-Formats Importer", "open=[] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT use_virtual_stack");
+			pre = nImages;
+			run("Bio-Formats Importer", "open=[] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
 			file = File.directory + getTitle();
+			closeWrongChannels(pre);
 		}
 
 		//Chose a file to process, this way we also set which file to use for the open commands
 		//The CodedFile is required as \ marks disappear when saved to a file (required for Restart)
 
-
-		MetadataLIF = getImageInfo(); // is a large string containing all info about the opened images
-		print(MetadataLIF);
+		//MetadataLIF = getImageInfo(); // is a large string containing all info about the opened images	// DB turned this off
+		//print(MetadataLIF);				// DB turned this off
 		if (Timo == 3) {
 			waitForUser("print(MetadataLIF)");
 		}
@@ -2212,14 +2220,11 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				Dialog.show();
 					for (i = 0; i < PositionNumber.length; i++) {
 						LastTimepointBlack[i] = Dialog.getNumber();
-						//RO Cleaning	List.set("LastTimepointBlack"+i,LastTimepointBlack[i]);//List.set("Singletimepoint"+i,Singletimepoint[i]);
 						NumberOfTimepoints[i] = NumberOfTimepoints[i] - LastTimepointBlack[i];
-						//RO Cleaning	List.set("NumberOfTimepoints"+i,NumberOfTimepoints[i]);
 					}
 			} else {
 				for (i = 0; i < PositionNumber.length; i++) {
 					NumberOfTimepoints[i] = NumberOfTimepoints[i] - LastTimepointBlack[i];
-					//RO Cleaning	List.set("NumberOfTimepoints"+i,NumberOfTimepoints[i]);
 				}
 			}
 		}
@@ -2250,36 +2255,33 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		//NORMAL, MAKE TEMPORARY WINDOWS FOR B&C NON-TRANSMITTED CHANNELS
 		print("4e test ");
 		FirstPos = 0; //bp
-		Duration = 1.3; //bp37  ##DB## duration from initiating macro
+		Duration = t_step; //bp37
 		for (i = StartFromi; i < PositionNumber.length; i++) {
 			if (ArraySkipPositions[i] == 0) { //bp17
+				pre = nImages;
 				if (tiffFile) {
-					run("Bio-Formats Importer", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT use_virtual_stack");
+					run("Bio-Formats Importer", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
+					closeWrongChannels(pre);
 					setLocation(1,1);
 				} else {
-					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT use_virtual_stack series_" + (PositionNumber[i]));
+					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
 					print("biof2 - CURRENT TIME -", makeDateOrTimeString("time"));
+					closeWrongChannels(pre);
 					setLocation(1,1);
 				}
 				getDimensions(width, height, channels, slices, frames);
 				// for scalebar later
 				if (tiffFile == 0) {
 					ImageInfoString = getImageInfo();
-					print(ImageInfoString);
+					//print(ImageInfoString);	// DB turned this off
 					StartIndex = indexOf(ImageInfoString, "Resolution:") + 13;
-					print("");
 					print("StartIndex : " + StartIndex);
-					print("");
 					RestOfImageInfo = substring(ImageInfoString, StartIndex);
 					EndIndex = indexOf(RestOfImageInfo, "pixels per ") - 1;
 					ResolutionString = substring(RestOfImageInfo, 0, EndIndex);
-					print("");
 					print("ResolutionString : " + ResolutionString);
-					print("");
 					Resolution = parseFloat(ResolutionString);
-					print("");
 					print("Resolution * 2 : " + 2 * Resolution);
-					print("");
 					MicronPerPixel = 1 / Resolution; // want staat geschreven in pixels/micron
 					ResolutionArray[i] = Resolution; 
 
@@ -2349,7 +2351,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				} else {
 					JumpT = FloorT + 1;
 				}
-				//if(JumpT<1)JumpT=1;	
+				
 				print("JumpT = " + JumpT);
 				FloatZ = slices / NumberOfZsTempStacks;
 				FloorZ = floor(slices / NumberOfZsTempStacks);
@@ -2433,7 +2435,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				// only calculate scalebar parameters
 				selectWindow(Title + "_Temp");
 				HeightTemp = getHeight();
-				WidthTemp = getWidth(); //	a=1;	if(a && i==0){FractionForBar = 0.04;}		if(a && i==1){FractionForBar = 0.15;}	if(a && i==2){FractionForBar = 0.6;}
+				WidthTemp = getWidth();
 				ScaleBarArray = newArray(1, 2, 5, 7.5, 10, 15, 20, 25, 40, 50, 60, 75, 100, 125, 150, 200, 250, 500, 750, 1000, 1500, 2000); /// in microns
 				Resolution = ResolutionArray[i];
 				Continue = 1;
@@ -2551,20 +2553,28 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 						} //bp43
 
 						// set B&C properly
+						selectImage(1);
 						resetMinAndMax();
+						getMinAndMax(no,maxBC);
+						
 						if (do_autoBC){
-							getMinAndMax(no,MaxBC);
+							run("Z Project...", "projection=[Max Intensity] all");
+							maxprj = getTitle();
 							
 							setAutoThreshold(min_thresh_meth);
 							getThreshold(no,minT);
 							
 							setAutoThreshold(max_thresh_meth);
 							getThreshold(no,maxT);
+							if(maxT <= minT)	maxT = maxBC;
+							else				maxT = maxT * maxBrightnessFactor;
 							
-							//setMinAndMax(minT,MaxBC * maxBrightnessFactor);
-							setMinAndMax(minT,maxT * maxBrightnessFactor);
+							selectImage(1);
+							setMinAndMax(minT,maxT);
+
 						}
-						//waitForUser("Set B&C for position " + w + 1 + " (of " + PositionNumber.length + ")"); //bp14 //RO2	// !!##DB test ABC
+						//waitForUser("$$$$$$$$$ \n Set B&C for position " + w + 1 + " (of " + PositionNumber.length + ")"); //bp14 //RO2	// !!##DB test ABC
+						close(maxprj);
 
 						for (c = 0; c < PositionChannelAmount[w]; c++) {
 							if (UseChannel[c]) {
@@ -3015,14 +3025,14 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
 									// play movie twice
 									if (PlayDepth) { //bp16								
-										FrameRate = 2 * NumberOfTPTempStacks / (Duration); // in fps 	// so, plays it twice
+										FrameRate = 2 * NumberOfTPTempStacks / (t_step); // in fps 	// so, plays it twice
 										wait(80);
 										selectWindow("Depth" + Title);
 										wait(80);
 										setSlice(1);
 										run("Animation Options...", "speed=" + FrameRate);
 										doCommand("Start Animation [\\]");
-										wait(Duration * 1000);
+										wait(t_step * 1000);
 										run("Stop Animation");
 										setSlice(1);
 									} else {
@@ -3476,14 +3486,14 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 											selectWindow(WhiteScreen);
 											// play movie twice
 											if (PlayDepth) { //bp16		
-												FrameRate = 2 * NumberOfTPTempStacks / (Duration); // in fps 	// so, plays it twice
+												FrameRate = 2 * NumberOfTPTempStacks / (t_step); // in fps 	// so, plays it twice
 												wait(80);
 												selectWindow("Depth" + Title);
 												wait(80);
 												setSlice(1);
 												run("Animation Options...", "speed=" + FrameRate);
 												doCommand("Start Animation [\\]");
-												wait(Duration * 1000);
+												wait(t_step * 1000);
 												run("Stop Animation");
 												setSlice(1);
 											}
@@ -3568,7 +3578,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				run("Close");
 			}
 			print("movie " + movie_index + " added to queue");
-			exit;
+			return "";	// returns empty string to OrgaMovie_Start
 		}
 
 		if (QueueMultiple == 0 && AlreadyShown == 0) {
@@ -3798,6 +3808,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				}
 				print("net voor de Bio-Formats");
 				print("CURRENT TIME -", makeDateOrTimeString("time"));
+				pre = nImages;
 				if (RunAllQueued) {
 					tiffFile = 0;
 					if (endsWith(file, ".tif")) {
@@ -3806,6 +3817,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				}
 				if (tiffFile) {
 					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
+					closeWrongChannels(pre);
+					
 					setLocation(1,1);
 					if (RunAllQueued) {
 						TiffName = getTitle();
@@ -3813,7 +3826,11 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					rename(TiffName);
 					run("The Real Glow");
 				} else {
-					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT use_virtual_stack series_" + (PositionNumber[i]));
+					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
+					closeWrongChannels(pre);
+					selectImage(pre+1);
+					//waitForUser("$$$$$$$$$$$ ");
+					
 					setLocation(1,1);
 					loop_number = loop_number + 1;
 				}
@@ -3929,16 +3946,11 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					} //RO 0204 got error when images were too big (tilescans), canged somting in splitZslice instead	
 
 					splitZslice(Transmitted, TransmittedZslice[i]); //This will extract 1 Zslice of all timepoints of (second variable given to function determines which Zslice)	
-					//waiForUser("TRANSMITTED? LastTimepointTemp:"+LastTimepointTemp);
 
 					selectWindow(Transmitted);
-					getDimensions(x, y, channelTemp, sliceTemp, frameTemp); // waitForUser("___sliceTemp_"+sliceTemp+"___frameTemp_"+frameTemp);print("");
-					// Dimension="frames"; if(sliceTemp>frameTemp){Dimension="slices";}
+					getDimensions(x, y, channelTemp, sliceTemp, frameTemp);
 
-					// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!																	// getDimensions (x,y,channelTemp,sliceTemp,frameTemp); waitForUser("_channelTemp__"+channelTemp+"_sliceTemp__"+sliceTemp+"__frameTemp_"+frameTemp);
-					// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!																	// getDimensions (x,y,channelTemp,sliceTemp,frameTemp); waitForUser("_channelTemp__"+channelTemp+"_sliceTemp__"+sliceTemp+"__frameTemp_"+frameTemp);
-					// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!																	// getDimensions (x,y,channelTemp,sliceTemp,frameTemp); waitForUser("_channelTemp__"+channelTemp+"_sliceTemp__"+sliceTemp+"__frameTemp_"+frameTemp);
-					// hier stond ooit frames=etcetera en deed het toen maanden lang goed !!!!																					// waitForUser("___LastTimepointTemp_"+LastTimepointTemp+"___Dimension_"+Dimension);print("");
+
 					// vanaf mei 2015 moet er slices staan...
 					// gevolg van nieuwe acq software? of nieuwe Fiji?
 					print("if macro crashes here, without printing HELLO!, then there's a problem again with \n run('Make Substack... slices= \n versus run('Make Substack...frames= ");
@@ -3950,7 +3962,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 						getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
 						print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec First do Trans 5");
 					}
-					rename(Transmitted); // waitForUser("A komt i hier ?");print("");			
+					rename(Transmitted);		
 					//Remove last timepoint 											
 					if (PauseAfterSettings) {
 						wait(500 + RunAllQueued * 200);
@@ -4405,11 +4417,10 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 								}
 								PauseText = "";
 								if (WindowForPause) {
-									PauseText = " \n \n until next pause window : " + FramesUntillPause;
+									PauseText = "\n until next pause window : " + FramesUntillPause;
 								}
-								print(" \n \n \n " + QueueText + " \n Position:" + PositionNumber[i] + " ( " + i + 1 + " of " + PositionNumber.length + " ) " + SplitZPrintText + " \n --> frame " + frame + " -van- " + LastTimepointTemp + "" + PauseText);
-								print("");
-								print(""); //bp		if(PrintLikeCrazy){getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS); print(plcH+"hr "+plcM+"min "+plcS+"sec "+plcMS+"msec Now we do each channel 37");}
+								print("\n" + QueueText + "\nPosition:" + PositionNumber[i] + " ( " + i + 1 + " of " + PositionNumber.length + " ) " + SplitZPrintText + " \n --> frame " + frame + " -van- " + LastTimepointTemp + "" + PauseText);
+								print(""); //bp
 							} //End of usechannel
 						} //End of channel loop
 
@@ -5376,12 +5387,14 @@ if (RunAllQueued) {
 	currtime = replace(currtime,":","");
 	savetextfile = image_output_location + prefix + "_" + currdate + "_" + currtime + "_Settings.txt";
 	savetextfile = replace(savetextfile,"__","_");
-	saveAs("Text", savetextfile);	
+	saveAs("Text", savetextfile);
 	
 	waitForUser(" Klaar! \n \n All (Cute) Queued Experiments Processed !! ");
 	FinalJoke();
 	//exit(" Klaar! \n \n All (Cute) Queued Experiments Processed !! ");
 }
+
+print("finished run");
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++END OF MACRO!!!!!!!!!!!!!!!!!!!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++END OF MACRO!!!!!!!!!!!!!!!!!!!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -5734,12 +5747,12 @@ function splitZplaneTemp(Title, JumpZ) {
 		run("Duplicate...", "title=[TEMP_" + i + "] duplicate");
 		ConcatenateString = ConcatenateString + " image" + i + 1 + "=TEMP_" + i;
 	}
-	ConcatenateString = ConcatenateString + " image" + i + 1 + "=[-- None --]"; //print(ConcatenateString);
+	ConcatenateString = ConcatenateString + " image" + i + 1 + "=[-- None --]"; 
 	run("Concatenate...", " title=[ConcatenatedStacks] " + ConcatenateString);
 	// and make it Hyperstack
 	run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices=" + Slices + " frames=" + Timepoints + " display=Color");
 	selectWindow("ConcatenatedStacks");
-	rename("Zselection" + Title); //exit();
+	rename("Zselection" + Title);
 	RETURN = getTitle();
 	return RETURN;
 	setBatchMode(false);
@@ -5751,10 +5764,10 @@ function splitTimepointTemp(Title, JumpT, JumpZ, Reduce) {
 	id = getImageID(); // remember the original hyperstack
 	getDimensions(dummy, dummy, dummy, Slices, nFrames); // we need to know only how many frames there are
 	ConcatenateString = " title=[" + Title + "_Temp] ";
-	image = 1; //rename(Title+"_Temp");
+	image = 1;
 	if (Singletimepoint[i] == 1) {
 		LastTimepointTemp = nFrames;
-	} //waitForUser(" ");
+	}
 	for (frame = 1; frame <= LastTimepointTemp; frame += JumpT) { // for each frame...
 
 		selectImage(id); // select the frame
@@ -5762,7 +5775,7 @@ function splitTimepointTemp(Title, JumpT, JumpZ, Reduce) {
 		run("Reduce Dimensionality...", "channels slices keep"); // extract one frame
 
 		run("Reduce...", "reduction=" + JumpZ);
-		ReducedTP = 0; //ReducedTP+1;
+		ReducedTP = 0; 
 		rename(Title + "_" + frame);
 		getDimensions(dummy, dummy, dummy, Slices, dummy);
 		cropToROI(Title + "_" + frame);
@@ -6142,7 +6155,7 @@ function GetLUTColour(Title) {
 		}
 	}
 
-	return (Colour)
+	return (Colour);
 }
 
 function DuplicateSingleTimepoint(Title, Colour) {
@@ -6779,15 +6792,16 @@ function autoCrop(minSize, boundary, endframe) { // DB
 
 function makeRegistrationFile(Z_project){
 	Registration_save_location = TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + loop_number + "\\Settings\\TransfMatrix.txt";
+	pre_prj = getTitle();
 	
 	// make Z projection
 	if(Z_project)	run("Z Project...", "projection=[Max Intensity] all");
 	
 	prj_reg = getTitle();
-	print(prj_reg);
-
 	// register projection
+	print("made registration file for: " + pre_prj);
 	run("MultiStackReg", "stack_1=[" + prj_reg + "] action_1=Align file_1=[" + Registration_save_location + "] stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body] save");
+	print("made registration file for: " + pre_prj);
 }
 
 
@@ -6813,7 +6827,7 @@ function correctDriftOnStack(endframe){
 		run("Duplicate...", "title=[" + ori + "_slice" + z +"] duplicate slices="+z);
 		curr_IM = getTitle();
 		run("MultiStackReg", "stack_1=[" + curr_IM + "] action_1=[Load Transformation File] file_1=[" + Registration_save_location + "] stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body]");
-		concat_arg = concat_arg + " image" + z + "=" + ori + "_slice" + z;
+		concat_arg = concat_arg + " image" + z + "=[" + ori + "_slice" + z + "]";
 	}
 	print("drift correction done");
 	print("CURRENT TIME -", makeDateOrTimeString("time"));
@@ -6877,7 +6891,7 @@ function makeDateOrTimeString(DorT){
 		if (hour > 9)	h = d2s(hour,0);
 		else			h = "0" + d2s(hour,0);
 		// minute
-		if (minute > 9)	m = d2s(minute+1,0);
+		if (minute > 9)	m = d2s(minute,0);
 		else			m = "0" + d2s(minute+1,0);
 		// day
 		if (second > 9)	s = d2s(second,0);
@@ -6907,6 +6921,7 @@ function detectLastTimepoint(){
 	
 	if(lastframe == 0)	lastframe = nSlices;
 	else if(lastframe < minMovieLength)	lastframe = minOf(minMovieLength,nSlices);
+	
 	print("last timepoint " + lastframe);
 	setSlice(lastframe);
 	print("CURRENT TIME -", makeDateOrTimeString("time"));
@@ -6918,6 +6933,14 @@ function detectLastTimepoint(){
 	Stack.setPosition(1, 1, lastframe);
 	return lastframe;
 	
+}
+
+function closeWrongChannels(pre){
+	// close all images of wrong channels
+	for (im_no = pre; im_no < nImages; im_no++){
+		selectImage(im_no + 1);
+		if(endsWith (getTitle,"C=" + channel_number_for_use) == 0)	close();
+	}
 }
 
 
