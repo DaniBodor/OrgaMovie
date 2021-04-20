@@ -935,7 +935,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
 		pre = nImages;
 		run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
-		closeWrongChannels(pre);
+		if (nImages > pre+1 )		closeWrongChannels(pre);
 		
 		setLocation(1,1);
 		print("CURRENT TIME -", makeDateOrTimeString("time"));
@@ -947,7 +947,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 			pre = nImages;
 			run("Bio-Formats Importer", "open=[] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
 			file = File.directory + getTitle();
-			closeWrongChannels(pre);
+			if (nImages > pre+1 )		closeWrongChannels(pre);
 		}
 
 		//Chose a file to process, this way we also set which file to use for the open commands
@@ -2261,12 +2261,12 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				pre = nImages;
 				if (tiffFile) {
 					run("Bio-Formats Importer", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
-					closeWrongChannels(pre);
+					if (nImages > pre+1 )		closeWrongChannels(pre);
 					setLocation(1,1);
 				} else {
 					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
 					print("biof2 - CURRENT TIME -", makeDateOrTimeString("time"));
-					closeWrongChannels(pre);
+					if (nImages > pre+1 )		closeWrongChannels(pre);
 					setLocation(1,1);
 				}
 				getDimensions(width, height, channels, slices, frames);
@@ -3817,7 +3817,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				}
 				if (tiffFile) {
 					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
-					closeWrongChannels(pre);
+					if (nImages > pre+1 )		closeWrongChannels(pre);
 					
 					setLocation(1,1);
 					if (RunAllQueued) {
@@ -3827,7 +3827,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					run("The Real Glow");
 				} else {
 					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
-					closeWrongChannels(pre);
+					if (nImages > pre+1 )		closeWrongChannels(pre);
 					selectImage(pre+1);
 					//waitForUser("$$$$$$$$$$$ ");
 					
