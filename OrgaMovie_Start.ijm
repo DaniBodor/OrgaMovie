@@ -21,7 +21,7 @@ crash_test = "";
 
 // Make dialog window for input settings
 Dialog.create("OrgaMovie Settings");
-	Dialog.addHelp("https://github.com/DaniBodor/OrgaMovie_dummy#readme");
+	Dialog.addHelp("https://github.com/DaniBodor/OrgaMovie#readme");
 	Dialog.addMessage("SETTING UP YOUR DATA STRUCTURE:");
 	Dialog.addMessage("Put all your analysis data in a single folder.\nIf you wish to skip any movies, add an underscore (i.e. _ ) in front of the filename.");
 	Dialog.setInsets(-5,20,0);
@@ -29,15 +29,15 @@ Dialog.create("OrgaMovie Settings");
 	
 	Dialog.addMessage("Press 'Help' (next to Cancel) to open the ReadMe containing extensive information on all settings below.");
 	Dialog.addMessage("");
-	Dialog.addMessage("GENERAL SETTINGS:");											Dialog.setInsets(0,0,5);
+	Dialog.addMessage("GENERAL SETTINGS");											Dialog.setInsets(0,0,5);
 	Dialog.addChoice("Input filetype", InputFileTypeList, InputFileTypeList[0]);	Dialog.setInsets(0,0,5);
-	Dialog.addNumber("Channel number:", 1, 0, 2, "");								Dialog.setInsets(0,0,5);
-	Dialog.addNumber("Time interval:", 3, 0, 2, "min");								Dialog.setInsets(0,0,5);
+	Dialog.addNumber("Channel to display", 1, 0, 2, "(Nth channel");				Dialog.setInsets(0,0,5);
+	Dialog.addNumber("Time interval", 3, 0, 2, "min");								Dialog.setInsets(0,0,5);
 	//Dialog.addString("Date experiment", date);		// DB: removed this because all it did was add unnece complexity to filename
-	Dialog.addString("Experiment name", curr_user + "_" + currdate, 20);
+	Dialog.addString("Experiment name:", curr_user + "_" + currdate, 20);
 	Dialog.addMessage("");
 
-	Dialog.addMessage("MOVIE OUTPUT SETTINGS:");
+	Dialog.addMessage("MOVIE OUTPUT SETTINGS");
 	Dialog.addChoice("Output format", OutputFormatOptions, OutputFormatOptions[0]);
 	Dialog.addNumber("Frame rate", 1.3, 1, 4,"sec / frame");
 	Dialog.addChoice("Output naming ", IndexingOptions, IndexingOptions[2]);
@@ -79,7 +79,7 @@ Dialog.show();
 
 // Second dialog in case of non-default automation settings
 Dialog.create("Automation Settings");
-	Dialog.addHelp("https://github.com/DaniBodor/OrgaMovie_dummy#readme");
+	Dialog.addHelp("https://github.com/DaniBodor/OrgaMovie#readme");
 	Dialog.addMessage("Auto-crop Settings:");
 	Dialog.addNumber("Minimum organoid size:", 350, 0, 4, micron+"^2");
 	Dialog.addNumber("Boundary around organoid:", 30, 0, 4, "pixels");
