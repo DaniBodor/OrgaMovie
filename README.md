@@ -55,8 +55,9 @@ I have noticed that many people have their own installation of FiJi on their acc
     - If multiple organoid regions are found, cropping occurs around the largest region only. 
     - If unchecked: the entire frame is used, leading to (unnecessarily) large file sizes and more cluttered movies. 
     - See default automation settings for more details.
-- Auto-contrasting: Automatically detects a good set of intensity values to use for contrasting (green and blue in original manual version of the macro). These are based on a lowest threshold values that exclude most organoid pixels and a highest threshold value that will include a small proportion of pixels.
+- Auto-contrasting: Automatically detects a good set of intensity values to use for contrasting (green and blue in original manual version of the macro).
     - If unchecked: dimmest and brightest pixel values are used, which tends to not give great contrast but also no pixels are overexposed or lost as background.
+    - Contrast is based on a low threshold dimmer than most organoid pixels and a high threshold of a small proportion of pixels.
     - Contrasting cannot be easily adjusted in the resulting output, as RGB images/movies are produced.
     - See default automation settings for more details on thresholding.
 .
