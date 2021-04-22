@@ -81,9 +81,14 @@ Dialog.show();
 	do_autocrop = Dialog.getCheckbox();
 	do_autoBC = Dialog.getCheckbox();
 	do_autotime = Dialog.getCheckbox();
-	do_autoZ = "obsolete";;	//do_autoZ = Dialog.getCheckbox();		// DB: decided not to implement this (for now)
+	do_autoZ = "obsolete";	//do_autoZ = Dialog.getCheckbox();		// DB: decided not to implement this (for now)
 	changeSettings = Dialog.getCheckbox();
 
+def = 0.5;
+if (do_autocrop && do_registration)		def_percile = def;
+else if (do_registration)				def_percile = def /  2;
+else if (do_autocrop)					def_percile = def / 10;
+else									def_percile = def /  5;
 
 // Second dialog in case of non-default automation settings
 Dialog.create("Automation Settings");
@@ -94,9 +99,8 @@ Dialog.create("Automation Settings");
 
 	Dialog.addMessage("Contrast Automation Settings:");
 	Dialog.addChoice("Minimum threshold method:", T_options, "Percentile");
-	//Dialog.addChoice("Maximum threshold method:", T_options, "Minimum");
 	Dialog.addNumber("Minimum brightness multiplier", 1.00, 2, 4, "(increases lowest pixel value; dimmer background; larger cutoff)");
-	Dialog.addNumber("Percentile overexposed pixels", 0.50, 2, 4, "(decreases highest pixel value; brighter foreground; more overexposure)");
+	Dialog.addNumber("Percentile overexposed pixels", def_percile, 2, 4, "(decreases highest pixel value; brighter foreground; more overexposure)");
 	Dialog.addNumber("Gamma factor", 0.7, 1, 4,"(brings low and high intensity together)" );
 	Dialog.addNumber("Multiply factor", 1.0, 1, 4,"(for depth coded channel)" );
 

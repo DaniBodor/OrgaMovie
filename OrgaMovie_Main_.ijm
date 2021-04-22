@@ -2543,6 +2543,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 							getThreshold(no,minT);
 							minT = minT * minBrightnessFactor;
 
+							makeRectangle(getWidth/2, 0, getWidth/2, getHeight);
 							maxT = getPercentile(overexp_percile);
 							close(maxprj);
 							selectImage(1);
@@ -6925,18 +6926,19 @@ function closeWrongChannels(pre){
 
 
 function getPercentile(percile){
-	w = getWidth;
-	h = getHeight;
+	getSelectionBounds(x0, y0, w, h);
+	run("Select None");
+	
 	a = newArray(w*h);
 	i = 0;
 	
-	for (y=0; y<h; y++)
-		for (x=0; x<w; x++)
+	for (y=y0; y<getHeight; y++)
+		for (x=x0; x<getWidth; x++)
 			a[i++] = getPixel(x,y);
 	Array.sort(a);
 	
 	perc_pos = a.length * (1 - percile/100);
-	perc_value = a[perc_pos]
+	perc_value = a[perc_pos];
 	
 	return perc_value;
 }
