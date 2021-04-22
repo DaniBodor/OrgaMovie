@@ -6,7 +6,7 @@
 # OrgaMovie Macro Information
 
 This FiJi/ImageJ macro takes any number 4D (xyzt) _\*.nd2_ image files of organoids and creates color-coded (for depth) time-lapse movies (see fig below).  
-The code is a fully automated adaptation of a macro (version 2016_03_24) previously created by Bas Ponsioen and  RenÃ© Overmeer, first published in _[Targeting mutant RAS in patient-derived colorectal cancer organoids by combinatorial drug screening](https://elifesciences.org/articles/18489)_, (eLife 2016;5:e18489 doi: 10.7554/eLife.18489).
+The code is a fully automated adaptation of a macro (version 2016_03_24) previously created by Bas Ponsioen and  René Overmeer, first published in _[Targeting mutant RAS in patient-derived colorectal cancer organoids by combinatorial drug screening](https://elifesciences.org/articles/18489)_, (eLife 2016;5:e18489 doi: 10.7554/eLife.18489).
 
 <img src="https://user-images.githubusercontent.com/14219087/114186287-f4473580-9946-11eb-99b2-1f3d73b78a69.png">
 
@@ -65,9 +65,9 @@ I have noticed that many people have their own installation of FiJi on their acc
     - Contrast is based on a low threshold dimmer than most organoid pixels and a high threshold of a small proportion of pixels.
     - Contrasting cannot be easily adjusted in the resulting output, as RGB images/movies are produced.
     - See default automation settings for more details on thresholding.
-.
 - Last timepoint detection: Finds the last timepoint where an organoid is still visible within the frame. This is based on the coefficient of variation (mean/stdev) of all pixel values in the frame. The last timepoint considered is the first timepoint found where this coefficient is detected. 
     - If unchecked: all frames of the movie are included in the output, which will lead to (unnecessarily) large file sizes.
+    - If signals are very low, it might be needed to turn this setting off.
     - See default automation settings for more details.
 - Change default settings: If this is checked, another dialog will be opened after this to set default automation settings.
     - If few movies turn out imperfect, try running those manually (press F10) rather than changing the settings for all movies.
@@ -79,14 +79,17 @@ If few movies turn out imperfect, try running those manually (press F10) rather 
 <img src="https://user-images.githubusercontent.com/14219087/115420299-50d60a80-a1fb-11eb-8ed6-be43368574f1.png" width="322" height="294">
 
 #### Auto-crop Settings
-- Minimum organoid size: the minimum organoid size (in Î¼m<sup>2</sup>) detected to crop around.
+- Minimum organoid size: the minimum organoid size (in µm<sup>2</sup>) detected to crop around.
     - If no organoid of this size or larger is found, then the entire frame is used.
 - Boundary around organoid: the number of pixels around the extreme edges of the organoid included in the cropped region.
 #### Contrast Automation Settings
 - Minimum threshold method: Choose between the ImageJ default threshold methods to detect brightness of background pixels.
-- Maximum threshold method: Choose between the ImageJ default threshold methods to automate maximum brightness detection.
-- Brightest-point factor: Fold-change between the brightest point detected above and what is actually used as the output brightest point
-    - Lower values create brighter movies, but also will also include more overexposed pixels. Probably between 0.85-1.15 is ideal.
+- Minimum brightness multiplier: Multiplier for dimmest pixel.
+    - Increase to make background dimmer, but you may lose some dim foreground pixels.
+- Percentile overexposed pixels: The percentile of pixels (from the max_Z-max_T projection) that is overexposed.
+    - Higher values create brighter movies, but also will also include more overexposed pixels.
+    - A good value for this is highly dependent on whether or not _Auto-crop_ and _Drift correction_ are used, as both of these influence the proportion of the frame that is occupied by background pixels.
+        - The most consistent result is obtained if both are active.
 - Gamma factor (copied from original macro). Applies a [gamma correction](https://en.wikipedia.org/wiki/Gamma_correction) on the output images. 
     - The original macro stated "brings low and high intensities together", but I don't fully understand what a gamma correction does.
 - Multiply factor (copied from original macro): I don't know what this setting does, but it was present in the original macro.
@@ -94,3 +97,4 @@ If few movies turn out imperfect, try running those manually (press F10) rather 
 #### Time-crop Settings
 - CoV cutoff: Cut-off value for coefficient of variation (mean/stdev) for detecting last time-point. Higher values will include more fuzzy/empty frames.
 - Minimum length: Minimum length of movie in case CoV cut-off is reached previously. This is mainly included as a workaround for movies that reach the CoV from frame 1, which leads to a crash.
+
