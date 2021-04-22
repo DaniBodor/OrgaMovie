@@ -6899,7 +6899,7 @@ function detectLastTimepoint(){
 		}
 	}
 
-	if(lastframe == 0)	lastframe = nSlices;
+	if(lastframe * minMovieLength == 0)	lastframe = nSlices;
 	else if(lastframe < minMovieLength)	lastframe = minOf(minMovieLength,nSlices);
 
 	print("last timepoint " + lastframe);
