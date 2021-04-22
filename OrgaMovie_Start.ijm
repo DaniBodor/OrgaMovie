@@ -86,14 +86,15 @@ Dialog.create("Automation Settings");
 
 	Dialog.addMessage("Contrast Automation Settings:");
 	Dialog.addChoice("Minimum threshold method:", T_options, "Percentile");
-	Dialog.addChoice("Maximum threshold method:", T_options, "Minimum");
-	Dialog.addNumber("Maximum brightness multiplier", 1.00, 2, 4, "(lower means brighter images)");
+	//Dialog.addChoice("Maximum threshold method:", T_options, "Minimum");
+	Dialog.addNumber("Minimum brightness multiplier", 1.00, 2, 4, "(increases lowest pixel value; dimmer background; larger cutoff)");
+	Dialog.addNumber("Percentile overexposed pixels", 2.0, 1, 4, "(decreases highest pixel value; brighter foreground; more overexposure)");
 	Dialog.addNumber("Gamma factor", 0.7, 1, 4,"(brings low and high intensity together)" );
 	Dialog.addNumber("Multiply factor", 1.0, 1, 4,"(for depth coded channel)" );
 
 	Dialog.addMessage("Time-crop Settings:")
 	Dialog.addNumber("CoV cutoff:", 5, 1, 4, "(higher values leads to a higher inclusion)");
-	Dialog.addNumber("Minimum length:", 999, 0, 4, "time points");
+	Dialog.addNumber("Minimum length:", 20, 0, 4, "time points");
 
 	Dialog.addMessage("Press 'Help' to open the ReadMe containing extensive information on these settings.");
 if (changeSettings && (do_autocrop + do_autoBC) > 1) {
@@ -103,8 +104,9 @@ if (changeSettings && (do_autocrop + do_autoBC) > 1) {
 	cropBoundary = Dialog.getNumber();
 
 	min_thresh_meth = Dialog.getChoice();
-	max_thresh_meth = Dialog.getChoice();
-	maxBrightnessFactor = Dialog.getNumber();
+	//max_thresh_meth = Dialog.getChoice();
+	minBrightnessFactor = Dialog.getNumber();
+	overexp_percile = Dialog.getNumber();
 	gamma_factor = Dialog.getNumber();
 	multiply_factor = Dialog.getNumber();
 
@@ -133,9 +135,10 @@ arguments = newArray(	t_step, // 0
 						cropBoundary, //15
 						0, // 16 (loop_number)
 						min_thresh_meth, // 17
-						max_thresh_meth, // 18
+						//max_thresh_meth, // 18
+						overexp_percile, // 18
 						output_format, // 19
-						maxBrightnessFactor, // 20
+						minBrightnessFactor, // 20
 						covCutoff, // 21
 						minMovieLength, // 22
 						channel_number, // 23
