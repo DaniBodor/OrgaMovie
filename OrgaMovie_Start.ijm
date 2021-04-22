@@ -39,7 +39,7 @@ Dialog.create("OrgaMovie Settings");
 	Dialog.addMessage("");
 	Dialog.addMessage("GENERAL SETTINGS");											Dialog.setInsets(0,0,5);
 	Dialog.addChoice("Input filetype", InputFileTypeList, InputFileTypeList[0]);	Dialog.setInsets(0,0,5);
-	Dialog.addNumber("Channel to display", 1, 0, 2, "(Nth channel");				Dialog.setInsets(0,0,5);
+	Dialog.addNumber("Channel to display", 1, 0, 2, "(Nth channel)");				Dialog.setInsets(0,0,5);
 	Dialog.addNumber("Time interval", 3, 0, 2, "min");								Dialog.setInsets(0,0,5);
 	//Dialog.addString("Date experiment", date);		// DB: removed this because all it did was add unnece complexity to filename
 	Dialog.addString("Experiment name:", curr_user + "_" + currdate, 20);
