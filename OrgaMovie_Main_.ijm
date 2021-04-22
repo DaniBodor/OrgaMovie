@@ -130,7 +130,7 @@ MinimalTextSize = 12;
 
 GarbageEverynTimes = 4; // bp37
 tiffFile = 0; // if you load an tiff file, it will be recognized
-nd2File = 0; // if you load an nd2 file, it will be recognized 
+nd2File = 0; // if you load an nd2 file, it will be recognized
 
 TCPForOverruling = ""; //nw//
 
@@ -144,11 +144,11 @@ TempXtoD = 0;
 //FIRST DIALOG (restart? transmitted? check position?)
 //RESTART, CHECK LAST POSITION
 //LOAD SETTINGS
-//RESTART, SETTINGS 	
+//RESTART, SETTINGS
 //RESTART, DIALOG, CHOSE POSITION
 //NORMAL, SETTINGS\
 //NORMAL, POSITION NUMBER
-//NORMAL, POSITION NAME	
+//NORMAL, POSITION NAME
 //NORMAL, TRANSMITTED CHANNEL
 //NORMAL, CHANGE LUT SETTING FOR WHITE CHANNELS
 //NORMAL, SAVE SETTINGS
@@ -159,7 +159,7 @@ TempXtoD = 0;
 //NORMAL, SAVE SETTINGS 2
 //RESTART, GET SETTING FOR ALL POSITIONS
 //NORMAL, SET ROI, ZPLANE AND B&C
-//NORMAL, CHECK LAST TIMEPOINT BLACK	
+//NORMAL, CHECK LAST TIMEPOINT BLACK
 //NORMAL, MAKE TEMPORARY WINDOWS FOR B&C NON-TRANSMITTED CHANNELS
 //NORMAL, DELETE Z-planes, CREATE 2 WINDOWS
 //NORMAL, DELETE Z-planes, GET TOP AND BOTTOM
@@ -245,7 +245,7 @@ if (QueueMultiple) {
 
 OptionArray = newArray("Add another experiment to the queue", "Run ALL queued experiments", "Start all over again setting experiments in queue", "Restart (the queue-run got stuck...)");
 QueueFollowUp = "";
-QuitQueuing = 0; // deze MOET 0 blijven	
+QuitQueuing = 0; // deze MOET 0 blijven
 if (nQueuedExp == 1) {
 	Text = "1 Experiment Queued";
 }
@@ -382,7 +382,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		File.makeDirectory(TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Temp + "\\");
 		File.makeDirectory(TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Temp + "\\Settings\\");
 		File.makeDirectory(TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Temp + "\\RESULT\\");
-	} // altijd 1 folder vooruit maken ; beetje raar maar kan geen kwaad 
+	} // altijd 1 folder vooruit maken ; beetje raar maar kan geen kwaad
 	// for output
 	// deze hieronder kan toch weg?
 	File.makeDirectory(OutputDisk + ":\\ANALYSIS DUMP\\");
@@ -397,8 +397,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		File.makeDirectory(OutputDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Temp + "\\");
 		File.makeDirectory(OutputDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Temp + "\\Settings\\");
 		File.makeDirectory(OutputDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Temp + "\\RESULT\\");
-	} // altijd 1 folder vooruit maken ; beetje raar maar kan geen kwaad 
-	
+	} // altijd 1 folder vooruit maken ; beetje raar maar kan geen kwaad
+
 	// DB output image to better place
 	image_output_location = OutputDisk + ":\\ANALYSIS DUMP\\_Movies_" + prefix + File.separator;
 	File.makeDirectory(image_output_location);
@@ -410,7 +410,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 	ScreenHeight = screenHeight();
 	FitWidthFactor = 0.8;
 	FitHeightFactor = 0.8; //RO 2204
-	FitWidth = FitWidthFactor * screenWidth; //RO 2204						
+	FitWidth = FitWidthFactor * screenWidth; //RO 2204
 	FitHeight = FitHeightFactor * screenHeight; //RO 2204
 	WindowSeparateMarginX = 30; //RO 2204
 
@@ -478,7 +478,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
 	List.clear; //Start with retrieving settings from a previous run (if there is one)
 
-	//LOAD SETTINGS		
+	//LOAD SETTINGS
 	if (Restart) {
 		if (File.exists(TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\Settings_Exp" + Exp + ".tif")) {
 			open(TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\Settings_Exp" + Exp + ".tif");
@@ -514,11 +514,11 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 	ArraySkipPositions = newArray(10000);
 	Array.fill(ArraySkipPositions, 0); //bp17
 	SplitZ = newArray(10000);
-	Array.fill(SplitZ, 0); //bp21	 	// 0 betekent geen splitting en 2 of 3 wil zeggen dat er gechopt wordt en het echte getal zegt in hoeveel delen 
+	Array.fill(SplitZ, 0); //bp21	 	// 0 betekent geen splitting en 2 of 3 wil zeggen dat er gechopt wordt en het echte getal zegt in hoeveel delen
 	PileUpChunks = newArray(10000);
-	Array.fill(PileUpChunks, 0); //bp37	
+	Array.fill(PileUpChunks, 0); //bp37
 	SplitAndUnsplit = newArray(10000);
-	Array.fill(SplitAndUnsplit, 0); //bp37	
+	Array.fill(SplitAndUnsplit, 0); //bp37
 
 	DefaultGamma = 0.55;
 	DefaultMultiply = 1.2;
@@ -544,7 +544,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 	RedDeadDye = false;
 	Hidewindows = 1;
 	Date = 20001231;
-	NameExperiment = "NameExperiment"; //ShiftPositions = 0;	
+	NameExperiment = "NameExperiment"; //ShiftPositions = 0;
 	ColourName = 1;
 	AddTime = 1;
 	AddScaleBar = 1;
@@ -586,7 +586,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
 	ChannelName = newArray("Max Project", "Max Project2", "Max Project3", "Max Project4", "Max Project5", "Max Project6", "Max Project7", "Max Project8", "Max Project9", "Max Project10"); //RO 2304
 
-	// GET Settings from file (if present) // GET Settings from file (if present) // GET Settings from file (if present) 
+	// GET Settings from file (if present) // GET Settings from file (if present) // GET Settings from file (if present)
 
 	if (PresenceSettingsFile) {
 
@@ -629,7 +629,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		ArraySizeForChannelUseandColour = parseFloat(List.get("ArraySizeForChannelUseandColour"));
 		maxNumberOfChannels = parseFloat(List.get("maxNumberOfChannels"));
 		UseChannel = newArray;
-		ChannelColour = newArray; //ChannelName=newArray;	
+		ChannelColour = newArray; //ChannelName=newArray;
 		for (l = 0; l < ArraySizeForChannelUseandColour; l++) {
 			if (PresenceSettingsFile) {
 				UseChannel[l] = List.get("UseChannel" + l);
@@ -659,7 +659,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		ColorTime = List.get("ColorTime");
 		GuidedBC = List.get("GuidedBC");
 		RedDeadDye = List.get("RedDeadDye");
-		SkipGlow = List.get("SkipGlow"); //	AspectChoice = List.get("AspectChoice");	
+		SkipGlow = List.get("SkipGlow"); //	AspectChoice = List.get("AspectChoice");
 		FractionForText = List.get("FractionForText");
 		NumberOfTPTempStacks = List.get("NumberOfTPTempStacks");
 		NumberOfZsTempStacks = List.get("NumberOfZsTempStacks");
@@ -772,7 +772,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 			ArraySkipPositions[l] = List.get("ArraySkipPositions_" + l); //bp17
 			PileUpChunks[l] = List.get("PileUpChunks_" + l);
 			if (isNaN(PileUpChunks[l])) {
-				PileUpChunks[l] = 1; 
+				PileUpChunks[l] = 1;
 			} //bp37
 			SplitAndUnsplit[l] = List.get("SplitAndUnsplit_" + l);
 			if (isNaN(SplitAndUnsplit[l])) {
@@ -836,7 +836,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		if (File.exists(TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\Settings\\Progress.tif")) {
 			selectWindow("Progress.tif");
 		}
-		//RESTART, DIALOG, CHOOSE POSITION	
+		//RESTART, DIALOG, CHOOSE POSITION
 
 		AskFromWichPos = 0;
 		if (RunAllQueued == 0 && Exp == 1) {
@@ -888,7 +888,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		for (l = 0; l < AmountOfPositions; l++) {
 			if (PositionNumber[l] == StartfromPositionNumber) {
 				StartFromi = l;
-				print("StartFromi: " + StartFromi); 
+				print("StartFromi: " + StartFromi);
 			}
 		}
 		if (RunAllQueued && RestartQueueRun == 0) {
@@ -901,7 +901,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
 	} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART ELSE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-		//NORMAL, SETTINGS	
+		//NORMAL, SETTINGS
 		StartFromi = 0;
 
 		//file = File.openDialog("Choose LIF-file to process");
@@ -936,7 +936,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		pre = nImages;
 		run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
 		if (nImages > pre+1 )		closeWrongChannels(pre);
-		
+
 		setLocation(1,1);
 		print("CURRENT TIME -", makeDateOrTimeString("time"));
 
@@ -967,7 +967,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		}
 		nFramesForTimeProject = 35; // = parameter for this function
 
-		//NORMAL, POSITION NUMBER	
+		//NORMAL, POSITION NUMBER
 		if (CheckPositionNumber) { // Added this if-loop in case the metadata is such that the search is incorrect i.e. giving an error...
 			AmountOfPositions = 0;
 			Start = 0;
@@ -988,7 +988,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				};	// !!##DB this semi colon is very weird, but the macro currently runs so I'm hesitant to remove it
 			}
 			PositionNumber = Array.trim(PositionNumber, PositionNumber.length - 1);
-			//Remove the last point in the Array as this is not a number! 
+			//Remove the last point in the Array as this is not a number!
 			PositionNumber = Array.sort(PositionNumber); //Sort the array as he order in the metadata is 0-1-10-11-...-2-3 etc. this doesnot correspond to the order the images are opened!
 			AmountOfPositions = AmountOfPositions - 1;
 			//Correct for loop going 1 to far (asigning LD as a position number) Need this variable to make determine array.length when retreiving data from the settings file
@@ -1005,7 +1005,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 			PositionNumber = newArray(AmountOfPositions);
 			for (PositionNumberFill = 0; PositionNumberFill < PositionNumber.length; PositionNumberFill++){
 				PositionNumber[PositionNumberFill] = PositionNumberFill + 1;
-			} 
+			}
 
 		}
 
@@ -1016,12 +1016,12 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		Array.fill(Transmittedfound, 0);
 		print("AmountOfPositions" + AmountOfPositions);
 
-		// Counts the number of channels and determines the name for each postion 
+		// Counts the number of channels and determines the name for each postion
 		// The name for each position is derived from the title of the window (is always 'filename'.lif - 'Positionname' - C='channelnumber')
 		// Set i as position.length -1 as we start with the highest position number (ie the last one opened)
 		for (i = AmountOfPositions - 1; i >= 0; i--) {
 
-			//NORMAL, POSITION NAME	
+			//NORMAL, POSITION NAME
 			ImageTitle = getTitle();
 			if (tiffFile) {
 				TiffName = ImageTitle;
@@ -1036,7 +1036,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 			if (CheckPositionName && nd2File == 0 && tiffFile == 0 && TitleLength > 6) {
 				BeginIndex = indexOf(ImageTitle, ".lif - ") + 7;
 				EndIndex = indexOf(ImageTitle, "- C=") - 1;
-				filename = substring(ImageTitle, 0, BeginIndex - 3); 
+				filename = substring(ImageTitle, 0, BeginIndex - 3);
 				if (EndIndex < BeginIndex) {
 					PositionName[i] = "No name" + i;
 				} else { // RO 2904
@@ -1056,7 +1056,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				PositionChannelAmount[i] = 1;
 			}
 
-			//NORMAL, TRANSMITTED CHANNEL		
+			//NORMAL, TRANSMITTED CHANNEL
 
 			getDimensions(dummy, dummy, nChannels, dummy, dummy);
 			if (nChannels > 1) {
@@ -1082,7 +1082,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					TempName = substring(ImageTitle, 0, EndIndex);
 					selectWindow(TempName + " - C=" + c);
 					Temp = getTitle();
-					Colour = ChannelColourOriginal[GetLUTColour(Temp)]; //This returns the channel colour GetLUTColour(returns a number) which refers to the position in the array ChannelColourOriginal)	
+					Colour = ChannelColourOriginal[GetLUTColour(Temp)]; //This returns the channel colour GetLUTColour(returns a number) which refers to the position in the array ChannelColourOriginal)
 					ChannelColour[j] = Colour;
 					print("Colour: " + Colour); //So we now make an array with the colour of each channel
 					if (TransmittedChannelPresent) {
@@ -1206,13 +1206,13 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					}
 
 				}
-				c = TransmittedChannelNumber[i]; 
+				c = TransmittedChannelNumber[i];
 				selectWindow(TempName + " - C=" + c);
 				rename("TransmittedVirtual_" + PositionNumber[i]);
 				TransmittedWindow = getTitle;
 				getDimensions(dummy, dummy, dummy, ZSLICE, TIMEPOINTS);
 				ZSLICE = round(ZSLICE / 2);
-				TIMEPOINTS = round(TIMEPOINTS / 2); //bp(floor) !!!!!!!!!!!!!!!!!!!!!!!!! 
+				TIMEPOINTS = round(TIMEPOINTS / 2); //bp(floor) !!!!!!!!!!!!!!!!!!!!!!!!!
 				Stack.setPosition(1, ZSLICE, TIMEPOINTS);
 				setMetadata("Position", j);
 				//bp time-project
@@ -1657,7 +1657,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		Array.print(Singletimepoint);
 	} else { // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RESTART ELSE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-		//NORMAL, SET ROI, ZPLANE AND B&C 	
+		//NORMAL, SET ROI, ZPLANE AND B&C
 		run("Collect Garbage");
 		setTool("rectangle");
 		ArraynFrames = newArray(); //RO232
@@ -1679,7 +1679,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					getDimensions(dummy, dummy, dummy, ZSLICE, TIMEPOINTS);
 				} //bp17
 
-				//RO232	
+				//RO232
 				Stack.getPosition(channel, slice, frame);
 				getDimensions(dummy, dummy, dummy, TempnSlices, NumberOfFrames);
 				ArraynFrames[i] = NumberOfFrames;
@@ -1704,7 +1704,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				Stack.setPosition(1, ZSLICE, TIMEPOINTS);
 				drawROI(TemporaryString);
 
-				//RO232	
+				//RO232
 				Stack.getPosition(channel, slice, frame);
 				getDimensions(dummy, dummy, dummy, TempnSlices, NumberOfFrames);
 				ArraynFrames[i] = NumberOfFrames;
@@ -1953,7 +1953,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				//The above part has been added to be able to work without a transmitted stack (calling the first channel transmHyperstack for historical reasons)
 				selectWindow(transmHyperstack);
 				Stack.getPosition(channel, slice, frame);
-				selectWindow(transmHyperstack); // First check whether there was a selection at all; if not --> Select All					
+				selectWindow(transmHyperstack); // First check whether there was a selection at all; if not --> Select All
 				getSelectionBounds(x, y, Width, Height);
 				TotalSurfaceSelection = Width * Height;
 				getDimensions(x, y, ch, z, t);
@@ -2010,13 +2010,13 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					print(min + ", " + max);
 
 					List.set("LUT_Min_" + a + "_" + Trans, min);
-					List.set("LUT_Max_" + a + "_" + Trans, max); //RO Cleaning	can not remove as this requires a double array like structure (both channel and position vary)		
+					List.set("LUT_Max_" + a + "_" + Trans, max); //RO Cleaning	can not remove as this requires a double array like structure (both channel and position vary)
 				}
 			}
 		}
 		//================================================ Now we have the settings from the Transmitted==================================================
 
-		//NORMAL, CHECK LAST TIMEPOINT BLACK	
+		//NORMAL, CHECK LAST TIMEPOINT BLACK
 		//Lets check whether the last image is black! and determine what the last timepoint is
 		//Lets check whether the last image is black! and determine what the last timepoint is
 		for (i = 0; i < PositionNumber.length; i++) {
@@ -2164,7 +2164,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 						 	Stack.setPosition(channels, slices, lastframe);
 						 }
 					}
-					
+
 					if (testWait) {
 						wait(ms);
 					}
@@ -2231,11 +2231,11 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		Array.getStatistics(NumberOfTimepoints, MinNumberOfTimepoints, dummy, dummy, dummy);
 
 		if (MinNumberOfTimepoints == 1) {
-			items = newArray("As normal, output is a single jpg", "Switch t for z, output is an avi going through slices"); //RO232 correct spelling 
+			items = newArray("As normal, output is a single jpg", "Switch t for z, output is an avi going through slices"); //RO232 correct spelling
 			Dialog.create("There is only 1 timepoint!");
 				Dialog.setInsets(10, 20, 0)
 				Dialog.addMessage("There is only 1 timepoint in at least 1 position");
-				Dialog.addRadioButtonGroup("Chose how to process z stacks", items, 2, 1, items[1]); //RO232 
+				Dialog.addRadioButtonGroup("Chose how to process z stacks", items, 2, 1, items[1]); //RO232
 			Dialog.show();
 				OutcomeSingleTPtoZstack = Dialog.getRadioButton();
 				if (OutcomeSingleTPtoZstack == items[1]) SingleTPtoZstack = 1;
@@ -2283,7 +2283,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					Resolution = parseFloat(ResolutionString);
 					print("Resolution * 2 : " + 2 * Resolution);
 					MicronPerPixel = 1 / Resolution; // want staat geschreven in pixels/micron
-					ResolutionArray[i] = Resolution; 
+					ResolutionArray[i] = Resolution;
 
 					StartIndexX = indexOf(ImageInfoString, "Voxel size:") + 13;
 					StartIndexY = indexOf(ImageInfoString, "x", StartIndexX) + 2;
@@ -2351,7 +2351,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				} else {
 					JumpT = FloorT + 1;
 				}
-				
+
 				print("JumpT = " + JumpT);
 				FloatZ = slices / NumberOfZsTempStacks;
 				FloorZ = floor(slices / NumberOfZsTempStacks);
@@ -2466,7 +2466,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		getLocationAndSize(XFirstPos, YFirstPos, WidthFirstPos, HeightFirstPos);
 		print("6");
 		selectWindow("B&C");
-	   
+
 		WhiteScreenDimension = 0.89;
 
 		if (RedDeadDye == 0) {
@@ -2527,7 +2527,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 										Continue = 0;
 									}
 								}
-								
+
 								setLocation(screenWidth - testWidth - MarginBC, screenHeight - (testHeight * place) - MarginBC);
 								getLocationAndSize(testX, testY, testWidth, testHeight);
 								selectWindow("B&C");
@@ -2556,19 +2556,19 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 						selectImage(1);
 						resetMinAndMax();
 						getMinAndMax(no,maxBC);
-						
+
 						if (do_autoBC){
 							run("Z Project...", "projection=[Max Intensity] all");
 							maxprj = getTitle();
-							
+
 							setAutoThreshold(min_thresh_meth);
 							getThreshold(no,minT);
-							
+
 							setAutoThreshold(max_thresh_meth);
 							getThreshold(no,maxT);
 							if(maxT <= minT)	maxT = maxBC;
 							else				maxT = maxT * maxBrightnessFactor;
-							
+
 							selectImage(1);
 							setMinAndMax(minT,maxT);
 
@@ -2769,7 +2769,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 							Title = "SelectedZstack";
 							selectWindow(Title);
 							getLocationAndSize(x0, y0, WidthZselect, HeightZselect);
-							Zoom = getZoom(); //bp22		
+							Zoom = getZoom(); //bp22
 							// onderstaande regel ; anders kun je de Status niet lezen....
 							getLocationAndSize(xTemp, yTemp, dummy, dummy);
 							if (xTemp < StatusWidth) {
@@ -2912,7 +2912,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 											Loop = 0;
 										}
 										print("printloop 1: " + Loop);
-										GammaCorrFill = GammaCorr[i]; //bp16 opschuiven		
+										GammaCorrFill = GammaCorr[i]; //bp16 opschuiven
 										MultiplyFill = MultiplyBeforeDepthcoding[i];
 										PlayDepth = Dialog.getCheckbox(); //bp16
 										Duration = Dialog.getNumber();
@@ -2949,7 +2949,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 											if (ButtonZSplit == DialogArraySplitZ[0]) {
 												nChunks = 2;
 												SplitZ[i] = 2;
-											} // dus > 0 wil zeggen dat er gechopt wordt en het echte getal zegt in hoeveel delen 
+											} // dus > 0 wil zeggen dat er gechopt wordt en het echte getal zegt in hoeveel delen
 											if (ButtonZSplit == DialogArraySplitZ[1]) {
 												nChunks = 3;
 												SplitZ[i] = 3;
@@ -2964,7 +2964,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 											SplitAndUnsplit[i] = Dialog.getCheckbox();
 											SplitAndUnsplitFill = SplitAndUnsplit[i]; //bp40
 									} // vd if(DecideSplitZ
-								} // vd while continue 
+								} // vd while continue
 
 								////
 								if (FirstTime == 0) {
@@ -3024,7 +3024,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 									selectWindow(WhiteScreen);
 
 									// play movie twice
-									if (PlayDepth) { //bp16								
+									if (PlayDepth) { //bp16
 										FrameRate = 2 * NumberOfTPTempStacks / (t_step); // in fps 	// so, plays it twice
 										wait(80);
 										selectWindow("Depth" + Title);
@@ -3202,13 +3202,13 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 										selectWindow("SelectedZstack");
 										run("Select None");
 										run("Duplicate...", "title=[SelectedZstack_2] duplicate slices=" + BottomZ_2[i] + "-" + TopZ_2[i]);
-										Title = getTitle(); 
+										Title = getTitle();
 									}
 									if (s + 1 == 3 && ForUnsplit == 0) {
 										selectWindow("SelectedZstack");
 										run("Select None");
 										run("Duplicate...", "title=[SelectedZstack_3] duplicate slices=" + BottomZ_3[i] + "-" + TopZ_3[i]);
-										Title = getTitle(); 
+										Title = getTitle();
 									}
 									if (ForUnsplit) {
 										selectWindow("SelectedZstack");
@@ -3424,7 +3424,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 											selectWindow("Depth" + Title);
 											close();
 										}
-										if (Loop) { 
+										if (Loop) {
 											selectWindow(Title);
 											run("Select None");
 											run("Duplicate...", "title=[" + Title + "_temp] duplicate");
@@ -3485,7 +3485,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 											setLocation(0.5 * screenWidth - 0.5 * TempWidth, 0.5 * screenHeight - 0.5 * TempHeight);
 											selectWindow(WhiteScreen);
 											// play movie twice
-											if (PlayDepth) { //bp16		
+											if (PlayDepth) { //bp16
 												FrameRate = 2 * NumberOfTPTempStacks / (t_step); // in fps 	// so, plays it twice
 												wait(80);
 												selectWindow("Depth" + Title);
@@ -3514,7 +3514,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 									close();
 								}
 
-							} // vd if(SplitZ[i]>0) // 
+							} // vd if(SplitZ[i]>0) //
 
 							//////////////////////////////// ALTERNATIVE SETTINGS-LOOP	end
 							//////////////////////////////// ALTERNATIVE SETTINGS-LOOP	end
@@ -3532,11 +3532,11 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					}
 				}
 			} // vd for(i=StartFromi;i<PositionNumber.length
-		} // vd if(DeleteZStacks					
+		} // vd if(DeleteZStacks
 
 		//Zslice selection !!!!!!!!!!!! DeleteZslices!!!!!!!!!!!!!!
 
-		//NORMAL, SAVE SETTINGS 3	
+		//NORMAL, SAVE SETTINGS 3
 		SetSettings();
 		newImage("Settings", "16-bit white", 10, 10, 1); //Move this to the end of B&C selection when ready?!
 		list = List.getList();
@@ -3552,7 +3552,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		}
 		setColor("black");
 		setFont("SansSerif", 25, "bold antialiased");
-		getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec); //Gets time 
+		getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec); //Gets time
 		month = month + 1; //for some reason my computer saw august as 7 !?!
 		if (hour < 10) hour = "0" + hour;
 		if (minute < 10) minute = "0" + minute;
@@ -3592,7 +3592,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 	if (Restart && CheckSettings) {
 		Dialog.create("Settings");
 			Dialog.addString("Date experiment:", Date);
-			Dialog.addString("Name Experiment:", NameExperiment, 30); //Dialog.setInsets(top, left, bottom) 		
+			Dialog.addString("Name Experiment:", NameExperiment, 30); //Dialog.setInsets(top, left, bottom)
 			if (Interval == round(Interval)) {
 				DecimalPlaces = 0;
 			} else {
@@ -3654,7 +3654,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 			}
 			UseDepthcoding = Dialog.getRadioButton;
 			RedDeadDye = Dialog.getCheckbox();
-			//		DeleteZStacks 		= Dialog.getCheckbox();		
+			//		DeleteZStacks 		= Dialog.getCheckbox();
 			if (CheckPositionName) {
 				AddPositionName = Dialog.getCheckbox();
 			}
@@ -3818,7 +3818,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				if (tiffFile) {
 					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
 					if (nImages > pre+1 )		closeWrongChannels(pre);
-					
+
 					setLocation(1,1);
 					if (RunAllQueued) {
 						TiffName = getTitle();
@@ -3830,14 +3830,14 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					if (nImages > pre+1 )		closeWrongChannels(pre);
 					selectImage(pre+1);
 					//waitForUser("$$$$$$$$$$$ ");
-					
+
 					setLocation(1,1);
 					loop_number = loop_number + 1;
 				}
 
 				print("net na de Bio-Formats");
 				if (do_registration)	correctDriftOnStack(lastframe);
-				
+
 				getDimensions(width, height, channels, slices, frames);
 				LastTimepointTemp = parseFloat(NumberOfTimepoints[i]);
 
@@ -3846,11 +3846,11 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				// This is temporary to make the macro run through faster (for debugging)// This is temporary to make the macro run through faster (for debugging)
 				if (LimitTimepointForDebugging >= 1) LastTimepointTemp = LimitTimepointForDebugging;
 				// This is temporary to make the macro run through faster (for debugging)// This is temporary to make the macro run through faster (for debugging)
-				// This is temporary to make the macro run through faster (for debugging)// This is temporary to make the macro run through faster (for debugging)								
+				// This is temporary to make the macro run through faster (for debugging)// This is temporary to make the macro run through faster (for debugging)
 				// This is temporary to make the macro run through faster (for debugging)// This is temporary to make the macro run through faster (for debugging)
 				if (Singletimepoint[i] == 1) {
 					LastTimepointTemp = 2;
-				} //ro							
+				} //ro
 
 				TransmittedZslice[i] = List.get("TransmittedZslice" + i);
 				SelectionX1[i] = List.get("SelectionX1_" + i);
@@ -3909,8 +3909,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				if (RedDeadDye) {
 					UseChannel[DeadChannel] = 0; // No list.Set as I don't want to save this! It would mean having to select the channel each time again you run the macro again
 					ChannelColour[DeadChannel] = "None";
-				} // It could also confuse the user. It does however need to be set to prevent making projections of the dead stuff	
-				//ALL, PROCESS TRANSMITTED	
+				} // It could also confuse the user. It does however need to be set to prevent making projections of the dead stuff
+				//ALL, PROCESS TRANSMITTED
 
 				// ===========================================================First do Trans====================================
 				if (TransmittedChannelPresent) {
@@ -3943,9 +3943,9 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					if (Singletimepoint[i] == 1) {
 						run("Collect Garbage");
 						selectWindow(Transmitted);
-					} //RO 0204 got error when images were too big (tilescans), canged somting in splitZslice instead	
+					} //RO 0204 got error when images were too big (tilescans), canged somting in splitZslice instead
 
-					splitZslice(Transmitted, TransmittedZslice[i]); //This will extract 1 Zslice of all timepoints of (second variable given to function determines which Zslice)	
+					splitZslice(Transmitted, TransmittedZslice[i]); //This will extract 1 Zslice of all timepoints of (second variable given to function determines which Zslice)
 
 					selectWindow(Transmitted);
 					getDimensions(x, y, channelTemp, sliceTemp, frameTemp);
@@ -3962,8 +3962,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 						getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
 						print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec First do Trans 5");
 					}
-					rename(Transmitted);		
-					//Remove last timepoint 											
+					rename(Transmitted);
+					//Remove last timepoint
 					if (PauseAfterSettings) {
 						wait(500 + RunAllQueued * 200);
 					}
@@ -4024,7 +4024,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 							print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec First do Trans 15");
 						}
 					}
-					// if you don't adjust the B&C in the trans you get an error when applying LUT	
+					// if you don't adjust the B&C in the trans you get an error when applying LUT
 					selectWindow(Transmitted);
 					if (PrintLikeCrazy) {
 						getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
@@ -4137,7 +4137,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 									getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
 									print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec Now we do each channel 8");
 								}
-								//setBatchMode(Hidewindows);	
+								//setBatchMode(Hidewindows);
 								selectWindow("Temp_" + ChannelName[c]); // If possible remove channelname from tempfile to save diskspace (each channel will overwrite previous channel instead of creating a separeate set of images)
 
 								id = getTitle;
@@ -4181,7 +4181,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 									getDimensions(x, y, ch, nZplanes, NumberOfFrames);
 									BottomZApply = 1;
 									TopZApply = nZplanes;
-								} 
+								}
 								// !!##DB##!! there's some stupid bug in the next line
 								// the bug only appears in the second movie to be opened and only in if drift correction is selected
 								run("Make Substack...", "slices=" + BottomZApply + "-" + TopZApply + " frames=" + frame);
@@ -4247,7 +4247,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 											getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
 											print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec Now we do each channel 23");
 										}
-										run("Reduce Dimensionality...", "channels slices keep"); // extract one frame										
+										run("Reduce Dimensionality...", "channels slices keep"); // extract one frame
 										if (DeleteZStacks) run("Make Substack...", " slices=" + BottomZApply + "-" + TopZApply);
 										if (PrintLikeCrazy) {
 											getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
@@ -4299,7 +4299,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 									getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
 									print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec Now we do each channel 33");
 								}
-								run("Select None"); 
+								run("Select None");
 								setMinAndMax(min, max);
 								if (bitDepth() == 8) {
 									run("Apply LUT", "stack");
@@ -4324,7 +4324,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 									selectWindow("Pause");
 									setLocation(VisibleX, VisibleY);
 									selectWindow(TheOtherWindow);
-									wait(TimeForPause);										
+									wait(TimeForPause);
 									if (getTitle == "Pause") {
 										waitForUser("You just pressed PAUSE" + "\n" + "\n" + "press OK to continue \n \n \n ((or drag this window to upper left quadrant if you want to change certain settings ");
 										// if user drags the pause window to upper left...
@@ -4398,7 +4398,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 								}
 								if (GarbageFilter) {
 									run("Collect Garbage");
-								} //RO BP	
+								} //RO BP
 								if (PrintLikeCrazy) {
 									getDateAndTime(NAV, NAV, NAV, NAV, plcH, plcM, plcS, plcMS);
 									print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec Now we do each channel 36");
@@ -4433,14 +4433,14 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 							newImage("Progress", "16-bit white", 800, 300, 1);
 							setColor("black");
 							setFont("SansSerif", 25, "bold antialiased");
-							getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec); //Gets time 
+							getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec); //Gets time
 							month = month + 1; //for some reason my computer saw august as 7 !?!
 							if (hour < 10) hour = "0" + hour;
 							if (minute < 10) minute = "0" + minute;
 							if (second < 10) second = "0" + second; //Adds a 0 if the number is below 10 (esthetics...)
 							drawString("That was: Position " + i + " of: " + AmountOfPositions, 10, 40);
 							drawString("Position number in LIF file :" + PositionNumber[i], 10, 80);
-							// ##DB## in above line I cleared a plus from the following line, cause it probably would result in an error (even though it was present in old version): 
+							// ##DB## in above line I cleared a plus from the following line, cause it probably would result in an error (even though it was present in old version):
 							// drawString("Position number in LIF file :" + PositionNumber[i] + , 10, 80);
 							if (CheckPositionName) drawString("Name: " + PositionName[i], 10, 80);
 							drawString("Timepoint: " + frame + " of:" + LastTimepointTemp, 10, 120);
@@ -4462,7 +4462,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 						//if(RunAllQueued){run("Collect Garbage");}
 					}
 
-				} //End of timepoints loop	
+				} //End of timepoints loop
 
 				for (j = 0; j < PositionChannelAmount[i]; j++) {
 					c = j;
@@ -4864,7 +4864,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					}
 				}
 
-				//bp37	
+				//bp37
 				FourQuadrants = 0;
 				if (NumberOfCh == 2 && nChunks == 1) {
 					FourQuadrants = 1;
@@ -4876,9 +4876,9 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				}
 				print("FourQuadrants " + FourQuadrants);
 
-				//bp37	
+				//bp37
 
-				if (FourQuadrants) { //bp37			
+				if (FourQuadrants) { //bp37
 					print("160225-TEST 14 getTitle = " + getTitle);
 					if (UseDepthcoding == "With") {
 						if (TransmittedChannelPresent) {
@@ -5064,7 +5064,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					run("Combine...", "stack1=top stack2=bottom combine");
 					rename("END");
 				}
-				//waitForUser("NumberOfCh: "+NumberOfCh); 
+				//waitForUser("NumberOfCh: "+NumberOfCh);
 				if (NumberOfCh == 7) {
 					if (TransmittedChannelPresent) {
 						open(TempDisk + ":\\ANALYSIS DUMP\\TEMP DUMP\\Temp_Trans.tif");
@@ -5213,7 +5213,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 							print(plcH + "hr " + plcM + "min " + plcS + "sec " + plcMS + "msec COMBINE THE CHANNELS AND TRANS/DEPTHCODING 32");
 						}
 					}
-					//bp37 
+					//bp37
 					//selectWindow("END");
 					//print("Saved: [" + OutputDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + Exp + "\\" + PRINT + "]");
 					if (PrintLikeCrazy) {
@@ -5234,7 +5234,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					}
 					setColor("black");
 					setFont("SansSerif", 25, "bold antialiased");
-					getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec); //Gets time 
+					getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec); //Gets time
 					month = month + 1; //for some reason my computer saw august as 7 !?!
 					if (hour < 10) hour = "0" + hour;
 					if (minute < 10) minute = "0" + minute;
@@ -5285,7 +5285,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		newImage("Progress", "16-bit white", 800, 300, 1);
 		setColor("black");
 		setFont("SansSerif", 25, "bold antialiased");
-		getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec); //Gets time 
+		getDateAndTime(year, month, dayOfWeek, dayOfMonth, hour, minute, second, msec); //Gets time
 		month = month + 1; //for some reason my computer saw august as 7 !?!
 		if (hour < 10) hour = "0" + hour;
 		if (minute < 10) minute = "0" + minute;
@@ -5301,7 +5301,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		oldmonth = month;
 		oldyear = year;
 		close();
-	} //										End of SaveProgressToNetwork				
+	} //										End of SaveProgressToNetwork
 
 	if (isOpen("Pause")) {
 		selectWindow("Pause");
@@ -5388,7 +5388,7 @@ if (RunAllQueued) {
 	savetextfile = image_output_location + prefix + "_" + currdate + "_" + currtime + "_Settings.txt";
 	savetextfile = replace(savetextfile,"__","_");
 	saveAs("Text", savetextfile);
-	
+
 	waitForUser(" Klaar! \n \n All (Cute) Queued Experiments Processed !! ");
 	FinalJoke();
 	//exit(" Klaar! \n \n All (Cute) Queued Experiments Processed !! ");
@@ -5438,14 +5438,14 @@ print("finished run");
 // =======================================================================================================================================================================
 // =======================================================================================================================================================================
 
-// define splitZslice		
+// define splitZslice
 function splitZslice(title, UitgekozenZplaneVoorTransmitted) {
 	selectWindow(title);
 	Stack.setPosition(1, UitgekozenZplaneVoorTransmitted, 1);
 	run("Reduce Dimensionality...", " frames");
 }
 
-// define cropToROI		
+// define cropToROI
 function cropToROI(title) {
 	selectWindow(title);
 	makeRectangle(ROIx1, ROIy1, ROIx2, ROIy2);
@@ -5460,7 +5460,7 @@ function drawROI(title) {
 	getDimensions(x, y, ch, nZplanes, NumberOfFrames);
 	ZHalfwayStack = round(0.5 * nZplanes);
 	print("ZHalfwayStack : " + ZHalfwayStack);
-	// make rectangle 
+	// make rectangle
 	XCoordinate = round(0.1 * x);
 	YCoordinate = round(0.1 * y);
 	Width = round(0.8 * x);
@@ -5562,7 +5562,7 @@ function removeNoise(Title) {
 	setBatchMode(false);
 }
 
-// define Ch2Mask	
+// define Ch2Mask
 // define Ch2Mask	Thresholding Ch2 Image for substraction		//first get, save and load cutoff	DeadMask(TitleDead)		substractDeadMask(TitleDead,TitleNuclei)
 function DeadMask(TitleDead, cutoff) {
 	setBatchMode(Hidewindows);
@@ -5747,7 +5747,7 @@ function splitZplaneTemp(Title, JumpZ) {
 		run("Duplicate...", "title=[TEMP_" + i + "] duplicate");
 		ConcatenateString = ConcatenateString + " image" + i + 1 + "=TEMP_" + i;
 	}
-	ConcatenateString = ConcatenateString + " image" + i + 1 + "=[-- None --]"; 
+	ConcatenateString = ConcatenateString + " image" + i + 1 + "=[-- None --]";
 	run("Concatenate...", " title=[ConcatenatedStacks] " + ConcatenateString);
 	// and make it Hyperstack
 	run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices=" + Slices + " frames=" + Timepoints + " display=Color");
@@ -5775,7 +5775,7 @@ function splitTimepointTemp(Title, JumpT, JumpZ, Reduce) {
 		run("Reduce Dimensionality...", "channels slices keep"); // extract one frame
 
 		run("Reduce...", "reduction=" + JumpZ);
-		ReducedTP = 0; 
+		ReducedTP = 0;
 		rename(Title + "_" + frame);
 		getDimensions(dummy, dummy, dummy, Slices, dummy);
 		cropToROI(Title + "_" + frame);
@@ -5954,11 +5954,11 @@ function DrawText(Title, Text, Size, Colour) {
 	setBatchMode(false);
 }
 // setFont("SansSerif", Size, " antialiased");
-// drawString(Text, Xposition, Yposition); 
+// drawString(Text, Xposition, Yposition);
 // Xposition 1=textbox starts at first pixel, text starts later! Should be fine!
 // Yposition = bottom of textbox, so 1024 in a 1024x1024 image the text is above the bottom Should be fine!
 // Yposition2 to do top shift the textbox down by the Size, this puts the text ~2 pixels below top
-// So 1, 35 is top left; 1,512 is bottom left for 512x512 image; 
+// So 1, 35 is top left; 1,512 is bottom left for 512x512 image;
 // work with getDimensions for anything other than top left
 // if working on 4-luik 1, ydimension/2 is bottom left top image and 1, ydimension/2 + Size is top bottom image
 // both were left image, right image is xdimension/2 (going to the right is tricky due to text size)
@@ -6059,7 +6059,7 @@ function SetTransmittedBrightness(CurrentWindow) {
 		run("Apply LUT", "stack");
 	} else {
 		run("8-bit");
-	} // Appy LUT does not work with 12 bit images?! is you use //run("8-bit"); the image is converted to an 8 bit using the current B&C settings 
+	} // Appy LUT does not work with 12 bit images?! is you use //run("8-bit"); the image is converted to an 8 bit using the current B&C settings
 
 	// new april 0215
 	Saturated = 0.35;
@@ -6188,7 +6188,7 @@ function ZlevelOfHighestIntensity(Title) {
 	}
 	Highest = 0;
 	for (i = 0; i < ZSLICE; i++) {
-		Stack.setPosition(1, i, 0.5 * TIMEPOINTS); // Stack.setPosition(channel, slice, frame) 
+		Stack.setPosition(1, i, 0.5 * TIMEPOINTS); // Stack.setPosition(channel, slice, frame)
 		run("Measure");
 		Mean = getResult("Mean", nResults - 1);
 		if (Mean > Highest) {
@@ -6728,7 +6728,7 @@ function autoCrop(minSize, boundary, endframe) { // DB
 	minPixSize = minSize / (pixelWidth * pixelHeight);
 
 	// project 4D image into 2D (all slices, all timepoints)
-	ori = getTitle();	
+	ori = getTitle();
 
 	if(endframe > 0){
 		Stack.getDimensions(width, height, channels, slices, frames);
@@ -6738,16 +6738,16 @@ function autoCrop(minSize, boundary, endframe) { // DB
 	run("Z Project...", "projection=[Max Intensity] all"); // z-projection on all timepoints
 	zprj = getTitle();
 	if(isOpen("substack"))		close("substack");
-	
+
 	if (do_registration){
 		makeRegistrationFile(0);
 	}
 	pre_tprj = getTitle();
-	
+
 	run("Z Project...", "projection=[Max Intensity]"); // project all timepoints into single image
 	tprj = getTitle();
 
-	// convert units of final projection for identifying region in pixel units (original movie will retain unit info) 
+	// convert units of final projection for identifying region in pixel units (original movie will retain unit info)
 	run("Properties...", "unit=px pixel_width=1 pixel_height=1");
 	setAutoThreshold("Triangle dark");
 	run("Analyze Particles...", "size=" + minPixSize + "-Infinity display clear include add");
@@ -6766,7 +6766,7 @@ function autoCrop(minSize, boundary, endframe) { // DB
 			}
 		}
 		roiManager("select", roi_selector);
-		
+
 		// this makes a box around that largest loop
 		run("Measure");
 		x = getResult("BX") - boundary;
@@ -6793,10 +6793,10 @@ function autoCrop(minSize, boundary, endframe) { // DB
 function makeRegistrationFile(Z_project){
 	Registration_save_location = TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + loop_number + "\\Settings\\TransfMatrix.txt";
 	pre_prj = getTitle();
-	
+
 	// make Z projection
 	if(Z_project)	run("Z Project...", "projection=[Max Intensity] all");
-	
+
 	prj_reg = getTitle();
 	// register projection
 	print("made registration file for: " + pre_prj);
@@ -6808,7 +6808,7 @@ function makeRegistrationFile(Z_project){
 
 function correctDriftOnStack(endframe){
 	Registration_save_location = TempDisk + ":\\ANALYSIS DUMP\\" + Q + "Exp" + loop_number + "\\Settings\\TransfMatrix.txt"; // !!##DB#!! I hope this is the right place!
-	
+
 	// import stack info
 	ori = getTitle();
 	Stack.getDimensions(width, height, channels, slices, frames);
@@ -6823,7 +6823,7 @@ function correctDriftOnStack(endframe){
 	print("CURRENT TIME -", makeDateOrTimeString("time"));
 	for (z = 1; z < slices+1; z++) {
 		selectImage(ori);
-		
+
 		run("Duplicate...", "title=[" + ori + "_slice" + z +"] duplicate slices="+z);
 		curr_IM = getTitle();
 		run("MultiStackReg", "stack_1=[" + curr_IM + "] action_1=[Load Transformation File] file_1=[" + Registration_save_location + "] stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body]");
@@ -6833,7 +6833,7 @@ function correctDriftOnStack(endframe){
 	print("CURRENT TIME -", makeDateOrTimeString("time"));
 	print(concat_arg);
 	close(ori);
-	
+
 	// concatenate slices back together
 	concat_arg = concat_arg + " image" + z + "=[-- None --]";
 	selectWindow("Log");	// DB: I don't know why, but this statement fixes a bug that crashes the macro if auto-crop is not selected
@@ -6899,7 +6899,7 @@ function makeDateOrTimeString(DorT){
 		// return string
 		string = h + ":" + m + ":" + s;
 	}
-	
+
 	return string;
 }
 
@@ -6918,10 +6918,10 @@ function detectLastTimepoint(){
 			i += nSlices;	// ends current for loop.
 		}
 	}
-	
+
 	if(lastframe == 0)	lastframe = nSlices;
 	else if(lastframe < minMovieLength)	lastframe = minOf(minMovieLength,nSlices);
-	
+
 	print("last timepoint " + lastframe);
 	setSlice(lastframe);
 	print("CURRENT TIME -", makeDateOrTimeString("time"));
@@ -6932,7 +6932,7 @@ function detectLastTimepoint(){
 	selectImage(ori_im);
 	Stack.setPosition(1, 1, lastframe);
 	return lastframe;
-	
+
 }
 
 function closeWrongChannels(pre){
@@ -6948,12 +6948,12 @@ function closeWrongChannels(pre){
 
 //FUNCTIONS
 /*
-function splitZslice(title,UitgekozenZplaneVoorTransmitted) 
-function cropToROI(title) 
-function drawROI(title) 
-function substractDeadMask(TitleDead,TitleNuclei) 
-function removeNoise(Title) 
-function DeadMask(TitleDead,cutoff) 
+function splitZslice(title,UitgekozenZplaneVoorTransmitted)
+function cropToROI(title)
+function drawROI(title)
+function substractDeadMask(TitleDead,TitleNuclei)
+function removeNoise(Title)
+function DeadMask(TitleDead,cutoff)
 function splitTimepoint(Title,Start,End)
 function CorrectZ(ChromaticAberration)
 function RemoveBottomZ(Title)
@@ -6963,7 +6963,7 @@ function MergeTimepoint(title,start,end)
 function splitZplaneTemp(Title, JumpZ)
 function splitTimepointTemp(Title,JumpT,JumpZ,Reduce)
 function MergeTimepointTemp(title,JumpT)
-function MergeTrans_BGYR(ChannelName) 
+function MergeTrans_BGYR(ChannelName)
 function PureDenoise(Title)
 function PureDenoiseStack(Title)
 function DrawText(Title,Text, Size, Colour)

@@ -26,7 +26,7 @@ Dialog.create("OrgaMovie Settings");
 	Dialog.addMessage("Put all your analysis data in a single folder.\nIf you wish to skip any movies, add an underscore (i.e. _ ) in front of the filename.");
 	Dialog.setInsets(-5,20,0);
 	Dialog.addMessage("Avoid confusion with previous experiments by deleting all 'Queued Exp' folders and the \nOutput_Movies folder and all *.txt files from D:\\ANALYSIS DUMP before proceeding.");
-	
+
 	Dialog.addMessage("Press 'Help' (next to Cancel) to open the ReadMe containing extensive information on all settings below.");
 	Dialog.addMessage("");
 	Dialog.addMessage("GENERAL SETTINGS");											Dialog.setInsets(0,0,5);
@@ -42,7 +42,7 @@ Dialog.create("OrgaMovie Settings");
 	Dialog.addNumber("Frame rate", 1.3, 1, 4,"sec / frame");
 	Dialog.addChoice("Output naming ", IndexingOptions, IndexingOptions[2]);
 	Dialog.addMessage("");
-	
+
 	Dialog.addMessage("AUTOMATION SETTINGS");
 	Dialog.setInsets(0,20,0);
 	Dialog.addCheckbox("Use drift correction", 1);
@@ -53,8 +53,8 @@ Dialog.create("OrgaMovie Settings");
 	Dialog.addMessage("");
 	Dialog.addCheckbox("Change default automation settings?", 0);
 
-	
-Dialog.show();	
+
+Dialog.show();
 	// DATA INPUT SETTINGS
 	input_filetype = Dialog.getChoice();
 	channel_number = Dialog.getNumber() - 1;
@@ -83,7 +83,7 @@ Dialog.create("Automation Settings");
 	Dialog.addMessage("Auto-crop Settings:");
 	Dialog.addNumber("Minimum organoid size:", 350, 0, 4, micron+"^2");
 	Dialog.addNumber("Boundary around organoid:", 30, 0, 4, "pixels");
-	
+
 	Dialog.addMessage("Contrast Automation Settings:");
 	Dialog.addChoice("Minimum threshold method:", T_options, "Percentile");
 	Dialog.addChoice("Maximum threshold method:", T_options, "Minimum");
@@ -101,27 +101,27 @@ if (changeSettings && (do_autocrop + do_autoBC) > 1) {
 }
 	minOrgaSize = Dialog.getNumber();
 	cropBoundary = Dialog.getNumber();
-	
+
 	min_thresh_meth = Dialog.getChoice();
 	max_thresh_meth = Dialog.getChoice();
 	maxBrightnessFactor = Dialog.getNumber();
 	gamma_factor = Dialog.getNumber();
 	multiply_factor = Dialog.getNumber();
-	
+
 	covCutoff = Dialog.getNumber();
 	minMovieLength = Dialog.getNumber();
 
-	
+
 
 
 // Assemble dialog data to single array, used to pass argument
 arguments = newArray(	t_step, // 0
 						date, // 1
 						prefix,	// 2
-						do_registration, // 3 
+						do_registration, // 3
 						do_autocrop, // 4
 						do_autoBC, // 5
-						do_autotime, // 6 
+						do_autotime, // 6
 						do_autoZ,	// 7
 						gamma_factor, // 8
 						multiply_factor, // 9
@@ -160,21 +160,21 @@ if (File.exists(Macro_location) == 0)	exit("main macro not found at location\n" 
 for (f = 0; f < filelist.length; f++) {
 	currfile = filelist[f];
 	if (endsWith(currfile, input_filetype) &! startsWith(currfile, "_") )  {
-		
+
 		if (indexOf(currfile," ") >= 0){
 			oldfilename = dir + currfile;
 			currfile = replace(currfile," ","_");
 			newfilename = dir + currfile;
 			File.rename (oldfilename,newfilename);
 		}
-		
+
 		// determine proper movie_index
 		if (indexing == IndexingOptions[0])			movie_index ++;		// linear
 		else if(indexing == IndexingOptions[1])		movie_index = substring(currfile, 0, indexOf(currfile,input_filetype));		// filename
 		else if (indexing == IndexingOptions[2])	movie_index = substring(currfile, 0, indexOf(currfile,"_"));	// index (until 1st '_'")
 		if (movie_index == "")						movie_index = substring(currfile, 0, indexOf(currfile,input_filetype));		// revert to filename if empty
 		movie_index_list = Array.concat(movie_index_list,movie_index);
-		
+
 		// set file specific arguments to pass
 		arguments[11] = dir + currfile;	// filename
 		arguments[12] = movie_index;	// movie index
@@ -182,11 +182,11 @@ for (f = 0; f < filelist.length; f++) {
 
 		// initiate main macro and do memory dumps
 		//for(i = 0; i < arguments.length; i++)		print(i,arguments[i]);
-		
+
 		run("Collect Garbage");
 		print("run macro in queue mode on movie: " + movie_index);
 		print("CURRENT TIME -", makeDateOrTimeString("time"));
-		
+
 		passargument = makeArgument(arguments);
 		crash_test = runMacro(Macro_location + "OrgaMovie_Main_.ijm", passargument);	// returns empty string if ok, or [aborted] if main macro crashed
 		run("Collect Garbage");
@@ -237,29 +237,29 @@ function makeDateOrTimeString(DorT){
 
 	if(DorT == "date" || DorT == "Date" || DorT == "DATE" || DorT == "D" || DorT == "d"){
 		y = substring (d2s(year,0),2);
-		
+
 		if (month > 8)	m = d2s(month+1,0);
 		else			m = "0" + d2s(month+1,0);
-		
+
 		if (dayOfMonth > 9)		d = d2s(dayOfMonth,0);
 		else					d = "0" + d2s(dayOfMonth,0);
-		
+
 		string = y + m + d;
 	}
 
 	if(DorT == "time" || DorT == "Time" || DorT == "TIME" || DorT == "T" || DorT == "t"){
 		if (hour > 9)	h = d2s(hour,0);
 		else			h = "0" + d2s(hour,0);
-		
+
 		if (minute > 9)	m = d2s(minute,0);
 		else			m = "0" + d2s(minute,0);
-		
+
 		if (second > 9)	s = d2s(second,0);
 		else			s = "0" + d2s(second,0);
-		
+
 		string = h + ":" + m + ":" + s;
 	}
-	
+
 	return string;
 }
 
@@ -268,7 +268,7 @@ function getCurrUser(){
 	parent = File.getParent(curr_user);
 	curr_user = substring(curr_user, lengthOf(parent)+1, lengthOf(curr_user)-1);
 	curr_user = replace(curr_user,"\\.","");
-	
+
 	return curr_user;
 }
 
