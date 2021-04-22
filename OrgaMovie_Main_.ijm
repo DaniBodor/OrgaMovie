@@ -1,37 +1,14 @@
-// !!!!!!!!!!!!!!!!!!!!!!! in settings wegschrijven definitie Ch, Slice, Frames
-//As of may 2015 the new formed image (make substack..., merge channels...) is no longer automatically selected!
-/// data op X (NIET lokaal gehaald)
-/// nog eens fiji op D terwijl F leeg is. beter?
-/// verhuis Fiji naa de F en run
 
-//	java.lang.IllegalArgumentException: Invalid Z index: 12/12
-//	java.lang.IllegalArgumentException: Invalid Z index: 23/20
-
-// *****************************************************
-// *****************************************************
-
-// opkrikken tijdelijke min en max als multipl groot wordt
-
-// wat is het probleem van time-projcted ????
-
-// 1) laatste window van de virtual transmitted --> steeds geen vierkante ROI
-// 2) positions 4 (1 of 2)
-
-// label ipv for-loop voor draw-functies
-
-// als je geen depth hebt, dat dat een loop wordt
-
-// REMOVE !!!! DoingOtherTests EN TESTS IN FUNCTION - function TimeProjectionOnTransmitted(title,slice){
-
-// VERBETER DE SetBrightness etc....... ook CONTRAST standaardiseren
-
-
+// check if macro was opened from Start macro or locally
 passargument = getArgument();
 if (passargument == ""){
-	exit("You started the wrong macro. Please run:\n OrgaMovie Start")
+	waitForUser("You started the wrong macro.\n \nRun OrgaMovie_Start.ijm instead?");
+	Macro_location = getDirectory("plugins") + "OrgaMovie" + File.separator;
+	runMacro(Macro_location + "OrgaMovie_Start.ijm");
 }
 
 input_arguments = split(passargument, "$");
+// turn line below on for troubleshooting of input arguments
 //for(i = 0; i < input_arguments.length; i++)		print(i,input_arguments[i]);
 
 t_step = input_arguments[0];
@@ -2576,7 +2553,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 							else				setMinAndMax(minT,maxT);
 
 						}
-						waitForUser("$$$$$$$$$ \n Set B&C for position " + w + 1 + " (of " + PositionNumber.length + ")"); //bp14 //RO2	// !!##DB test ABC
+						//waitForUser("$$$$$$$$$ \n Set B&C");	// !!##DB test ABC
 						
 						for (c = 0; c < PositionChannelAmount[w]; c++) {
 							if (UseChannel[c]) {
@@ -6991,3 +6968,4 @@ function DrawTime(Title,Interval, Size, Colour)
 function SetTransmittedBrightness(CurrentWindow)
 function GetLUTColour(Title)
 */
+

@@ -1,5 +1,11 @@
 //Macro_location = "C:\\Users\\dani\\Documents\\MyCodes\\OrgaMovie" + File.separator;
 Macro_location = getDirectory("plugins") + "OrgaMovie" + File.separator;
+if (File.exists(Macro_location) == 0)	exit("main macro not found at location\n" + Macro_location);
+
+
+underscore_only = false;
+// if true, only analyze files starting with underscore
+// if false, skips files starting with underscore
 
 
 // Dialog options settings
@@ -63,7 +69,7 @@ Dialog.show();
 	t_step = Dialog.getNumber();	// min
 	date = "obsolete";	// date = Dialog.getString();
 	prefix = Dialog.getString() + "_";
-		prefix = replace(prefix,"\\.","_");
+		prefix = replace(prefix,"\\.","-");
 	// MOVIE OUTPUT SETTINGS
 	output_format = Dialog.getChoice();
 	sec_p_frame = Dialog.getNumber();
@@ -102,20 +108,18 @@ Dialog.create("Automation Settings");
 if (changeSettings && (do_autocrop + do_autoBC) > 1) {
 	Dialog.show();
 }
+	// AUTO-CROP
 	minOrgaSize = Dialog.getNumber();
 	cropBoundary = Dialog.getNumber();
-
+	// AUTO-CONTRAST
 	min_thresh_meth = Dialog.getChoice();
-	//max_thresh_meth = Dialog.getChoice();
 	minBrightnessFactor = Dialog.getNumber();
 	overexp_percile = Dialog.getNumber();
 	gamma_factor = Dialog.getNumber();
 	multiply_factor = Dialog.getNumber();
-
+	// TIME-CROP
 	covCutoff = Dialog.getNumber();
 	minMovieLength = Dialog.getNumber();
-
-
 
 
 // Assemble dialog data to single array, used to pass argument
@@ -273,14 +277,15 @@ function getCurrUser(){
 }
 
 
-function saveCrashLog(){
+function SaveLogToArchive(descriptor){
 	// print settings and save Log for future reference
 	currdate = makeDateOrTimeString("D");
 	currtime = makeDateOrTimeString("T");
 	print("CURRENT TIME -", currtime);
-	print("!!!!! main macro crashed");
+	
 	currtime = replace(currtime,":","");
-	savetextfile = "D:\\ANALYSIS DUMP\\_Movies_" + prefix + File.separator + prefix + "_" + currdate + "_" + currtime + "_CrashReport.txt";
+	savetextfile = "D:\\ANALYSIS DUMP\\Settings\\LogArchive" + File.separator + prefix + "_" + currdate + "_" + currtime + "_" + descriptor + ".txt";
 	selectWindow("Log");
 	saveAs("Text", savetextfile);
 }
+
