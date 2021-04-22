@@ -1,3 +1,5 @@
+//Macro_location = "C:\\Users\\dani\\Documents\\MyCodes\\OrgaMovie" + File.separator;
+Macro_location = getDirectory("plugins") + "OrgaMovie" + File.separator;
 
 
 // Dialog options settings
@@ -152,11 +154,6 @@ if (dir == "")		exit("macro aborted\nno input directory given");
 filelist = getFileList(dir);
 if (filelist.length == 0)	exit("no data found in input directory\n" + dir);
 
-
-//Macro_location = "C:\\Users\\j.fernandes\\Desktop\\TEST" + File.separator;
-//Macro_location = "C:\\Users\\TEMP\\Desktop\\OrgaMovie_Macro" + File.separator;
-
-Macro_location = getDirectory("plugins") + "OrgaMovie" + File.separator;
 if (File.exists(Macro_location) == 0)	exit("main macro not found at location\n" + Macro_location);
 
 // run macro for all *.nd2 files in "queue" mode, excluding files starting with an _
