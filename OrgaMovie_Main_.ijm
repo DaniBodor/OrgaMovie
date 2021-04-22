@@ -2564,19 +2564,20 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
 							setAutoThreshold(min_thresh_meth);
 							getThreshold(no,minT);
+							minT = minT * minBrightnessFactor;
 
-							setAutoThreshold(max_thresh_meth);
-							getThreshold(no,maxT);
-							if(maxT <= minT)	maxT = maxBC;
-							else				maxT = maxT * maxBrightnessFactor;
-
+							maxT = getPercentile(overexp_percile);
+							close(maxprj);
 							selectImage(1);
-							setMinAndMax(minT,maxT);
+							
+							//setAutoThreshold(max_thresh_meth);
+							//getThreshold(no,maxT);
+							if(maxT <= minT)	resetMinAndMax();
+							else				setMinAndMax(minT,maxT);
 
 						}
-						//waitForUser("$$$$$$$$$ \n Set B&C for position " + w + 1 + " (of " + PositionNumber.length + ")"); //bp14 //RO2	// !!##DB test ABC
-						close(maxprj);
-
+						waitForUser("$$$$$$$$$ \n Set B&C for position " + w + 1 + " (of " + PositionNumber.length + ")"); //bp14 //RO2	// !!##DB test ABC
+						
 						for (c = 0; c < PositionChannelAmount[w]; c++) {
 							if (UseChannel[c]) {
 								selectWindow(PositionNumber[w] + "_" + ChannelName[c] + "_Temp");

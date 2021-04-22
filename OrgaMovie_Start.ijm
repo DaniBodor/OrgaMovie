@@ -88,7 +88,7 @@ Dialog.create("Automation Settings");
 	Dialog.addChoice("Minimum threshold method:", T_options, "Percentile");
 	//Dialog.addChoice("Maximum threshold method:", T_options, "Minimum");
 	Dialog.addNumber("Minimum brightness multiplier", 1.00, 2, 4, "(increases lowest pixel value; dimmer background; larger cutoff)");
-	Dialog.addNumber("Percentile overexposed pixels", 2.0, 1, 4, "(decreases highest pixel value; brighter foreground; more overexposure)");
+	Dialog.addNumber("Percentile overexposed pixels", 0.50, 2, 4, "(decreases highest pixel value; brighter foreground; more overexposure)");
 	Dialog.addNumber("Gamma factor", 0.7, 1, 4,"(brings low and high intensity together)" );
 	Dialog.addNumber("Multiply factor", 1.0, 1, 4,"(for depth coded channel)" );
 
