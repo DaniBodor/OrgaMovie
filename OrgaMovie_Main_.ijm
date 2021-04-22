@@ -6946,6 +6946,24 @@ function closeWrongChannels(pre){
 }
 
 
+
+function getPercentile(percile){
+	w = getWidth;
+	h = getHeight;
+	a = newArray(w*h);
+	i = 0;
+	
+	for (y=0; y<h; y++)
+		for (x=0; x<w; x++)
+			a[i++] = getPixel(x,y);
+	Array.sort(a);
+	
+	perc_pos = a.length * (1 - percile/100);
+	perc_value = a[perc_pos]
+	
+	return perc_value;
+}
+
 //BP37
 
 //FUNCTIONS
