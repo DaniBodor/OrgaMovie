@@ -162,48 +162,16 @@ if (dir == "")		exit("macro aborted\nno input directory given");
 filelist = getFileList(dir);
 if (filelist.length == 0)	exit("no data found in input directory\n" + dir);
 
-if (File.exists(Macro_location) == 0)	exit("main macro not found at location\n" + Macro_location);
+
+/// Business end of macro
+
 
 // run macro for all *.nd2 files in "queue" mode, excluding files starting with an _
 for (f = 0; f < filelist.length; f++) {
 	currfile = filelist[f];
-	if (endsWith(currfile, input_filetype) &! startsWith(currfile, "_") )  {
-
-		if (indexOf(currfile," ") >= 0){
-			oldfilename = dir + currfile;
-			currfile = replace(currfile," ","_");
-			newfilename = dir + currfile;
-			File.rename (oldfilename,newfilename);
-		}
-
-		// determine proper movie_index
-		if (indexing == IndexingOptions[0])			movie_index ++;		// linear
-		else if(indexing == IndexingOptions[1])		movie_index = substring(currfile, 0, indexOf(currfile,input_filetype));		// filename
-		else if (indexing == IndexingOptions[2])	movie_index = substring(currfile, 0, indexOf(currfile,"_"));	// index (until 1st '_'")
-		if (movie_index == "")						movie_index = substring(currfile, 0, indexOf(currfile,input_filetype));		// revert to filename if empty
-		movie_index_list = Array.concat(movie_index_list,movie_index);
-
-		// set file specific arguments to pass
-		arguments[11] = dir + currfile;	// filename
-		arguments[12] = movie_index;	// movie index
-		arguments[16] ++;				// loop number // DB: identical to movie_index if indexing is linear. Could probably be consolidated, but I can't be bothered to.
-
-		// initiate main macro and do memory dumps
-		//for(i = 0; i < arguments.length; i++)		print(i,arguments[i]);
-
-		run("Collect Garbage");
-		print("run macro in queue mode on movie: " + movie_index);
-		print("CURRENT TIME -", makeDateOrTimeString("time"));
-
-		passargument = makeArgument(arguments);
-		crash_test = runMacro(Macro_location + "OrgaMovie_Main_.ijm", passargument);	// returns empty string if ok, or [aborted] if main macro crashed
-		run("Collect Garbage");
-
-		// exit start macro if main macro crashed
-		if (crash_test == "[aborted]"){
-			saveCrashLog();
-			exit("Exit macro.\nOrgaMovie_Main crashed during last run.\nCurrent Log has been saved as CrashReport.txt\nPlease save a screenshot or pic of the current screen for debugging purposes.");
-		}
+	if (endsWith(currfile, input_filetype)){
+		if (underscore_only && startsWith(currfile, "_") )  	initiateMainMacroStep1 (currfile);
+		else if (startsWith(currfile, "_") == 0)				initiateMainMacroStep1 (currfile);
 	}
 }
 
@@ -219,15 +187,57 @@ arguments[16] = 0;	// loop number
 arguments = Array.concat(arguments, "Movie_index_1_follows");
 arguments = Array.concat(arguments, movie_index_list);
 passargument = makeArgument(arguments);
+
 runMacro(Macro_location + "OrgaMovie_Main_.ijm", passargument);
 
 
-print("*****************initiation macro finished");
-print("CURRENT TIME -", makeDateOrTimeString("time"));
-
+print("Macro all done");
+SaveLogToArchive("CompletedRun");
 
 
 ////////////////////////////////////////////// FUNCTIONS //////////////////////////////////////////////
+
+
+
+function initiateMainMacroStep1(currfile){
+	if (indexOf(currfile," ") >= 0){
+		oldfilename = dir + currfile;
+		currfile = replace(currfile," ","_");
+		newfilename = dir + currfile;
+		File.rename (oldfilename,newfilename);
+	}
+
+	// determine proper movie_index
+	if (indexing == IndexingOptions[0])			movie_index ++;		// linear
+	else if(indexing == IndexingOptions[1])		movie_index = substring(currfile, 0, indexOf(currfile,input_filetype));		// filename
+	else if (indexing == IndexingOptions[2])	movie_index = substring(currfile, 0, indexOf(currfile,"_"));	// index (until 1st '_'")
+	if (movie_index == "")						movie_index = substring(currfile, 0, indexOf(currfile,input_filetype));		// revert to filename if empty
+	movie_index_list = Array.concat(movie_index_list,movie_index);
+
+	// set file specific arguments to pass
+	arguments[11] = dir + currfile;	// filename
+	arguments[12] = movie_index;	// movie index
+	arguments[16] ++;				// loop number // DB: identical to movie_index if indexing is linear. Could probably be consolidated, but I can't be bothered to.
+
+	// initiate main macro and do memory dumps
+	//for(i = 0; i < arguments.length; i++)		print(i,arguments[i]);
+
+	run("Collect Garbage");
+	print("run macro in queue mode on movie: " + movie_index);
+	print("CURRENT TIME -", makeDateOrTimeString("time"));
+
+	passargument = makeArgument(arguments);
+	crash_test = runMacro(Macro_location + "OrgaMovie_Main_.ijm", passargument);	// returns empty string if ok, or [aborted] if main macro crashed
+	run("Collect Garbage");
+
+	// exit start macro if main macro crashed
+	if (crash_test == "[aborted]"){
+		print("!!!!! main macro crashed");
+		SaveLogToArchive("CrashReport");
+		exit("Exit macro.\nOrgaMovie_Main crashed during last run.\nCurrent Log has been saved as CrashReport.txt\nPlease save a screenshot or pic of the current screen for debugging purposes.");
+	}
+}
+
 
 function makeArgument(arg_array){
 	string_arg = "";
