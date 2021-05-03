@@ -1761,12 +1761,12 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				}
 			}
 		}
-
+/* DB commented this out
 		print("");
 		print("ArraySkipPositions : ");
 		Array.print(ArraySkipPositions);
 		print("");
-
+*/ 
 		//RO232		exclude single timepoints in 1 step or not...
 
 		if (minNofTimePoints < 2) {
