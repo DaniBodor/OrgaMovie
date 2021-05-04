@@ -137,12 +137,21 @@ Current settings will be stored and used as default next time you run the macro,
 
 <img src="https://user-images.githubusercontent.com/14219087/117026322-f7420580-acfb-11eb-95e0-fa8cd4ce7fcf.png" width=55%>
 
-## Analyze cells
 
-### Identify mitotic cell
-Draw a box around a mitotic cell for each timepoint selected above. The selected region will be displayed so that you can keep track of which cell has already been analyzed.
+## Identify & score mitotic cells
 
+The macro will ask you to draw a box around the mitotic cell at the for each stage selected in the settings. These boxes are used to visually keep track of which cells have already been analyzed.  
+These boxes are saved in your save location after each analyzed cell, and are automatically reloaded when you restart the macro on the same cell.
 
+Next, you will be prompted to input observations to track:  
+<img src="https://user-images.githubusercontent.com/14219087/117031513-efd12b00-ad00-11eb-8125-b4d0fecb1fce.png" width=33%>
+
+Then, results will be written to the scoring table, which is immediately saved (the file is overwritten after each cell) as a \*.csv, which can be read by most downstream applications (Excel, R, Python, Matlab, ...).
+<img src="https://user-images.githubusercontent.com/14219087/117033113-5f93e580-ad02-11eb-95db-e90ea82ce905.png">
+
+It then asks you to identify and box the next cell. This repeats forever, until you hit 'Esc' or in some other way quit the macro.
+
+NOTE: **At any point you can close the image and open a different (or the same) one without crashing the macro, or quit the macro and carry on at a later time without losing your progress.**
 
 
 
