@@ -10,7 +10,7 @@ This FiJi/ImageJ macro takes any number 4D (xyzt) _\*.nd2_ image files of organo
 The code is a fully automated adaptation of a macro (version 2016_03_24) previously created by Bas Ponsioen and  René Overmeer, first published in _[Targeting mutant RAS in patient-derived colorectal cancer organoids by combinatorial drug screening](https://elifesciences.org/articles/18489)_, (eLife 2016;5:e18489 doi: 10.7554/eLife.18489).
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/14219087/114186287-f4473580-9946-11eb-99b2-1f3d73b78a69.png">
+    <img src="https://user-images.githubusercontent.com/14219087/114186287-f4473580-9946-11eb-99b2-1f3d73b78a69.png" width=75%>
 </p>
 
 The macro will not run on recent versions of ImageJ. The most recent version of ImageJ that this has been stably tested on is 1.49b. Also, the macro currently only works from the workstation (DED-KOPS-001) in the Hubrecht Lab (2nd floor student room). If either of these is limiting for you, please talk to me to figure out a solution.
@@ -135,9 +135,7 @@ Here, you can set:
 
 Current settings will be stored and used as default next time you run the macro, so if nothing changes you can just click OK.
 
-<p align="center">
-    <img src="https://user-images.githubusercontent.com/14219087/117026322-f7420580-acfb-11eb-95e0-fa8cd4ce7fcf.png" width=50%>
-</p>
+<img src="https://user-images.githubusercontent.com/14219087/117026322-f7420580-acfb-11eb-95e0-fa8cd4ce7fcf.png" width=50%>
 
 
 
