@@ -103,8 +103,12 @@ If few movies turn out imperfect, try running those manually (press F10) rather 
 
 #
 #
+###
+###
   
 # Scoring Macro
 This macro keeps track of manual scoring of mitotic events.  
-It can keep track of time, position, and potential mitotic errors or events
+It can keep track of time, position, and potential mitotic errors or events.
+
+
 
