@@ -151,7 +151,7 @@ Then, results will be written to the scoring table, which is immediately saved (
 
 It then asks you to identify and box the next cell. This repeats forever, until you hit 'Esc' or in some other way quit the macro.
 
-NOTE: **At any point you can close the image and open a different (or the same) one without crashing the macro, or quit the macro and carry on at a later time without losing your progress.**
+NOTE: **At any point you can close the image and open a different (or the same) one without crashing the macro or losing your progress. Also, you can quit the macro and carry on at a later time without losing your current progress.**
 
 
 
