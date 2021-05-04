@@ -3,6 +3,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/Naereen/StrapDown.js.svg)](https://GitHub.com/Naereen/StrapDown.js/issues/)
 [![Only 32 Kb](https://badge-size.herokuapp.com/Naereen/StrapDown.js/master/strapdown.min.js)](https://github.com/Naereen/StrapDown.js/blob/master/strapdown.min.js)
 
+(see below for scoring macro)
 # OrgaMovie Macro Information
 
 This FiJi/ImageJ macro takes any number 4D (xyzt) _\*.nd2_ image files of organoids and creates color-coded (for depth) time-lapse movies (see fig below).  
@@ -99,4 +100,11 @@ If few movies turn out imperfect, try running those manually (press F10) rather 
 #### Time-crop Settings
 - CoV cutoff: Cut-off value for coefficient of variation (mean/stdev) for detecting last time-point. Higher values will include more fuzzy/empty frames.
 - Minimum length: Minimum length of movie in case CoV cut-off is reached previously. This is mainly included as a workaround for movies that reach the CoV from frame 1, which leads to a crash.
+
+#
+#
+  
+# Scoring Macro
+This macro keeps track of manual scoring of mitotic events.  
+It can keep track of time, position, and potential mitotic errors or events
 
