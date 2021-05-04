@@ -3,7 +3,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/Naereen/StrapDown.js.svg)](https://GitHub.com/Naereen/StrapDown.js/issues/)
 [![Only 32 Kb](https://badge-size.herokuapp.com/Naereen/StrapDown.js/master/strapdown.min.js)](https://github.com/Naereen/StrapDown.js/blob/master/strapdown.min.js)
 
-(see below for scoring macro)
+(see below for info on [Scoring macro](https://github.com/DaniBodor/OrgaMovie/blob/master/README.md#scoring-macro))
 # OrgaMovie Macro Information
 
 This FiJi/ImageJ macro takes any number 4D (xyzt) _\*.nd2_ image files of organoids and creates color-coded (for depth) time-lapse movies (see fig below).  
