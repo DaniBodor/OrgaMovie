@@ -3,7 +3,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/Naereen/StrapDown.js.svg)](https://GitHub.com/Naereen/StrapDown.js/issues/)
 [![Only 32 Kb](https://badge-size.herokuapp.com/Naereen/StrapDown.js/master/strapdown.min.js)](https://github.com/Naereen/StrapDown.js/blob/master/strapdown.min.js)
 
-(see below for info on [Scoring macro](https://github.com/DaniBodor/OrgaMovie/blob/master/README.md#scoring-macro))
+(see below for info on [Scoring macro](https://github.com/DaniBodor/OrgaMovie/blob/master/README.md#mitotic-scoring-macro))
 # OrgaMovie Macro Information
 
 This FiJi/ImageJ macro takes any number 4D (xyzt) _\*.nd2_ image files of organoids and creates color-coded (for depth) time-lapse movies (see fig below).  
@@ -106,7 +106,7 @@ If few movies turn out imperfect, try running those manually (press F10) rather 
 ###
 ###
   
-# Scoring Macro
+# Mitotic Scoring Macro
 This macro keeps track of manual scoring of mitotic events. It keeps track of timings, position, and potential mitotic errors or events.
 
 Results are saved after each analyzed cell to avoid losing data after crashes or mistakes. Furthermore, previous progress can be loaded when re-running the macro for the same experiment so that you can stop in the middle of an analysis and carry on another time without losing track of where you were.
