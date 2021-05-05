@@ -105,8 +105,14 @@ for (c = prev_c+1; c > 0; c++){	// loop through cells
 	for (tp = 0; tp < nStages; tp++) {
 		// allow user to box mitotic cell
 		wait_string = "Draw a box around a cell at " + stages_used[tp] + " of mitotic event.";
-		if (tp>0)	wait_string = wait_string + "\n ---- t" + tp-1 + " at frame " + f;
+		if (tp > 0) wait_string = wait_string + "\n ---- t" + tp-1 + " at frame " + f;
 		waitForUser(wait_string);
+
+		im = getTitle();
+		if (tp == 0 && im != prev_im){
+			c = 1;
+			prev_im = im;
+		}
 
 		// get coordinates
 		getSelectionBounds(x, y, w, h);
@@ -122,7 +128,7 @@ for (c = prev_c+1; c > 0; c++){	// loop through cells
 		makeOverlay("box", current_coord, current_coord[0], "red");
 	}
 	run("Select None");
-
+	
 	// reorganize coordinates for output
 	reorganized_coord_array = reorganizeCoord(coordinates_array);
 	xywhtt = getFullSelectionBounds(reorganized_coord_array);
@@ -141,10 +147,7 @@ for (c = prev_c+1; c > 0; c++){	// loop through cells
 	events = GUI(notes_lines);
 
 	// create and print results line
-	im = getTitle();
-	if (im != prev_im)	c = 1;
-	prev_im = im;
-	
+
 	results = Array.concat(im, c, tps, intervals, events);
 	
 	for (i = 0; i < nStages; i++){
