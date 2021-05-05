@@ -116,23 +116,28 @@ for (c = prev_c+1; c > 0; c++){	// loop through cells
 
 		// get coordinates
 		getSelectionBounds(x, y, w, h);
-		f = getSliceNumber();
+		Stack.getDimensions(_, _, _, _, f);
 		current_coord = newArray(x, y, w, h, f);
 		rearranged = newArray(x, y, x+w, y+h, f);
 		coordinates_array = Array.concat(coordinates_array, rearranged);
 
 		// create overlay of mitotic timepoint (t0, t1, etc)
-		x_mid = current_coord[0] + current_coord[2]/2;
-		overlay = "c" + c + "_t"+tp;
-		makeOverlay("str", overlay, x_mid, "red");
-		makeOverlay("box", current_coord, current_coord[0], "red");
+		overlay_name = "c" + c + "_" + stages_used[tp];
+		makeOverlay(current_coord, overlay_name, "red");
 	}
 	run("Select None");
 	
-	// reorganize coordinates for output
+	// reorganize coordinates
 	reorganized_coord_array = reorganizeCoord(coordinates_array);
 	xywhtt = getFullSelectionBounds(reorganized_coord_array);
 	
+	// create box overlay of cells already analyzed (only on relevant slices)
+	makeOverlay(xywhtt, "c" + c, "white");	
+	
+	// for manual input on observations
+	events = GUI(notes_lines);
+
+	// create and print results line
 	tps = newArray();
 	intervals = newArray();
 	for (i = 0; i < nStages; i++) {
@@ -140,14 +145,6 @@ for (c = prev_c+1; c > 0; c++){	// loop through cells
 		if (i>0)	intervals[i-1] = (tps[i] - tps[i-1]) * timestep;
 	}
 	
-	// create box overlay of cells already analyzed (only on relevant slices)
-	makeOverlay("box", xywhtt, xywhtt[0], "white");
-
-	// custom function to ask for manual input on mitotic events
-	events = GUI(notes_lines);
-
-	// create and print results line
-
 	results = Array.concat(im, c, tps, intervals, events);
 	
 	for (i = 0; i < nStages; i++){
@@ -425,37 +422,25 @@ function loadPreviousProgress(){
 	}
 }
 
-function makeOverlay(type, item, x_pos, color){
-	setColor(color);
-	
-	if(type == "str"){
-		Overlay.drawString(item, x_pos, current_coord[1]-5);
-		Overlay.setPosition(getSliceNumber());
+function makeOverlay(coord, name, color){
+	// if single timepoint is given, make this both first and last timepoint
+	if (coord.length < 6)	coord[5] = coord[4];
 
-		if (dup_overlay){
-			offset = getWidth/2;
-			if (x_pos < offset) Overlay.drawString(item, x_pos + offset, current_coord[1]-1);
-			else				Overlay.drawString(item, x_pos - offset, current_coord[1]-1);
-			Overlay.setPosition(getSliceNumber());
+	// create rect at each frame
+	for (f = coord[4]; f <= coord[5]; f++) {
+		for (i = 0; i < dup_overlay+1; i++) {	// 1 or 2 boxes, depending on dup_overlay
+			x_coord = (coord[0] + getWidth()/2 * i) % getWidth();		// changes only if (i==1 && dup_coord==1)
+			makeRectangle(x_coord, coord[1], coord[2], coord[3]);
+			Roi.setName(name);
+			Overlay.addSelection(color);
+			Overlay.setPosition(f);
 		}
 	}
 	
-	else if (type == "box"){
-		if (item.length < 6)	item[5] = item[4];
-		for (f = item[4]; f <= item[5]; f++) {
-			Overlay.drawRect(item[0], item[1], item[2], item[3]);
-			Overlay.setPosition(f);
-			Overlay.add;	// not sure this command is needed.
-			if (dup_overlay){
-				offset = getWidth/2;
-				if (x_pos < offset) Overlay.drawRect(item[0] + offset, item[1], item[2], item[3]);
-				else				Overlay.drawRect(item[0] - offset, item[1], item[2], item[3]);
-				Overlay.setPosition(f);
-				Overlay.add;
-			}
-		}
-	}
+	// display and format overlay
 	Overlay.show;
-	//Overlay.setLabelFontSize(6,"scale");
-	//Overlay.setLabelFontSize("back");
+	Overlay.useNamesAsLabels(1);
+	Overlay.drawLabels(1);
+	Overlay.setLabelFontSize(8,"scale");
+	Overlay.setLabelColor(color);
 }
