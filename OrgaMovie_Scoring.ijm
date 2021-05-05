@@ -136,7 +136,7 @@ for (c = prev_c+1; c > 0; c++){	// loop through cells
 		coordinates_array = Array.concat(coordinates_array, rearranged);
 
 		// create overlay of mitotic timepoint (t0, t1, etc)
-		overlay_name = "c" + c + "_" + stages_used[tp];
+		overlay_name = "c" + c + "_t" + tp;
 		makeOverlay(current_coord, overlay_name, "red");
 	}
 	run("Select None");
