@@ -121,11 +121,16 @@ for (c = prev_c+1; c > 0; c++){	// loop through cells
 		if (tp == 0 && im != prev_im){
 			c = 1;
 			prev_im = im;
+			Stack.getDimensions(_, _, ch, sl, fr);
+			if (fr == 1){
+				Stack.setDimensions(ch, fr, sl);
+				Stack.getDimensions(_, _, ch, sl, fr);
+			}
 		}
 
 		// get coordinates
 		getSelectionBounds(x, y, w, h);
-		Stack.getDimensions(_, _, _, _, f);
+		Stack.getPosition(_, _, f);
 		current_coord = newArray(x, y, w, h, f);
 		rearranged = newArray(x, y, x+w, y+h, f);
 		coordinates_array = Array.concat(coordinates_array, rearranged);
@@ -442,9 +447,12 @@ function makeOverlay(coord, name, color){
 			makeRectangle(x_coord, coord[1], coord[2], coord[3]);
 			Roi.setName(name);
 			Overlay.addSelection(color);
-			Overlay.setPosition(f);
+			// unfortunately Overlay.setPosition(c, z, t) only works if there's c (or z?) > 1
+			if(ch*sl > 1)	Overlay.setPosition(0, 0, f);
+			else			Overlay.setPosition(f);
 		}
 	}
+	run("Select None");
 	
 	// display and format overlay
 	Overlay.show;
