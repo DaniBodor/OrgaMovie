@@ -45,7 +45,7 @@ Dialog.create("Setup");
 	Dialog.addNumber("Time step", default_timestep);
 	Dialog.setInsets(20, 0, 0);
 	Dialog.addCheckbox("Duplicate tracking ROIs left and right? "+
-						"(for OrgaMovie output that contain the same organoid twice)",  default_duplic);
+						"(for OrgaMovie output that contains the same organoid twice)",  default_duplic);
 	Dialog.addString("ROI color at timepoint", default_color1);
 	Dialog.addString("ROI color throughout", default_color2);
 	Dialog.setInsets(20, 0, 0);
@@ -54,7 +54,7 @@ Dialog.create("Setup");
 	Dialog.addMessage("Which mitotic stages should be monitored?")
 	Dialog.setInsets(0, 0, 0);
 	Dialog.addCheckboxGroup(2, 4, all_stages, default_stages);
-	Dialog.addHelp("https://github.com/DaniBodor/OrgaMovie/blob/master/README.md#mitotic-scoring-macro");
+	Dialog.addHelp("https://github.com/DaniBodor/MitoticScoring#setup");
 Dialog.show();
 	saveloc = Dialog.getString();
 	expname = Dialog.getString();
