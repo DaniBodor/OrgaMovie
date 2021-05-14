@@ -8,7 +8,9 @@ if (passargument == ""){
 }
 
 input_arguments = split(passargument, "$");
-// turn line below on for troubleshooting of input arguments
+// turn lines below on for troubleshooting of input arguments
+//print("inside main macro");
+//print(passargument);
 //for(i = 0; i < input_arguments.length; i++)		print(i,input_arguments[i]);
 
 t_step = input_arguments[0];
@@ -58,6 +60,7 @@ if (run_mode == "process"){
 	}
 	movie_index_list = Array.slice(input_arguments, movie_index_1, input_arguments.length);
 }
+
 
 
 export_folder = "Output_Movies";
@@ -1766,7 +1769,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		print("ArraySkipPositions : ");
 		Array.print(ArraySkipPositions);
 		print("");
-*/ 
+*/
 		//RO232		exclude single timepoints in 1 step or not...
 
 		if (minNofTimePoints < 2) {
@@ -3786,7 +3789,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					ChannelName[c] = "Transmitted";
 					ChannelColour[c] = "White";
 				}
-				print("net voor de Bio-Formats");
+				print("prior to Bio-Formats step 2");
 				print("CURRENT TIME -", makeDateOrTimeString("time"));
 				pre = nImages;
 				if (RunAllQueued) {
@@ -3812,10 +3815,10 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					//waitForUser("$$$$$$$$$$$ ");
 
 					setLocation(1,1);
-					loop_number = loop_number + 1;
+					loop_number ++;
 				}
 
-				print("net na de Bio-Formats");
+				print("after Bio-Formats step 2");
 				if (do_registration)	correctDriftOnStack(lastframe);
 
 				getDimensions(width, height, channels, slices, frames);

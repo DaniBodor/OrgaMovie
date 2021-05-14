@@ -60,6 +60,9 @@ Dialog.create("OrgaMovie Settings");
 	// Dialog.addCheckbox("Use auto-detection of Z planes? (not implemented)", 0);		// DB: decided not to implement this (for now)
 	Dialog.addMessage("");
 	Dialog.addCheckbox("Change default automation settings?", 0);
+	Dialog.addMessage(" ");
+	Dialog.addMessage(" ");
+	Dialog.addCheckbox("Skip straight to processing mode?", 0);
 
 
 Dialog.show();
@@ -83,6 +86,7 @@ Dialog.show();
 	do_autotime = Dialog.getCheckbox();
 	do_autoZ = "obsolete";	//do_autoZ = Dialog.getCheckbox();		// DB: decided not to implement this (for now)
 	changeSettings = Dialog.getCheckbox();
+	skip_step_1 = Dialog.getCheckbox();
 
 def = 0.5;
 if (do_autocrop && do_registration)		def_percile = def;
@@ -166,12 +170,14 @@ if (filelist.length == 0)	exit("no data found in input directory\n" + dir);
 /// Business end of macro
 
 
-// run macro for all *.nd2 files in "queue" mode, excluding files starting with an _
+// run macro for all files with correct extenstion in "queue" mode, excluding files starting with an _
 for (f = 0; f < filelist.length; f++) {
 	currfile = filelist[f];
 	if (endsWith(currfile, input_filetype)){
-		if (underscore_only && startsWith(currfile, "_") )  	initiateMainMacroStep1 (currfile);
-		else if (startsWith(currfile, "_") == 0)				initiateMainMacroStep1 (currfile);
+		if (underscore_only && startsWith(currfile, "_") )  	movie_index_list = initiateMainMacroStep1 (currfile, arguments);
+		else if (startsWith(currfile, "_") == 0)				movie_index_list = initiateMainMacroStep1 (currfile, arguments);
+		//print("index list follows");
+		//Array.print(movie_index_list);
 	}
 }
 
@@ -184,8 +190,9 @@ print("CURRENT TIME -", makeDateOrTimeString("time"));
 print("***************** entering process mode");
 arguments[13] = "process";	// i.e. the run mode
 arguments[16] = 0;	// loop number
-arguments = Array.concat(arguments, "Movie_index_1_follows");
+arguments[arguments.length-1] = "Movie_index_1_follows";
 arguments = Array.concat(arguments, movie_index_list);
+//for (i=0;i<arguments.length;i++) print(i,arguments[i]);
 passargument = makeArgument(arguments);
 
 runMacro(Macro_location + "OrgaMovie_Main_.ijm", passargument);
@@ -199,7 +206,7 @@ SaveLogToArchive("CompletedRun");
 
 
 
-function initiateMainMacroStep1(currfile){
+function initiateMainMacroStep1(currfile, arguments){
 	if (indexOf(currfile," ") >= 0){
 		oldfilename = dir + currfile;
 		currfile = replace(currfile," ","_");
@@ -212,7 +219,7 @@ function initiateMainMacroStep1(currfile){
 	else if(indexing == IndexingOptions[1])		movie_index = substring(currfile, 0, indexOf(currfile,input_filetype));		// filename
 	else if (indexing == IndexingOptions[2])	movie_index = substring(currfile, 0, indexOf(currfile,"_"));	// index (until 1st '_'")
 	if (movie_index == "")						movie_index = substring(currfile, 0, indexOf(currfile,input_filetype));		// revert to filename if empty
-	movie_index_list = Array.concat(movie_index_list,movie_index);
+	movie_index_list_returner = Array.concat(movie_index_list, movie_index);
 
 	// set file specific arguments to pass
 	arguments[11] = dir + currfile;	// filename
@@ -221,14 +228,27 @@ function initiateMainMacroStep1(currfile){
 
 	// initiate main macro and do memory dumps
 	//for(i = 0; i < arguments.length; i++)		print(i,arguments[i]);
+	crash_test = "";
 
-	run("Collect Garbage");
-	print("run macro in queue mode on movie: " + movie_index);
-	print("CURRENT TIME -", makeDateOrTimeString("time"));
-
-	passargument = makeArgument(arguments);
-	crash_test = runMacro(Macro_location + "OrgaMovie_Main_.ijm", passargument);	// returns empty string if ok, or [aborted] if main macro crashed
-	run("Collect Garbage");
+	if(skip_step_1 == 0){
+		print("current memory usage: " + IJ.freeMemory());
+		for(x=0;x<5;x++)	run("Collect Garbage");
+		print("memory usage after collect garbage: " + IJ.freeMemory());
+		print("run macro in queue mode on movie: " + movie_index);
+		print("CURRENT TIME -", makeDateOrTimeString("time"));
+	
+		passargument = makeArgument(arguments);
+	
+		runMacro(Macro_location + "OrgaMovie_Main_.ijm", passargument);	// returns empty string if ok, or [aborted] if main macro crashed
+	
+		
+		print("current memory usage: " + IJ.freeMemory());
+		for(x=0;x<5;x++)	run("Collect Garbage");
+		print("memory usage after collect garbage: " + IJ.freeMemory());
+	}
+	else{
+		print("skipping step 1, processing movie: " + movie_index);
+	}
 
 	// exit start macro if main macro crashed
 	if (crash_test == "[aborted]"){
@@ -236,6 +256,8 @@ function initiateMainMacroStep1(currfile){
 		SaveLogToArchive("CrashReport");
 		exit("Exit macro.\nOrgaMovie_Main crashed during last run.\nCurrent Log has been saved as CrashReport.txt\nPlease save a screenshot or pic of the current screen for debugging purposes.");
 	}
+
+	return movie_index_list_returner;
 }
 
 
