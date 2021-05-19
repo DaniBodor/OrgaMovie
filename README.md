@@ -15,20 +15,18 @@ I have noticed that many people have their own installation of FiJi on their acc
 
 # Running the OrgaMovie Macro on the Workstation (DED-KOPS-001)
 
-1) Check that previous user has collected all their data, otherwise store/rename the _Output_Movies_ folder.
-2) Delete old files from D:\ANALYSIS DUMP. This is not essential but avoids confusion with previous analyses.
+1) Delete old files from D:\ANALYSIS DUMP. This is not essential but avoids confusion with previous analyses.
     - Delete all folders called _Queue Exp \[\#\]_.
-    - Delete previous output movies from _Output_Movies_ folder, or delete/rename the entire folder.
-      - MAKE SURE PREVIOUS USER HAS COLLECTED THEIR DATA BEFORE DELETING!
     - Delete all _\*.txt_ files.
 3) Start FiJi from the common folder ***D:\Fiji.app\\***.
-4) Start OrgaMovie macro by hitting F11, or go to _Plugins > OrgaMovies > OrgaMovie Start_.
-5) Input your favorite settings (see below).
-6) Choose input folder where your raw data (_\*.nd2_ files) are located.
+    - Some accounts have an additional installation of FiJi on their own accounts. However, the macro is only stored on the common account, so make sure you run it from the location above
+5) Start OrgaMovie macro by hitting F11, or go to _Plugins > OrgaMovies > OrgaMovie Start_.
+6) Input your favorite settings (see below).
+7) Choose input folder where your raw data (_\*.nd2_ files) are located.
     - Please work from local or external hard disks and NOT from the server. 
 8) Wait overnight (rough time estimate: ~14-22h).
 9) Collect your output data from _D:\ANALYSIS DUMP\\\_Movies\_\[exp-name\]\\_.
-10) Check that your movies are ok and then delete them from the analysis dump.
+10) Check that your movies are ok and then delete them from the analysis dump to avoid crowding the local HD.
 
 # Macro Settings
 
@@ -45,27 +43,29 @@ I have noticed that many people have their own installation of FiJi on their acc
     - Default is your windows account + the current date in yymmdd format.
 #### Movie Output Settings
 - Output format: Choose whether output videos should be in between _\*.avi_ or _\*.tif_ or both.
-    - TIFs are easier to use for downstream analysis in ImageJ but require significantly more diskspace than AVIs (~25x larger files on average).
+    - TIFs are easier to use for downstream analysis in ImageJ but require significantly more diskspace than AVIs (~25-50x larger files).
 - Frame rate: The frame rate of the output movie (for _\*.avi_). Set how many seconds each frame stays in view when playing the movie.
+    - I copied this setting from original macro, but I'm not sure it does anything. I have the impression that all AVIs are 20 seconds long, independent of number of frames.
 - Output naming: What to use after the prefix (set above) to name individual output movies. Options are:
   - _linear_ = number movies consecutively from 1-N.
-  - _filename_ = use the entire original filename (minus the extension).
+  - _filename_ = use the original filename (minus the extension).
   - _file index_ = use the original filename until the first underscore ( \_ ). Often filenames are numbered by the microsope software and this number is repeated after the underscore. E.g., the output resulting from _Point0004_Seq0004.nd2_, will be named _\[exp-name\]\_Point0004.avi_.
 #### Automation Settings (on/off)
-- Drift correction - Uses _[MultiStackReg](http://bigwww.epfl.ch/thevenaz/stackreg/)_ plugin (default in FiJi) to correct drift and shaking in movies.
+- Drift correction: Correct for organoid drifting or jittering during acquisition.
+    - Uses _[MultiStackReg](http://bigwww.epfl.ch/thevenaz/stackreg/)_ plugin (default in FiJi) to correct drift and shaking in movies.
     - If unchecked: the organoid will move across the frame as happened during filming. As a knock-on effect, this will require a larger crop-area (see next setting) leading to larger output file size.
     - Note that the drift correction can lead to movies where it appears that a blacked out region is 'wiping' across your movie. This is in fact the organoid moving out of the field of view.
 - Auto-cropping: Detects portion of frame (XY) that is visited by the organoid in any Z or T and crops around this.
     - If multiple organoid regions are found, cropping occurs around the largest region only. 
     - If unchecked: the entire frame is used, leading to (unnecessarily) large file sizes and more cluttered movies. 
     - See default automation settings for more details.
-- Auto-contrasting: Automatically detects a good set of intensity values to use for contrasting (green and blue in original manual version of the macro).
+- Auto-contrasting: Automatically detects intensity values to use for contrasting (green and blue in original manual version of the macro).
     - If unchecked: dimmest and brightest pixel values are used, which tends to not give great contrast but also no pixels are overexposed or lost as background.
-    - Contrast is based on a low threshold dimmer than most organoid pixels and a high threshold of a small proportion of pixels.
     - Contrasting cannot be easily adjusted in the resulting output, as RGB images/movies are produced.
+    - Ideal contrasting occurs with a lower threshold around the dimmest signals within the organoid and an upper threshold around the value of the brightest (non-apoptotic) pixels in the organoid.
     - See default automation settings for more details on thresholding.
 - Last timepoint detection: Finds the last timepoint where an organoid is still visible within the frame. This is based on the coefficient of variation (mean/stdev) of all pixel values in the frame. The last timepoint considered is the first timepoint found where this coefficient is detected. 
-    - **Turn off for low signal movie to avoid cutting them short!**
+    - **Turn off for low signal movies to avoid cutting them short!**
     - If unchecked: all frames of the movie are included in the output, which will lead to (unnecessarily) large file sizes.
     - See default automation settings for more details.
 - Change default settings: If this is checked, another dialog will be opened after this to set default automation settings.
