@@ -65,8 +65,8 @@ I have noticed that many people have their own installation of FiJi on their acc
     - Contrasting cannot be easily adjusted in the resulting output, as RGB images/movies are produced.
     - See default automation settings for more details on thresholding.
 - Last timepoint detection: Finds the last timepoint where an organoid is still visible within the frame. This is based on the coefficient of variation (mean/stdev) of all pixel values in the frame. The last timepoint considered is the first timepoint found where this coefficient is detected. 
+    - **Turn off for low signal movie to avoid cutting them short!**
     - If unchecked: all frames of the movie are included in the output, which will lead to (unnecessarily) large file sizes.
-    - If signals are very low, it might be needed to turn this setting off.
     - See default automation settings for more details.
 - Change default settings: If this is checked, another dialog will be opened after this to set default automation settings.
     - If few movies turn out imperfect, try running those manually (press F10) rather than changing the settings for all movies.
