@@ -56,7 +56,7 @@ Dialog.create("OrgaMovie Settings");
 	Dialog.addCheckbox("Use drift correction", 1);
 	Dialog.addCheckbox("Use auto-cropping?", 1);
 	Dialog.addCheckbox("Use auto-contrasting?", 1);
-	Dialog.addCheckbox("Use auto-detection of last timepoint?", 1);
+	Dialog.addCheckbox("Use auto-detection of last timepoint?", 0);
 	// Dialog.addCheckbox("Use auto-detection of Z planes? (not implemented)", 0);		// DB: decided not to implement this (for now)
 	Dialog.addMessage("");
 	Dialog.addCheckbox("Change default automation settings?", 0);
