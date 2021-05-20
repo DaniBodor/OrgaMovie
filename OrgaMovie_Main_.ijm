@@ -3789,7 +3789,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					ChannelName[c] = "Transmitted";
 					ChannelColour[c] = "White";
 				}
-				print("prior to Bio-Formats step 2");
+				print("before Bio-Formats step 2");
+				memoryDump(5);
 				print("CURRENT TIME -", makeDateOrTimeString("time"));
 				pre = nImages;
 				if (RunAllQueued) {
@@ -3819,6 +3820,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				}
 
 				print("after Bio-Formats step 2");
+				memoryDump(5);
 				if (do_registration)	correctDriftOnStack(lastframe);
 
 				getDimensions(width, height, channels, slices, frames);
@@ -6811,6 +6813,7 @@ function correctDriftOnStack(endframe){
 		curr_IM = getTitle();
 		run("MultiStackReg", "stack_1=[" + curr_IM + "] action_1=[Load Transformation File] file_1=[" + Registration_save_location + "] stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body]");
 		concat_arg = concat_arg + " image" + z + "=[" + ori + "_slice" + z + "]";
+		memoryDump(5);
 	}
 	print("drift correction done");
 	print("CURRENT TIME -", makeDateOrTimeString("time"));
@@ -6944,6 +6947,12 @@ function getPercentile(percile){
 	perc_value = a[perc_pos];
 	
 	return perc_value;
+}
+
+function memoryDump(n){
+	print("current memory usage: " + IJ.freeMemory());
+	for(x=0; x<n; x++)	run("Collect Garbage");
+	print("memory usage after " + n + "x memory dump: " + IJ.freeMemory());
 }
 
 //BP37

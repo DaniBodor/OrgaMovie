@@ -231,9 +231,7 @@ function initiateMainMacroStep1(currfile, arguments){
 	crash_test = "";
 
 	if(skip_step_1 == 0){
-		print("current memory usage: " + IJ.freeMemory());
-		for(x=0;x<5;x++)	run("Collect Garbage");
-		print("memory usage after collect garbage: " + IJ.freeMemory());
+		memoryDump(5);
 		print("run macro in queue mode on movie: " + movie_index);
 		print("CURRENT TIME -", makeDateOrTimeString("time"));
 	
@@ -325,3 +323,8 @@ function SaveLogToArchive(descriptor){
 	saveAs("Text", savetextfile);
 }
 
+function memoryDump(n){
+	print("current memory usage: " + IJ.freeMemory());
+	for(x=0; x<n; x++)	run("Collect Garbage");
+	print("memory usage after memory dump: " + IJ.freeMemory());
+}
