@@ -1,3 +1,9 @@
+ZonlyFiles = newArray(	// each line should have image name and number of slices as separate consecutive array elements 
+				"PointP8T_ChannelQC TS 488nm_Seq0002.nd2", 64,
+				"LEAVE THIS LINE AS IS");
+
+
+
 
 // check if macro was opened from Start macro or locally
 passargument = getArgument();
@@ -59,6 +65,8 @@ if (run_mode == "process"){
 		}
 	}
 	movie_index_list = Array.slice(input_arguments, movie_index_1, input_arguments.length);
+	print("list of movies to be be processed:");
+	Array.print(movie_index_list);
 }
 
 
@@ -545,7 +553,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 	SkipGlow = 0;
 	TextInGlowIsWhite = 1;
 	SetMultiplyBeforeDepthcoding = 1;
-	WindowForPause = 1; //RO this failed if the settings file was not present!
+	WindowForPause = 0; //RO this failed if the settings file was not present!
 	AddPositionName = 1;
 	GuidedBC = 1;
 	TimeProjectTransm = 1;
@@ -914,9 +922,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 			ReadFileName = 0;
 		}
 
-		pre = nImages;
-		run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
-		if (nImages > pre+1 )		closeWrongChannels(pre);
+		BioFormatImporter(file);
 
 		setLocation(1,1);
 		print("CURRENT TIME -", makeDateOrTimeString("time"));
@@ -1197,7 +1203,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				Stack.setPosition(1, ZSLICE, TIMEPOINTS);
 				setMetadata("Position", j);
 				//bp time-project
-				DoSetZ = 1; //RO 0704	SetTransmittedBrightness("TransmittedVirtual_"+PositionNumber[i]);					//Sets the brightness to a predefined setting (best guess to start from...)
+				DoSetZ = 1; //RO 0704	//Sets the brightness to a predefined setting (best guess to start from...)
 				if (TimeProjectTransm == 0) {
 					drawROI("TransmittedVirtual_" + PositionNumber[i]);
 				}
@@ -1699,6 +1705,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 		Array.getStatistics(ArraynFrames, minNofTimePoints, dummy, dummy, dummy); //RO232		exclude single timepoints in 1 step or not...
 		Array.getStatistics(ArraynSlices, minNofSlices, dummy, dummy, dummy); //RO232		exclude single z-plane acquisitions... (BP)
 
+//	DB: Don't know what these lines do, but they crashed Carlos' run so will try commenting out
 		if (minNofTimePoints < 3) {
 			Dialog.create("Exclude positions?");
 				Dialog.addMessage(" Which ones would you like to exclude from analysis ? ");
@@ -1707,8 +1714,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					Dialog.addCheckbox("Pos#" + i + " --> only " + ArraynFrames[i] + " frame(s)", 0);
 				}
 				Dialog.addMessage(" ");
-				Dialog.addCheckbox(" Ignore this and keep ALL postions anyway ", 0);
-			Dialog.show();
+				Dialog.addCheckbox(" Ignore this and keep ALL postions anyway ", 1);
+			//Dialog.show();	// #### DB commented out
 				for (i = 0; i < PositionNumber.length; i++) {
 					Temp = Dialog.getCheckbox();
 					if (Temp) {
@@ -1722,8 +1729,9 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
 			for (i = 0; i < PositionNumber.length; i++) {
 				if (ArraySkipPositions[i]) {
-					selectWindow("TransmittedVirtual_" + PositionNumber[i]);
-					close();
+					if (isOpen "TransmittedVirtual_" + PositionNumber[i]){
+						close("TransmittedVirtual_" + PositionNumber[i]);
+					}
 				} else {
 					drawROI("TransmittedVirtual_" + PositionNumber[i]);
 				}
@@ -1739,8 +1747,8 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					Dialog.addCheckbox("Pos#" + i + " --> only " + ArraynSlices[i] + " z-plane(s)", 0);
 				}
 				Dialog.addMessage(" ");
-				Dialog.addCheckbox(" Ignore this and keep ALL postions anyway ", 0);
-			Dialog.show();
+				Dialog.addCheckbox(" Ignore this and keep ALL postions anyway ", 1);
+			//Dialog.show();	// #### DB commented out
 				for (i = 0; i < PositionNumber.length; i++) {
 					Temp = Dialog.getCheckbox();
 					if (Temp) {
@@ -1755,21 +1763,15 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 
 			for (i = 0; i < PositionNumber.length; i++) {
 				if (ArraySkipPositions[i]) {
-					if (isOpen("TransmittedVirtual_" + PositionNumber[i])) {
-						selectWindow("TransmittedVirtual_" + PositionNumber[i]);
-						close();
+					if (isOpen "TransmittedVirtual_" + PositionNumber[i]){
+						close("TransmittedVirtual_" + PositionNumber[i]);
 					}
 				} else {
 					drawROI("TransmittedVirtual_" + PositionNumber[i]);
 				}
 			}
 		}
-/* DB commented this out
-		print("");
-		print("ArraySkipPositions : ");
-		Array.print(ArraySkipPositions);
-		print("");
-*/
+
 		//RO232		exclude single timepoints in 1 step or not...
 
 		if (minNofTimePoints < 2) {
@@ -2241,11 +2243,11 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 			if (ArraySkipPositions[i] == 0) { //bp17
 				pre = nImages;
 				if (tiffFile) {
-					run("Bio-Formats Importer", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
+					BioFormatImporter(file);
 					if (nImages > pre+1 )		closeWrongChannels(pre);
 					setLocation(1,1);
 				} else {
-					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
+					BioFormatImporter(file);
 					print("biof2 - CURRENT TIME -", makeDateOrTimeString("time"));
 					if (nImages > pre+1 )		closeWrongChannels(pre);
 					setLocation(1,1);
@@ -3800,8 +3802,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					}
 				}
 				if (tiffFile) {
-					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
-					if (nImages > pre+1 )		closeWrongChannels(pre);
+					BioFormatImporter(file);
 
 					setLocation(1,1);
 					if (RunAllQueued) {
@@ -3810,17 +3811,15 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 					rename(TiffName);
 					run("The Real Glow");
 				} else {
-					run("Bio-Formats", "open=[" + file + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
-					if (nImages > pre+1 )		closeWrongChannels(pre);
-					selectImage(pre+1);
+					BioFormatImporter(file);
 					//waitForUser("$$$$$$$$$$$ ");
 
 					setLocation(1,1);
 					loop_number ++;
 				}
 
-				print("after Bio-Formats step 2");
 				memoryDump(5);
+				print("after Bio-Formats step 2");
 				if (do_registration)	correctDriftOnStack(lastframe);
 
 				getDimensions(width, height, channels, slices, frames);
@@ -3878,9 +3877,6 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 				}
 
 				for (j = 0; j < PositionChannelAmount[i]; j++) {
-					if (tiffFile == 0) {
-						//selectWindow(TempTitle + j);	// ##DB## DB debug --> commented out. Results in *.nd0
-					}
 					print("i__" + j + "__TempTitle__" + TempTitle);
 					if (tiffFile == 1) {
 						selectWindow(TempTitle);
@@ -4311,7 +4307,7 @@ for (Exp = 1; Exp < nExp + 1; Exp++) {
 									selectWindow(TheOtherWindow);
 									wait(TimeForPause);
 									if (getTitle == "Pause") {
-										waitForUser("You just pressed PAUSE" + "\n" + "\n" + "press OK to continue \n \n \n ((or drag this window to upper left quadrant if you want to change certain settings ");
+										//waitForUser("You just pressed PAUSE" + "\n" + "\n" + "press OK to continue \n \n \n ((or drag this window to upper left quadrant if you want to change certain settings ");
 										// if user drags the pause window to upper left...
 										selectWindow("Pause");
 										getLocationAndSize(xPauseWindow, yPause, dummy, dummy);
@@ -5455,24 +5451,6 @@ function drawROI(title) {
 
 function TimeProjectionOnTransmitted(title, slice) {
 
-	test1 = 0;
-	if (test1) {
-		waitForUser("start function");
-	}
-	test2 = 0;
-	if (test2) {
-		wait(400);
-	}
-	test3 = 0;
-	if (test3) {
-		run("Collect Garbage");
-	}
-	test4 = 0;
-	if (test4) {
-		wait(500);
-		run("Collect Garbage");
-	}
-
 	selectWindow(title);
 	run("Select None");
 	if (testWait) {
@@ -5511,9 +5489,6 @@ function TimeProjectionOnTransmitted(title, slice) {
 	Stack.setPosition(1, slice, TIMEPOINTS);
 	if (testWait) {
 		wait(ms);
-	}
-	if (test1) {
-		waitForUser("END function");
 	}
 
 }
@@ -6950,9 +6925,23 @@ function getPercentile(percile){
 }
 
 function memoryDump(n){
-	print("current memory usage: " + IJ.freeMemory());
+	print("memory usage prior to memory dump: " + IJ.freeMemory());
 	for(x=0; x<n; x++)	run("Collect Garbage");
 	print("memory usage after " + n + "x memory dump: " + IJ.freeMemory());
+}
+
+function BioFormatImporter(path){
+	pre = nImages;
+	run("Bio-Formats", "open=[" + path + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
+	if (nImages > pre+1 )		closeWrongChannels(pre);
+	imname = getTitle();
+	for (qqq=0; qqq<ZonlyFiles.length; qqq++){
+		if (indexOf(imname,ZonlyFiles[qqq]) >= 0){
+			Zplanes = ZonlyFiles[qqq + 1];
+			run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices=" + Zplanes + " frames=" + nSlices/Zplanes + " display=Color");
+		}
+	}
+	selectImage(pre+1);
 }
 
 //BP37

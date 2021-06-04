@@ -1,6 +1,7 @@
 //Macro_location = "C:\\Users\\dani\\Documents\\MyCodes\\OrgaMovie" + File.separator;
 Macro_location = getDirectory("plugins") + "OrgaMovie" + File.separator;
-if (File.exists(Macro_location) == 0)	exit("main macro not found at location\n" + Macro_location);
+Macro_path = Macro_location + "OrgaMovie_Main.ijm"
+if (!File.exists(Macro_path) )		exit("Main macro not found at location\n" + Macro_path);
 
 
 underscore_only = false;
@@ -24,7 +25,7 @@ print("CURRENT TIME -", makeDateOrTimeString("time"));
 run("Close All");
 run("Collect Garbage");
 run("Set Measurements...", "area mean standard min bounding stack limit redirect=None decimal=1");
-crash_test = "";
+macro_return = "";
 
 
 // Make dialog window for input settings
@@ -48,7 +49,7 @@ Dialog.create("OrgaMovie Settings");
 	Dialog.addMessage("MOVIE OUTPUT SETTINGS");
 	Dialog.addChoice("Output format", OutputFormatOptions, OutputFormatOptions[0]);
 	Dialog.addNumber("Frame rate", 1.3, 1, 4,"sec / frame");
-	Dialog.addChoice("Output naming ", IndexingOptions, IndexingOptions[2]);
+	Dialog.addChoice("Output naming ", IndexingOptions, IndexingOptions[1]);
 	Dialog.addMessage("");
 
 	Dialog.addMessage("AUTOMATION SETTINGS");
@@ -71,8 +72,8 @@ Dialog.show();
 	channel_number = Dialog.getNumber() - 1;
 	t_step = Dialog.getNumber();	// min
 	date = "obsolete";	// date = Dialog.getString();
-	prefix = Dialog.getString() + "_";
-		prefix = replace(prefix,"\\.","-");
+	prefix = Dialog.getString();
+		prefix = replace(prefix,"\\.","");
 	// MOVIE OUTPUT SETTINGS
 	output_format = Dialog.getChoice();
 	sec_p_frame = Dialog.getNumber();
@@ -195,25 +196,17 @@ arguments = Array.concat(arguments, movie_index_list);
 //for (i=0;i<arguments.length;i++) print(i,arguments[i]);
 passargument = makeArgument(arguments);
 
-runMacro(Macro_location + "OrgaMovie_Main_.ijm", passargument);
+runMainMacro(passargument);
 
 
-print("Macro all done");
+print("Macro all done");	// should now only print if no crash
 SaveLogToArchive("CompletedRun");
 
 
 ////////////////////////////////////////////// FUNCTIONS //////////////////////////////////////////////
 
 
-
 function initiateMainMacroStep1(currfile, arguments){
-	if (indexOf(currfile," ") >= 0){
-		oldfilename = dir + currfile;
-		currfile = replace(currfile," ","_");
-		newfilename = dir + currfile;
-		File.rename (oldfilename,newfilename);
-	}
-
 	// determine proper movie_index
 	if (indexing == IndexingOptions[0])			movie_index ++;		// linear
 	else if(indexing == IndexingOptions[1])		movie_index = substring(currfile, 0, indexOf(currfile,input_filetype));		// filename
@@ -228,34 +221,36 @@ function initiateMainMacroStep1(currfile, arguments){
 
 	// initiate main macro and do memory dumps
 	//for(i = 0; i < arguments.length; i++)		print(i,arguments[i]);
-	crash_test = "";
+	macro_return = "";
 
 	if(skip_step_1 == 0){
+		print("\n************\n");
 		memoryDump(5);
 		print("run macro in queue mode on movie: " + movie_index);
 		print("CURRENT TIME -", makeDateOrTimeString("time"));
-	
+
+		// actually run the code
 		passargument = makeArgument(arguments);
-	
-		runMacro(Macro_location + "OrgaMovie_Main_.ijm", passargument);	// returns empty string if ok, or [aborted] if main macro crashed
-	
-		
-		print("current memory usage: " + IJ.freeMemory());
-		for(x=0;x<5;x++)	run("Collect Garbage");
-		print("memory usage after collect garbage: " + IJ.freeMemory());
+		runMainMacro(passargument);
+		memoryDump(5);
 	}
 	else{
 		print("skipping step 1, processing movie: " + movie_index);
 	}
 
-	// exit start macro if main macro crashed
-	if (crash_test == "[aborted]"){
+	return movie_index_list_returner;
+}
+
+
+function runMainMacro(arg){
+	macro_return = runMacro(Macro_path, arg);	// returns empty string if ok, or [aborted] if main macro crashed
+	
+	// exit start macro if main macro crashed	
+	if (macro_return == "[aborted]"){
 		print("!!!!! main macro crashed");
 		SaveLogToArchive("CrashReport");
 		exit("Exit macro.\nOrgaMovie_Main crashed during last run.\nCurrent Log has been saved as CrashReport.txt\nPlease save a screenshot or pic of the current screen for debugging purposes.");
 	}
-
-	return movie_index_list_returner;
 }
 
 
@@ -318,7 +313,7 @@ function SaveLogToArchive(descriptor){
 	print("CURRENT TIME -", currtime);
 	
 	currtime = replace(currtime,":","");
-	savetextfile = "D:\\ANALYSIS DUMP\\Settings\\LogArchive" + File.separator + prefix + "_" + currdate + "_" + currtime + "_" + descriptor + ".txt";
+	savetextfile = "D:\\ANALYSIS DUMP\\LogArchive" + File.separator + "d" + currdate + "_t" + currtime + "_" + prefix + "_" + descriptor + ".txt";
 	selectWindow("Log");
 	saveAs("Text", savetextfile);
 }
@@ -326,5 +321,7 @@ function SaveLogToArchive(descriptor){
 function memoryDump(n){
 	print("current memory usage: " + IJ.freeMemory());
 	for(x=0; x<n; x++)	run("Collect Garbage");
-	print("memory usage after memory dump: " + IJ.freeMemory());
+	print("memory usage after " + n + "x memory dump: " + IJ.freeMemory());
 }
+
+
