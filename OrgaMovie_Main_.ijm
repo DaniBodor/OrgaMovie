@@ -6841,13 +6841,18 @@ function exportFinalProduct(){
 
 	// save files as AVI and/or TIF
 	run("Select None");
-	if (makeAVI){
-		run("AVI... ", "compression=JPEG frame=" + FrameRateAvi + " save=[" + savename + ".avi]" );
-		print("saved: " + savename + ".avi");
+	getDimensions(_, _, _, z, t);
+	if (t == 1 && z > 1){
+		run("Properties...", "channels=1 slices=1 frames=" + z);
 	}
+	
 	if (makeTIF){
 		saveAs("Tiff", savename + ".tif");
 		print("saved: " + savename + ".tif");
+	}
+	if (makeAVI){
+		run("AVI... ", "compression=JPEG frame=" + FrameRateAvi + " save=[" + savename + ".avi]" );
+		print("saved: " + savename + ".avi");
 	}
 }
 
