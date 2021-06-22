@@ -1,10 +1,3 @@
-ZonlyFiles = newArray(	// each line should have image name and number of slices as separate consecutive array elements 
-				"PointP8T_ChannelQC TS 488nm_Seq0002.nd2", 64,
-				"LEAVE THIS LINE AS IS");
-
-
-
-
 // check if macro was opened from Start macro or locally
 passargument = getArgument();
 if (passargument == ""){
@@ -6961,14 +6954,19 @@ function BioFormatImporter(path){
 	run("Bio-Formats", "open=[" + path + "] color_mode=Default split_channels view=Hyperstack stack_order=XYCZT");
 	if (nImages > pre+1 )		closeWrongChannels(pre);
 	imname = getTitle();
-	for (qqq=0; qqq<ZonlyFiles.length; qqq++){
-		if (indexOf(imname,ZonlyFiles[qqq]) >= 0){
-			Zplanes = ZonlyFiles[qqq + 1];
-			run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices=" + Zplanes + " frames=" + nSlices/Zplanes + " display=Color");
-		}
-	}
+	check1Dbug();
 	selectImage(pre+1);
 }
+
+
+
+function check1Dbug(){
+	getDimensions(_, _, _, SLICES, FRAMES);
+	if (SLICES * FRAMES == maxOf(SLICES,FRAMES) ){
+		// add code here for if this is the case; I ca
+	}
+}
+
 
 //BP37
 
