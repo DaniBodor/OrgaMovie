@@ -248,6 +248,7 @@ function runMainMacro(arg){
 	// exit start macro if main macro crashed	
 	if (macro_return == "[aborted]"){
 		print("!!!!! main macro crashed");
+		print("CURRENT TIME -", makeDateOrTimeString("time"));
 		SaveLogToArchive("CrashReport");
 		exit("Exit macro.\nOrgaMovie_Main crashed during last run.\nCurrent Log has been saved as CrashReport.txt\nPlease save a screenshot or pic of the current screen for debugging purposes.");
 	}

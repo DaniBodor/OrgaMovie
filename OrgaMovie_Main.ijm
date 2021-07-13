@@ -6765,31 +6765,31 @@ function correctDriftOnStack(endframe){
 	// import stack info
 	ori = getTitle();
 	Stack.getDimensions(width, height, channels, slices, frames);
-	run("Hyperstack to Stack");
-	totalSlices = nSlices;
 	
 	// if auto_crop was used, then reg file has already been created
 	// otherwise, do so now
 	if (File.exists( Registration_save_location ) == 0)	makeRegistrationFile(1);
 
+	print("CURRENT TIME -", makeDateOrTimeString("time"));
 	print("correct drift on stack");
 	
-	//run("Stack Splitter", "number=" + slices);
-	
-	print("CURRENT TIME -", makeDateOrTimeString("time"));
-
 	// register individual Z-slices
+	run("Hyperstack to Stack");
+	totalSlices = nSlices;
 	for (z = 1; z <= slices; z++) {
 		selectImage(ori);
-		if (nSlices > frames)	run("Make Substack...", "delete slices=1-" + nSlices + "-" + slices - (z-1) );
-		else 					run("Duplicate...", "title=[" + ori + "_z" + z + "_slice" + z +"] duplicate");
-
+		print ("correcting slice:", z);
+		if (nSlices > frames){
+			run("Make Substack...", "delete slices=1-" + nSlices + "-" + slices - (z-1) );
+		}
+		else {
+			run("Duplicate...", "title=[" + ori + "_z" + z + "_slice" + z +"] duplicate");
+			close(ori);
+		}
 		selectImage(nImages);
 		rename("Z"+z);
 		run("MultiStackReg", "stack_1=[Z" + z + "] action_1=[Load Transformation File] file_1=[" + Registration_save_location + "] stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body]");
 	}
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	close(ori);
 
 	// concatenate slices back together
 	selectWindow("Log");	// DB: I don't know why, but this statement fixes a bug that crashes the macro if auto-crop is not selected
@@ -6803,6 +6803,7 @@ function correctDriftOnStack(endframe){
 	print("drift correction done");
 	print("CURRENT TIME -", makeDateOrTimeString("time"));
 
+	// copied from original
 	if (WindowForPause) {
 		newImage("Pause", "RGB black", 0.2 * screenWidth, 0.1 * screenHeight, 1);
 		HeightTemp = getHeight();
