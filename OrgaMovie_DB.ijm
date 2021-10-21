@@ -4,9 +4,10 @@
 
 function openFile(filename){
 
+	//%% open files
 	run("Bio-Formats Importer", "open=[" + filename + "] color_mode=Default rois_import=[ROI manager] view=Hyperstack stack_order=XYCZT");
 	
-	// fix file if not opened as Hyperstack
+	//%% fix file if not opened as Hyperstack
 	hstack_check = Property.get("hyperstack");
 	if (hstack_check != "true"){
 		frames = Property.getNumber("SizeT");
@@ -14,7 +15,7 @@ function openFile(filename){
 		if (isNaN(frames) || round(slices) != slices) {
 			print("file not (opened as) a hyperstack:", filename)
 		}
-		else{
+		else {
 			slices = nSlices/frames;
 			run("Stack to Hyperstack...", "order=xyczt(default) channels=1 slices="+slices+" frames="+frames+" display=Grayscale");
 		}
@@ -23,9 +24,7 @@ function openFile(filename){
 
 
 
-
-
-
+//%% create projections
 selectImage(1);
 close("\\Others");
 ori = getTitle();
@@ -46,22 +45,18 @@ run("MultiStackReg", "stack_1=MAX_Point0000_Seq0000.nd2 action_1=Align file_1=C:
 
 
 
-function autoCrop(minSize, extraBoundary, endframe) { // DB
+function autoCrop(minSize, extraBoundary) { // DB
 	selectImage(t_prj);
 	run("Select None");
 
-	// convert minSize (um) to pixel units
-	getPixelSize(unit, pixelWidth, pixelHeight);
-	minPixSize = minSize / (pixelWidth * pixelHeight);
-
-	// find areas with signal
+	//%% find areas with signal
 	setAutoThreshold("Percentile dark");
 	getThreshold(lower, upper);
 	setThreshold(lower*0.95, upper);
 	run("Analyze Particles...", "size="+minSize+"-Infinity pixel clear add");
 
-	// select largest ROI
 	if (nResults > 0) {
+		//%% select largest ROI
 		area = -1;
 		largest_roi = 0;
 		
@@ -72,28 +67,29 @@ function autoCrop(minSize, extraBoundary, endframe) { // DB
 				largest_roi = r;
 			}
 		}
-		
+
+		//%% select largest region
 		roiManager("select", largest_roi);
 		getBoundingRect(x, y, width, height);
 		roiManager("reset");
 		makeRectangle(x-extraBoundary, y-extraBoundary, width+2*extraBoundary, height+2*extraBoundary)
-		roiManager("add");
-		roiManager("rename", "Crop1");
+		//roiManager("add");
+		//roiManager("rename", "Crop1");
+
+		//%% crop images
+		for (i = 0; i < nImages; i++) {
+			selectImage(i);
+			roiManager("select", 0)
+			run("Crop");
+		}
 	}
 	
 	// in case no region is found use entire image
-	else {
+	/*else {
 		run("Select All");
 		roiManager("add");
 		roiManager("rename", "Crop1");
-	}
-
-	// crop images
-	for (i = 0; i < nImages; i++) {
-		selectImage(i);
-		roiManager("select", 0)
-		run("Crop");
-	}
+	}*/
 }
 
 
