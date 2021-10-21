@@ -37,11 +37,24 @@ t_prj = getTitle();
 
 
 
-run("MultiStackReg", "stack_1=MAX_Point0000_Seq0000.nd2 action_1=Align file_1=C:/Users/dani/Documents/MyCodes/OrgaMovie/data/Test/TM.txt stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body] save");
 
 
 
 
+function getTransformationMatrix(base_folder){
+	selectImage(prj);
+	run("Duplicate...", "duplicate");
+	prj_reg = getTitle();
+	TransMatrix_File = base_folder + "TrMatrix.txt";
+	
+	run("MultiStackReg", "stack_1="+prj_reg+" action_1=Align file_1="+TransMatrix_File+" stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body] save");
+
+	return TransMatrix_File;
+}
+
+function correct_drift(im, TransMatrix_File){
+	run("MultiStackReg", "stack_1="+im+" action_1=[Load Transformation File] file_1=["+TransMatrix_File+"] stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body]");
+}
 
 
 
