@@ -35,13 +35,33 @@ t_prj = getTitle();
 
 
 
+function setBC(min_thresh_meth, minBrightnessFactor, overexp_percile){
+	//%% select center frame for determining B&C
+	selectImage(prj);
+	setSlice(nSlices/2);
 
+	setAutoThreshold(min_thresh_meth);
+	getThreshold(no,minT);
+	minT = minT * minBrightnessFactor;
+
+	makeRectangle(getWidth/2, 0, getWidth/2, getHeight);
+	maxT = getPercentile(overexp_percile);
+	close(maxprj);
+	selectImage(1);
+	
+	//setAutoThreshold(max_thresh_meth);
+	//getThreshold(no,maxT);
+	if(maxT <= minT)	resetMinAndMax();
+	else				setMinAndMax(minT,maxT);
+
+}
 
 
 
 
 
 function getTransformationMatrix(base_folder){
+	//%% make transformation matrix file
 	selectImage(prj);
 	run("Duplicate...", "duplicate");
 	prj_reg = getTitle();
@@ -53,6 +73,7 @@ function getTransformationMatrix(base_folder){
 }
 
 function correct_drift(im, TransMatrix_File){
+	// %% use transformatin matrix to correct drift
 	run("MultiStackReg", "stack_1="+im+" action_1=[Load Transformation File] file_1=["+TransMatrix_File+"] stack_2=None action_2=Ignore file_2=[] transformation=[Rigid Body]");
 }
 
