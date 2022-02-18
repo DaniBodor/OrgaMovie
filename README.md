@@ -1,6 +1,6 @@
-[![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/sindresorhus/awesome)
+# THIS REPO IS DEPRECATED. PLEASE VISIT [OrgaMovie_v3](https://github.com/DaniBodor/OrgaMovie_v3) INSTEAD
 
-# OrgaMovie Macro
+## OrgaMovie Macro
 
 This FiJi/ImageJ macro takes any number 4D (xyzt) _\*.nd2_ image files of organoids and creates color-coded (for depth) time-lapse movies (see fig below).  
 The code is a fully automated adaptation of a macro (version 2016_03_24) previously created by Bas Ponsioen and  René Overmeer, first published in _[Targeting mutant RAS in patient-derived colorectal cancer organoids by combinatorial drug screening](https://elifesciences.org/articles/18489)_, (eLife 2016;5:e18489 doi: 10.7554/eLife.18489).
@@ -13,7 +13,7 @@ The macro will not run on recent versions of ImageJ. The most recent version of 
 
 I have noticed that many people have their own installation of FiJi on their account. However, there is also a common installation of FiJi on the D-drive (strictly speaking FiJi is not installed, but just exists on the disk). I have installed this plugin-set **only on the common FiJi installation**. I recommend you delete your own insance of FiJi if you are not using it for anything else and always work from the common one, which is located under _D:\FiJi.app_, and create a shortcut for _ImageJ-win64.exe_ on your desktop or taskbar.
 
-# Running the OrgaMovie Macro on the Workstation (DED-KOPS-001)
+## Running the OrgaMovie Macro on the Workstation (DED-KOPS-001)
 
 1) Delete old files from D:\ANALYSIS DUMP. This is not essential but avoids confusion with previous analyses.
     - Delete all folders called _Queue Exp \[\#\]_.
@@ -28,9 +28,9 @@ I have noticed that many people have their own installation of FiJi on their acc
 9) Collect your output data from _D:\ANALYSIS DUMP\\\_Movies\_\[exp-name\]\\_.
 10) Check that your movies are ok and then delete them from the analysis dump to avoid crowding the local HD.
 
-# Macro Settings
+## Macro Settings
 
-## Main Settings Dialog
+### Main Settings Dialog
 <img src="https://user-images.githubusercontent.com/14219087/115407951-c12b5e80-a1f0-11eb-9efc-500a5c805bc6.PNG" width=50%>
 
 #### General Settings
@@ -72,7 +72,7 @@ I have noticed that many people have their own installation of FiJi on their acc
     - If few movies turn out imperfect, try running those manually (press F10) rather than changing the settings for all movies.
     - If many movies turn out weird, perhaps changing default parameters can help. See below for details on these.
 
-## Automation Settings Dialog
+### Automation Settings Dialog
 If few movies turn out imperfect, try running those manually (press F10) rather than changing the settings for all movies. If many movies turn out weird, perhaps changing default parameters can help.
 
 <img src="https://user-images.githubusercontent.com/14219087/115743925-63cf1300-a392-11eb-867f-796c64fce8a7.png" width=50%>
