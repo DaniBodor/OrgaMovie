@@ -7,8 +7,6 @@ nFrames = 360;
 // hide images while opening
 setBatchMode(true);
 
-
-
 // define file locations
 dir = getDirectory("Choose a Directory");
 flist = getFileList(dir);
